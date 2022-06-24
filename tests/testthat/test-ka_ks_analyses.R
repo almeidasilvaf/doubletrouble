@@ -41,3 +41,33 @@ test_that("plot_ks_peaks() returns a ggplot object", {
     expect_true("ggplot" %in% class(peaks_plot))
         
 })
+
+test_that("find_intersect_mixtures() returns a numeric scalar", {
+    
+    peaks <- find_ks_peaks(ks, npeaks = 2)
+    inters <- find_intersect_mixtures(ks, peaks)
+    
+    expect_equal(class(inter), "numeric")
+    expect_equal(length(inter), 1)
+})
+
+test_that("split_pairs_by_peak() returns a list", {
+    
+    # Create a data frame of duplicate pairs and Ks values
+    ks_df <- gma_dups_kaks[!is.na(gma_dups_kaks$Ks), c("dup1", "dup2", "Ks")]
+     
+    # Remove Ks values >1 for testing purposes
+    ks_df <- ks_df[ks_df$Ks <= 1, ]
+    
+    # Create list of peaks
+    peaks <- find_ks_peaks(ks_df$Ks, npeaks = 2)
+    spairs <- split_pairs_by_peak(ks_df, peaks) 
+    
+    expect_equal(class(spairs), "list")
+    expect_equal(names(spairs), c("pairs", "plot"))
+    expect_equal(class(spairs$pairs), "data.frame")
+    expect_equal(ncol(spairs$pairs), 4)
+    expect_true("ggplot" %in% class(spairs$plot))
+    
+    
+})
