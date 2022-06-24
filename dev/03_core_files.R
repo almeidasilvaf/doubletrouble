@@ -63,7 +63,8 @@ usethis::use_github_actions_badge("R-CMD-check-bioc")
 
 ## Enable using tests
 usethis::use_testthat()
-usethis::use_test("duplication_classification") ## You need at least one test to run covr
+usethis::use_test("duplication_classification") 
+usethis::use_test("ka_ks_analyses") 
 usethis::use_coverage()
 
 ## Re-knit your README.Rmd file to update your README.md file

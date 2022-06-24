@@ -4,7 +4,7 @@
 \alias{find_ks_peaks}
 \title{Find peaks in a Ks distribution by fitting Gaussian Mixture Models (GMMs)}
 \usage{
-find_ks_peaks(ks, npeaks = 1, epsilon = 0.001)
+find_ks_peaks(ks, npeaks = 2, epsilon = 0.001)
 }
 \arguments{
 \item{ks}{A numeric vector of Ks values.}
@@ -12,7 +12,7 @@ find_ks_peaks(ks, npeaks = 1, epsilon = 0.001)
 \item{npeaks}{Numeric scalar indicating the number of peaks in
 the distribution. If you don't know how many peaks there are,
 the optimal number of peaks can be estimated with \code{find_peak_number}.
-Default: 1.}
+Default: 2.}
 
 \item{epsilon}{Numeric scalar with the convergence criterion for the
 expectation-maximization algorithm.}
@@ -35,5 +35,6 @@ ks <- ks[!is.na(ks)]
 # Remove Ks values >1 for testing purposes
 ks <- ks[ks <= 1]
 
+# Find 2 peaks in Ks distribution
 peaks <- find_ks_peaks(ks, npeaks = 2)
 }
