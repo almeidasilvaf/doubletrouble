@@ -1,0 +1,57 @@
+Package: doubletrouble
+Title: Identification and classification of duplicated genes
+Version: 0.99.0
+Date: 2022-05-29
+Authors@R: 
+    c(
+    person(given = "Fabrício",
+           family = "Almeida-Silva",
+           role = c("aut", "cre"),
+           email = "fabricio_almeidasilva@hotmail.com",
+           comment = c(ORCID = "0000-0002-5314-2964")),
+    person(given = "Yves",
+           family = "Van de Peer",
+           role = "aut",
+           email = "yves.vandepeer@psb.vib-ugent.be",
+           comment = c(ORCID = "0000-0003-4327-3730"))
+    )
+Description: doubletrouble aims to identify duplicated genes from
+    whole-genome protein sequences and classify them based on their modes
+    of duplication. The duplication modes are: 
+    i. whole-genome duplication (WGD);
+    ii. tandem duplication (TD);
+    iii. proximal duplication (PD);
+    iv. transposed duplication (TRD) and;
+    v. dispersed duplication (DD).
+    If users want a simpler classification scheme, duplicates can also be
+    classified into WGD- and SSD-derived (small-scale duplication) gene pairs.
+    Besides classifying gene pairs, users can also classify genes, so that
+    each gene is assigned a unique mode of duplication.
+License: GPL-3
+URL: https://github.com/almeidasilvaf/doubletrouble
+BugReports: https://support.bioconductor.org/t/doubletrouble
+biocViews: 
+    Software,
+    WholeGenome,
+    ComparativeGenomics,
+    FunctionalGenomics,
+    Phylogenetics,
+    Network
+Encoding: UTF-8
+LazyData: false
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.0
+Imports:
+    syntenet,
+    GenomicRanges
+Depends: 
+    R (>= 4.2.0)
+Suggests: 
+    testthat (>= 3.0.0),
+    knitr,
+    BiocStyle,
+    rmarkdown,
+    covr,
+    sessioninfo
+Config/testthat/edition: 3
+VignetteBuilder: knitr

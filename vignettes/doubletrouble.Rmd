@@ -1,0 +1,53 @@
+---
+title: "Identification and classification of duplicated genes"
+author: 
+  - name: Fabricio Almeida-Silva
+    affiliation: VIB-UGent Center for Plant Systems Biology, Ghent, Belgium
+  - name: Yves Van de Peer
+    affiliation: VIB-UGent Center for Plant Systems Biology, Ghent, Belgium
+output: 
+  BiocStyle::html_document:
+    toc: true
+    number_sections: yes
+vignette: >
+  %\VignetteIndexEntry{Identification and classification of duplicated genes}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}  
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+    collapse = TRUE,
+    comment = "#>",
+    crop = NULL ## Related to https://stat.ethz.ch/pipermail/bioc-devel/2020-April/016656.html
+)
+```
+
+# Introduction and data description
+
+Intro.
+
+# Installation
+
+```{r install, eval = FALSE}
+if (!requireNamespace("BiocManager", quietly = TRUE)) {
+      install.packages("BiocManager")
+  }
+
+BiocManager::install("doubletrouble")
+
+## Check that you have a valid Bioconductor installation
+BiocManager::valid()
+```
+
+
+# Session information
+
+This document was created under the following conditions.
+
+```{r session_info}
+sessionInfo()
+```
+
+# References
+
