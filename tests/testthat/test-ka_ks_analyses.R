@@ -68,6 +68,4 @@ test_that("split_pairs_by_peak() returns a list", {
     expect_equal(class(spairs$pairs), "data.frame")
     expect_equal(ncol(spairs$pairs), 4)
     expect_true("ggplot" %in% class(spairs$plot))
-    
-    
 })
