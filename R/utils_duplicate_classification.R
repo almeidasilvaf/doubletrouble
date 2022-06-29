@@ -37,17 +37,26 @@ get_anchors_list <- function(blast_list = NULL, annotation = NULL,
         return(as.data.frame(x)[, c("seqnames", "gene", "start", "end")])
     })
     
-    # Detect synteny
+    # Create output directory
     daytime <- format(Sys.time(), "%d_%b_%Y_%Hh%M")
     intradir <- file.path(tempdir(), paste0("intra_", daytime))
+    
     anchorp <- lapply(seq_along(fannotation), function(x) {
+        # Create BLAST and annotation list (length=1) only for species x
         sp <- names(fannotation)[x]
-        blast <- fblast[grep(sp, names(fblast))] # Do names match? Get it.
+        blast <- fblast[grep(sp, names(fblast))] # Subset based on name match
         annot <- fannotation[x]
+        
+        # Change element name in `annot` to abbreviation
+        new_name <- unique(gsub("_.*", "", annot[[1]]$gene))
+        names(annot) <- new_name
+        
+        # Detect synteny and get anchor pairs
         anch <- syntenet::intraspecies_synteny(
             blast, intradir, annot, anchors = anchors, max_gaps = max_gaps
         )
-        return(syntenet::parse_collinearity(anch))
+        anch <- syntenet::parse_collinearity(anch)
+        return(anch)
     })
     names(anchorp) <- names(fannotation)
     return(anchorp)
