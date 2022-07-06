@@ -24,6 +24,7 @@ A list with the following elements:
 \item{sd}{Numeric with the estimated standard deviations.}
 \item{lambda}{Numeric with the estimated mixture weights.}
 }
+}
 \description{
 Find peaks in a Ks distribution by fitting Gaussian Mixture Models (GMMs)
 }

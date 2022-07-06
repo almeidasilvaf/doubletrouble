@@ -67,7 +67,7 @@ find_peak_number <- function(ks, bootstraps = 1000, max_components = 2,
 #'   \item{mean}{Numeric with the estimated means.}
 #'   \item{sd}{Numeric with the estimated standard deviations.}
 #'   \item{lambda}{Numeric with the estimated mixture weights.}
-# }
+#' }
 #' @importFrom mixtools normalmixEM
 #' @export
 #' @rdname find_ks_peaks
