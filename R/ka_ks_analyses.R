@@ -272,7 +272,9 @@ split_pairs_by_peak <- function(ks_df, peaks, nsd = 2, binwidth = 0.05) {
     # Get minimum, intersection points, and maximum 
     inter <- find_intersect_mixtures(ks_df$ks, peaks)
     min_boun <- peaks$mean[1] - nsd * peaks$sd[1]
+    if(min_boun < 0) { min_boun <- 0 }
     max_boun <- peaks$mean[npeaks] + nsd * peaks$sd[npeaks]
+    if(max_boun > max(ks_df$ks)) { max_boun <- max(ks_df$ks) }
     cutpoints <- c(min_boun, inter, max_boun)
     
     # Plot histogram with cutpoints in "brown2" dashed lines
