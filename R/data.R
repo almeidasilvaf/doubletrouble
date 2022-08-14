@@ -1,84 +1,65 @@
 
-#' Processed genome annotation for Saccharomyces cerevisiae
+#' Protein sequences of the yeast species S. cerevisiae and S. pombe
 #'
-#' Data obtained from Pico-PLAZA 3.0. Only annotation data for primary
-#' transcripts were included. The data was processed with 
-#' syntenet::process_input().
+#' Data obtained from Pico-PLAZA 3.0. Only translated sequences of primary
+#' transcripts were included. 
 #' 
-#' @name sce_annotation
-#' @format A CompressedGRangesList containing 
-#' the element `Sce`.
+#' @name yeast_seq
+#' @format A list of AAStringSet objects with the elements
+#' \strong{Scerevisiae} and \strong{Spombe}.
 #' @references
 #' Van Bel, M., Silvestri, F., Weitz, E. M., Kreft, L., Botzki, A.,
 #' Coppens, F., & Vandepoele, K. (2021). PLAZA 5.0: extending the scope
 #' and power of comparative and functional genomics in plants.
 #' Nucleic acids research.
 #' @examples
-#' data(sce_annotation)
-#' @usage data(sce_annotation)
-"sce_annotation"
+#' data(yeast_seq)
+#' @usage data(yeast_seq)
+"yeast_seq"
 
 
-#' List of data frames containing BLAST-like tabular output
+#' Genome annotation of the yeast species S. cerevisiae and S. pombe
 #'
-#' Only the DIAMOND output for S. cerevisiae against itself was included.
-#' Here, we used DIAMOND in sensitive mode.
+#' Data obtained from Pico-PLAZA 3.0. Only annotation data for primary
+#' transcripts were included.
 #' 
-#' @name sce_diamond
+#' @name yeast_annot
+#' @format A CompressedGRangesList containing 
+#' the elements \strong{Scerevisiae} and \strong{Spombe}.
+#' @references
+#' Van Bel, M., Silvestri, F., Weitz, E. M., Kreft, L., Botzki, A.,
+#' Coppens, F., & Vandepoele, K. (2021). PLAZA 5.0: extending the scope
+#' and power of comparative and functional genomics in plants.
+#' Nucleic acids research.
+#' @examples
+#' data(yeast_annot)
+#' @usage data(yeast_annot)
+"yeast_annot"
+
+
+#' List of data frames containing intraspecies DIAMOND output for S. cerevisiae
+#'
+#' List obtained with \code{run_diamond()}.
+#' 
+#' @name diamond_intra
 #' @format A list of data frames (length 1) containing the whole paranome of
 #' S. cerevisiae resulting from intragenome similarity searches.
 #' @examples 
-#' data(sce_diamond)
-#' @usage data(sce_diamond)
-"sce_diamond"
+#' data(diamond_intra)
+#' @usage data(diamond_intra)
+"diamond_intra"
 
 
-#' All duplicate gene pairs for S. cerevisiae
-#'
-#' Duplicate gene pairs were obtained from the output of DIAMOND in sensitive
-#' mode with an E-value filter of 1e-10.
+#' List of data frames containing interspecies DIAMOND output for yeast species
 #' 
-#' @name sce_duplicates
-#' @format A 2-column data frame with each gene of the duplicate pair in each
-#' column. Columns are named "dup1" and "dup2", respectively.
+#' This list contains a similarity search of S. cerevisiae against
+#' S. pombe, and it was obtained with \code{run_diamond()}.
+#' 
+#' @name diamond_inter
+#' @format A list of data frames (length 1) containing the output of a 
+#' DIAMOND search of S. cerevisiae against S. pombe (outgroup).
 #' @examples 
-#' data(sce_duplicates)
-#' @usage data(sce_duplicates)
-"sce_duplicates"
-
-
-#' Anchor pairs in the S. cerevisiae genome
-#'
-#' Anchor pairs were obtained with \code{get_anchors_list()}.
-#'
-#' @name sce_anchors
-#' @format A 2-column data frame with each gene of the anchor pair in each 
-#' column. Columns are named "Anchor1" and "Anchor2".
-#' @examples 
-#' data(sce_anchors)
-#' @usage data(sce_anchors)
-"sce_anchors"
-
-
-#' Soybean duplicated gene pairs and their Ka, Ks, and Ka/Ks values
-#'
-#' @name gma_dups_kaks
-#' @format A data frame with the following columns:
-#' \describe{
-#'   \item{dup1}{Character, duplicated gene 1.}
-#'   \item{dup2}{Character, duplicated gene 2.}
-#'   \item{Ka}{Numeric, Ka values.}
-#'   \item{Ks}{Numeric, Ks values.}
-#'   \item{Ka_Ks}{Numeric, Ka/Ks values.}
-#'   \item{mode}{Mode of duplication.}
-#' }
-#' @references 
-#' Almeida-Silva, F., Moharana, K. C., Machado, F. B., & 
-#' Venancio, T. M. (2020). Exploring the complexity of soybean (Glycine max) 
-#' transcriptional regulation using global gene co-expression networks. 
-#' Planta, 252(6), 1-12.
-#' @examples 
-#' data(gma_dups_kaks)
-#' @usage data(gma_dups_kaks)
-"gma_dups_kaks"
+#' data(diamond_inter)
+#' @usage data(diamond_inter)
+"diamond_inter"
 

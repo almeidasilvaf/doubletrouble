@@ -3,124 +3,159 @@ Data acquisition
 
 # Data in data/
 
-## sce_annotation.rda
+Here, we will use genome data for two yeast species:
 
-The organism will be the budding yeast *Saccharomyces cerevisiae strain
-S288C*, and the data will be obtained from pico-PLAZA 3.0. Here, we will
-process the proteomes and annotation with `syntenet`.
+-   *Saccharomyces cerevisiae*
+-   *Schizosaccahromyces pombe*
+
+Data will be obtained from Pico-PLAZA 3.0.
+
+First of all, let’s obtain a list of only protein-coding genes for each
+species.
 
 ``` r
-library(syntenet)
-library(Biostrings)
-
-#----1) Get and clean annotation data-------------------------------------------
-## Read annotation
-annotation <- rtracklayer::import(
-    "ftp://ftp.psb.ugent.be/pub/plaza/plaza_pico_03/GFF/sac/annotation.selected_transcript.exon_features.sac.gff3.gz"
-)
-
-## Remove non-coding genes
-coding <- as.data.frame(readr::read_delim(
+# Get character vector of protein coding gene IDs
+## S. cerevisiae
+scerevisiae_coding <- as.data.frame(readr::read_delim(
     "ftp://ftp.psb.ugent.be/pub/plaza/plaza_pico_03/Annotation/annotation.selected_transcript.sac.csv.gz", skip = 8, delim = ";", show_col_types = FALSE
 ))
-coding <- coding[coding$type == "coding", 1]
+scerevisiae_coding <- scerevisiae_coding[scerevisiae_coding$type == "coding", 1]
 
-## Filter GRanges (include only gene ranges and relevant metadata)
-annotation <- annotation[annotation$type == "gene" & 
-                             annotation$ID %in% coding]
-annotation$score <- NULL
-annotation$phase <- NULL
-annotation$SGD <- NULL
-annotation$pid <- NULL
-annotation$Uniprot <- NULL
-annotation$Name <- NULL
-annotation$Parent <- NULL
-annotation$old_gi <- NULL
+## S. pombe
+spombe_coding <- as.data.frame(readr::read_delim(
+    "ftp://ftp.psb.ugent.be/pub/plaza/plaza_pico_03/Annotation/annotation.selected_transcript.scp.csv.gz", skip = 8, delim = ";", show_col_types = FALSE
+))
+spombe_coding <- spombe_coding[spombe_coding$type == "coding", 1]
+```
 
-sce_annotation <- GenomicRanges::GRangesList(Sce = annotation)
+## yeast_seq.rda
 
-#----2) Get and clean proteome data---------------------------------------------
-proteome <- readAAStringSet(
+The object `yeast_seq` is a list of `AAStringSet` objects with elements
+*Scerevisiae* and *Spombe*. Only translated sequences for primary
+transcripts (protein-coding only) are included.
+
+``` r
+library(Biostrings)
+
+# Get proteome data
+scerevisiae_proteome <- readAAStringSet(
     "ftp://ftp.psb.ugent.be/pub/plaza/plaza_pico_03/Fasta/proteome.selected_transcript.sac.fasta.gz"
 )
-names(proteome) <- gsub(".* \\| ", "", names(proteome))
-sce_proteome <- list(Sce = proteome)
+spombe_proteome <- readAAStringSet(
+    "ftp://ftp.psb.ugent.be/pub/plaza/plaza_pico_03/Fasta/proteome.selected_transcript.scp.fasta.gz"
+)
+names(scerevisiae_proteome) <- gsub(".* \\| ", "", names(scerevisiae_proteome))
+names(spombe_proteome) <- gsub(".* \\| ", "", names(spombe_proteome))
 
+# Remove non-coding genes
+scerevisiae_proteome <- scerevisiae_proteome[names(scerevisiae_proteome) %in%
+                                                 scerevisiae_coding, ]
+spombe_proteome <- spombe_proteome[names(spombe_proteome) %in% 
+                                       spombe_coding]
 
-#----3) Process data------------------------------------------------------------
-check_input(sce_proteome, sce_annotation)
-sce_pdata <- process_input(sce_proteome, sce_annotation)
-sce_annotation <- sce_pdata$annotation
-
-# Save data
-usethis::use_data(sce_annotation, compress = "xz", overwrite = TRUE)
-```
-
-## sce_diamond.rda
-
-Here, we will create a list containing a data frame of DIAMOND tabular
-output. As above, we will get the data for *S. cerevisiae* from
-pico-PLAZA.
-
-``` r
-# Run DIAMOND
-sce_diamond <- run_diamond(sce_pdata$seq, ... = "--sensitive")
-
-usethis::use_data(sce_diamond, compress = "xz", overwrite = TRUE)
-```
-
-## sce_duplicates.rda
-
-This is a 2-column data frame with all duplicate gene pairs (from
-DIAMOND output).
-
-``` r
-# Filter by e-value, and remove duplicate and redundant entries
-data(sce_diamond)
-sce_duplicates <- lapply(sce_diamond, function(x) {
-    fpair <- x[x$evalue <= 1e-10, 1:2]
-    fpair <- fpair[fpair[, 1] != fpair[, 2], ]
-    fpair <- fpair[!duplicated(t(apply(fpair, 1, sort))),]
-    names(fpair) <- c("dup1", "dup2")
-    return(fpair)
-})
-sce_duplicates <- sce_duplicates[[1]]
-
-usethis::use_data(sce_duplicates, compress = "xz", overwrite = TRUE)
-```
-
-## sce_anchors.rda
-
-This is a 2-column data frame with anchor pairs for S. cerevisiae.
-
-``` r
-data(sce_diamond)
-data(sce_annotation)
-blast_list <- sce_diamond
-annotation <- sce_annotation
-sce_anchors <- get_anchors_list(blast_list, annotation)[[1]]
-
-usethis::use_data(sce_anchors, compress = "xz", overwrite = TRUE)
-```
-
-## gma_dups_kaks.rda
-
-``` r
-urls <- c(
-    WGD = "https://raw.githubusercontent.com/almeidasilvaf/GmPR1/main/data/duplicated_genes_kaks/wgd_kaks.txt",
-    TD = "https://raw.githubusercontent.com/almeidasilvaf/GmPR1/main/data/duplicated_genes_kaks/td_kaks.txt",
-    PD = "https://raw.githubusercontent.com/almeidasilvaf/GmPR1/main/data/duplicated_genes_kaks/pd_kaks.txt",
-    TRD = "https://raw.githubusercontent.com/almeidasilvaf/GmPR1/main/data/duplicated_genes_kaks/trd_kaks.txt",
-    DD = "https://raw.githubusercontent.com/almeidasilvaf/GmPR1/main/data/duplicated_genes_kaks/dd_kaks.txt"
+# Store AAStringSet objects in a list
+yeast_seq <- list(
+    Scerevisiae = scerevisiae_proteome,
+    Spombe = spombe_proteome
 )
 
-gma_dups_kaks <- Reduce(rbind, lapply(seq_along(urls), function(x) {
-    pairs <- read.csv(urls[x], header = TRUE, sep = "\t", skip = 1)[, c(1:5)]
-    names(pairs) <- c("dup1", "dup2", "Ka", "Ks", "Ka_Ks")
-    mode <- names(urls)[x]
-    pairs$mode <- mode
-    return(pairs)
-}))
+# Save object
+usethis::use_data(yeast_seq, compress = "xz", overwrite = TRUE)
+```
 
-usethis::use_data(gma_dups_kaks, compress = "xz", overwrite = TRUE)
+## yeast_annot.rda
+
+The object `yeast_annot` is a `GRangesList` object with elements
+*Scerevisiae* and *Spombe*. Only ranges for primary transcripts
+(protein-coding only) are included.
+
+``` r
+library(rtracklayer)
+
+# Get gene ranges
+scerevisiae_annot <- import(
+    "ftp://ftp.psb.ugent.be/pub/plaza/plaza_pico_03/GFF/sac/annotation.selected_transcript.exon_features.sac.gff3.gz"
+)
+spombe_annot <- import(
+    "ftp://ftp.psb.ugent.be/pub/plaza/plaza_pico_03/GFF/scp/annotation.selected_transcript.exon_features.scp.gff3.gz"
+)
+
+# Filter GRanges (include only protein-coding genes and relevant metadata)
+## S. cerevisiae
+scerevisiae_annot <- scerevisiae_annot[scerevisiae_annot$type == "gene" & 
+                             scerevisiae_annot$ID %in% scerevisiae_coding]
+scerevisiae_annot$source <- NULL
+scerevisiae_annot$score <- NULL
+scerevisiae_annot$phase <- NULL
+scerevisiae_annot$SGD <- NULL
+scerevisiae_annot$pid <- NULL
+scerevisiae_annot$Uniprot <- NULL
+scerevisiae_annot$Name <- NULL
+scerevisiae_annot$ID <- NULL
+scerevisiae_annot$Parent <- NULL
+scerevisiae_annot$old_gi <- NULL
+
+## S. pombe
+spombe_annot <- spombe_annot[spombe_annot$type == "gene" & 
+                             spombe_annot$ID %in% spombe_coding]
+spombe_annot$source <- NULL
+spombe_annot$score <- NULL
+spombe_annot$phase <- NULL
+spombe_annot$SGD <- NULL
+spombe_annot$pid <- NULL
+spombe_annot$Uniprot <- NULL
+spombe_annot$Name <- NULL
+spombe_annot$ID <- NULL
+spombe_annot$Parent <- NULL
+spombe_annot$old_gi <- NULL
+
+
+# Combine GRanges objects in a GRangesList
+yeast_annot <- GenomicRanges::GRangesList(
+    Scerevisiae = scerevisiae_annot,
+    Spombe = spombe_annot
+)
+
+# Save data
+usethis::use_data(yeast_annot, compress = "xz", overwrite = TRUE)
+```
+
+## diamond_intra.rda and diamond_inter.rda
+
+The object `diamond_intra` is a list of DIAMOND data frames for
+intraspecies comparisons of *S. cerevisiae*, while `diamond_inter`
+contains the DIAMOND output of a comparison between *S. cerevisiae* and
+*S. pombe*.
+
+``` r
+# Load and process data
+data(yeast_seq)
+data(yeast_annot)
+
+pdata <- process_input(yeast_seq, yeast_annot)
+
+# Intraspecies DIAMOND
+diamond_intra <- run_diamond(
+    seq = pdata$seq["Scerevisiae"],
+    compare = "intraspecies", 
+    outdir = file.path(tempdir(), "diamond_intra_example"),
+    ... = "--sensitive"
+)
+
+# Interspecies DIAMOND
+comparisons <- data.frame(
+    species = "Scerevisiae",
+    outgroup = "Spombe"
+)
+
+diamond_inter <- run_diamond(
+    seq = pdata$seq,
+    compare = comparisons,
+    outdir = file.path(tempdir(), "diamond_inter_example"),
+    ... = "--sensitive"
+)
+
+# Save data
+usethis::use_data(diamond_intra, compress = "xz", overwrite = TRUE)
+usethis::use_data(diamond_inter, compress = "xz", overwrite = TRUE)
 ```
