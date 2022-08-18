@@ -1,14 +1,14 @@
 
 #' Get a list of anchor pairs for each species
 #'
-#' @param annotation A processed GRangesList or CompressedGRangesList object as
-#' returned by \code{syntenet::process_input()}.
 #' @param blast_list A list of data frames containing BLAST tabular output
 #' for intraspecies comparisons.
 #' Each list element corresponds to the BLAST output for a given species,
 #' and names of list elements must match the names of list elements in
 #' `annotation`. BLASTp, DIAMOND or simular programs must be run on processed
 #' sequence data as returned by \code{process_input()}.
+#' @param annotation A processed GRangesList or CompressedGRangesList object as
+#' returned by \code{syntenet::process_input()}.
 #' @param evalue Numeric scalar indicating the E-value threshold. 
 #' Default: 1e-10.
 #' @param anchors Numeric indicating the minimum required number of genes
@@ -23,13 +23,22 @@
 #' @export
 #' @rdname get_anchors_list 
 #' @examples 
-#' data(sce_diamond)
-#' data(sce_annotation)
-#' blast_list <- sce_diamond
-#' annotation <- sce_annotation
+#' data(diamond_intra)
+#' data(yeast_annot)
+#' data(yeast_seq)
+#' blast_list <- diamond_intra
+#' 
+#' # Get processed annotation for S. cerevisiae
+#' annotation <- syntenet::process_input(yeast_seq, yeast_annot)$annotation
+#' 
+#' # Get list of intraspecies anchor pairs
 #' anchorpairs <- get_anchors_list(blast_list, annotation)
 get_anchors_list <- function(blast_list = NULL, annotation = NULL,
                              evalue = 1e-10, anchors = 5, max_gaps = 25) {
+    
+    # Keep only elements in annotation with correspondence in BLAST list
+    names(blast_list) <- gsub("_.*", "", names(blast_list))
+    annotation <- annotation[names(blast_list)]
     
     # Filter by e-value and convert GRanges to data frame
     fblast <- lapply(blast_list, function(x) return(x[x$evalue <= evalue, ]))
@@ -81,9 +90,21 @@ get_anchors_list <- function(blast_list = NULL, annotation = NULL,
 #' @rdname get_wgd_pairs
 #' @export
 #' @examples
-#' data(sce_anchors)
-#' data(sce_duplicates)
-#' dups <- get_wgd_pairs(sce_anchors, sce_duplicates)
+#' data(diamond_intra)
+#' data(yeast_annot)
+#' data(yeast_seq)
+#' blast_list <- diamond_intra
+#' 
+#' # Get processed annotation for S. cerevisiae
+#' annotation <- syntenet::process_input(yeast_seq, yeast_annot)$annotation[1]
+#' 
+#' # Get list of intraspecies anchor pairs
+#' anchor_pairs <- get_anchors_list(blast_list, annotation)
+#' anchor_pairs <- anchor_pairs[[1]][, 1:2]
+#' 
+#' # Get duplicate pairs from DIAMOND output
+#' duplicates <- diamond_intra[[1]][, 1:2]
+#' dups <- get_wgd_pairs(anchor_pairs, duplicates)
 get_wgd_pairs <- function(anchor_pairs = NULL, duplicate_pairs = NULL) {
     
     p <- duplicate_pairs
@@ -108,6 +129,131 @@ get_wgd_pairs <- function(anchor_pairs = NULL, duplicate_pairs = NULL) {
     return(duplicates)
 }
 
+#' Parse .collinearity files into a data frame of syntenic blocks
+#'
+#' @param collinearity_paths Character vector of paths to .collinearity files.
+#'
+#' @return A 4-column data frame with the variables:
+#' \describe{
+#'   \item{block}{Syntenic block}
+#'   \item{anchor1}{Anchor pair 1}
+#'   \item{anchor2}{Anchor pair 2}
+#' }
+#'
+#' @importFrom utils read.table
+#' @noRd
+collinearity2blocks <- function(collinearity_paths = NULL) {
+    
+    fname <- gsub("\\.collinearity", "", basename(collinearity_paths))
+    names(collinearity_paths) <- fname
+    
+    blocks <- lapply(seq_along(collinearity_paths), function(x) {
+        lines <- readLines(collinearity_paths[x])
+        nlines <- length(lines[!startsWith(lines, "#")])
+        
+        df <- NULL
+        if(nlines > 0) {
+            df <- read.table(collinearity_paths[x], sep = "\t", comment.char = "#")
+            df <- df[, c(1:3)]
+            names(df)[2:3] <- c("anchor1", "anchor2")
+            
+            # Get syntenic block IDs
+            df$V1 <- gsub(":", "", df$V1)
+            block_ids <- strsplit(df$V1, "-")
+            blocks <- lapply(block_ids, function(x) return(as.numeric(x[1])))
+            
+            # Add syntenic block IDs to data frame
+            df$block <- unlist(blocks)
+            df <- df[, c("block", "anchor1", "anchor2")]
+        }
+        return(df)
+    })
+    blocks <- Reduce(rbind, blocks)
+    return(blocks)
+}
+
+#' Get transposed duplicate pairs
+#'
+#' @param pairs A 2-column data frame with duplicated gene 1 and 2 in
+#' columns 1 and 2, respectively.
+#' @param blast_inter A list of data frames of length 1 
+#' containing BLAST tabular output for the comparison between target
+#' species and outgroup. Names of list elements must match the names of 
+#' list elements in `annotation`. BLASTp, DIAMOND or simular programs must 
+#' be run on processed sequence data as returned by \code{process_input()}.
+#' @param annotation A processed GRangesList or CompressedGRangesList object as
+#' returned by \code{syntenet::process_input()}.
+#'
+#' @return A 3-column data frame with the following variables:
+#' \describe{
+#'   \item{dup1}{Duplicated gene 1}
+#'   \item{dup2}{Duplicated gene 2}
+#'   \item{type}{Duplication type, which can be either 
+#'               "TRD" (transposed duplication) or 
+#'               "DD" (dispersed duplication).}
+#' }
+#' @export
+#' @rdname get_transposed
+#' @examples 
+#' data(diamond_inter)
+#' data(diamond_intra)
+#' data(yeast_seq)
+#' data(yeast_annot)
+#' blast_inter <- diamond_inter
+#' 
+#' # Get processed annotation
+#' annotation <- process_input(yeast_seq, yeast_annot)$annotation
+#' 
+#' # Get duplicated pairs
+#' annot <- pdata$annotation["Scerevisiae"] 
+#' pairs_all <- classify_gene_pairs(diamond_intra, annot)
+#' pairs <- pairs_all$Scerevisiae[pairs_all$Scerevisiae$type == "DD", ]
+#'
+#' trd <- get_transposed(pairs, blast_inter, annotation)
+get_transposed <- function(pairs, blast_inter, annotation) {
+    
+    if(length(blast_inter) > 1) {
+        stop("The list in `blast_inter` must have only 1 element.")
+    }
+    names(pairs)[1:2] <- c("dup1", "dup2")
+    
+    # Detect synteny between target species and outgroup
+    target <- unlist(strsplit(names(blast_inter), "_"))[1]
+    outgroup <- unlist(strsplit(names(blast_inter), "_"))[2]
+    
+    syn <- interspecies_synteny(
+        blast_inter,
+        annot_list = annotation[c(target, outgroup)]
+    )
+    
+    # Read and parse interspecies synteny results
+    parsed_syn <- collinearity2blocks(syn)[, c("anchor2", "block")]
+    final <- NULL
+    
+    if(!is.null(parsed_syn)) {
+        # Find TRD-derived pairs (syntenic in outgroup, but not in target)
+        pairs_ancestral <- merge(
+            pairs[, 1:2], parsed_syn, by.x = "dup1", by.y = "anchor2",
+            all.x = TRUE
+        )
+        names(pairs_ancestral)[3] <- "block1"
+        
+        pairs_ancestral2 <- merge(
+            pairs_ancestral, parsed_syn, by.x = "dup2", by.y = "anchor2",
+            all.x = TRUE
+        )
+        names(pairs_ancestral2)[4] <- "block2"
+        
+        final <- pairs_ancestral2
+        final$type <- ifelse(final$block1 == final$block2, "TRD", "DD")
+        final$type[is.na(final$type)] <- "DD"
+        final <- final[, c("dup1", "dup2", "type")]
+        return(final)
+    }
+    return(final)
+}
+
+
 #' Classify small-scale duplication-derived gene pairs into subcategories
 #' 
 #' SSD-derived gene pairs are classified into tandem, proximal, and dispersed
@@ -116,37 +262,70 @@ get_wgd_pairs <- function(anchor_pairs = NULL, duplicate_pairs = NULL) {
 #' @param ssd_pairs A 2-column data frame with SSD-derived gene pairs.
 #' This data frame can be obtained by filtering the output of
 #' \code{get_wgd_pairs()} to keep only rows where type == "SSD".
-#' @param annotation A processed GRanges object as in each element of the list
-#' returned by \code{syntenet::process_input()}.
+#' @param annotation_granges A processed GRanges object as in each element 
+#' of the list returned by \code{syntenet::process_input()}.
+#' @param annotation A processed GRangesList or CompressedGRangesList 
+#' object as returned by \code{syntenet::process_input()}, which must
+#' contain the gene ranges for all species.
 #' @param proximal_max Numeric scalar with the maximum distance (in number
 #' of genes) between two genes to consider them as proximal duplicates.
 #' Default: 10.
+#' @param blast_inter A list of data frames containing the tabular output
+#' of interspecies BLAST/DIAMOND searches, as returned by \code{run_diamond()}.
+#' Each element must contain the pairwise comparison between a target species
+#' and its outgroup, which will be used to identify duplicated genes
+#' derived from transpositions (TRD). If this parameter is NULL, 
+#' this function will not identify TRD genes.
 #'
 #' @return A 3-column data frame with the variables:
 #' \describe{
 #'   \item{dup1}{Duplicated gene 1}
 #'   \item{dup2}{Duplicated gene 2}
-#'   \item{type}{Duplication type, which can be either 
-#'               "TD" (tandem duplication), "PD" (proximal duplication), and
+#'   \item{type}{Duplication type, which can be
+#'               "TD" (tandem duplication), 
+#'               "PD" (proximal duplication), 
+#'               "TRD" (transposed duplication), and
 #'               "DD" (dispersed duplication).}
 #' }
 #' @rdname classify_ssd_pairs
 #' @export
 #' @examples
-#' data(sce_annotation)
-#' annotation <- sce_annotation[[1]]
-#' data(sce_anchors)
-#' data(sce_duplicates)
-#' # Get SSD-derived gene pairs
-#' dups <- get_wgd_pairs(sce_anchors, sce_duplicates)
-#' ssd_pairs <- dups[dups$type == "SSD", 1:2]
+#' data(diamond_intra)
+#' data(diamond_inter)
+#' data(yeast_annot)
+#' data(yeast_seq)
+#' blast_list <- diamond_intra
+#' blast_inter <- diamond_inter
+#' 
+#' # Get processed annotation for S. cerevisiae
+#' pdata <- annotation <- syntenet::process_input(yeast_seq, yeast_annot)
+#' annotation <- pdata$annotation[1]
+#' 
+#' # Get list of intraspecies anchor pairs
+#' anchor_pairs <- get_anchors_list(blast_list, annotation)
+#' anchor_pairs <- anchor_pairs[[1]][, 1:2]
+#' 
+#' # Get duplicate pairs from DIAMOND output and classify them
+#' duplicates <- diamond_intra[[1]][, 1:2]
+#' dups <- get_wgd_pairs(anchor_pairs, duplicates)
+#' ssd_pairs <- dups[dups$type == "SSD", ]
+#' 
+#' # Get GRanges
+#' annotation_granges <- pdata$annotation[["Scerevisiae"]]
+#'
+#' # Get annotation list
+#' annotation <- pdata$annotation
 #'
 #' # Classify SSD-derived gene pairs
-#' ssd_classes <- classify_ssd_pairs(ssd_pairs, annotation)
-classify_ssd_pairs <- function(ssd_pairs = NULL, annotation = NULL,
-                               proximal_max = 10) {
+#' ssd_classes <- classify_ssd_pairs(
+#'     ssd_pairs, annotation_granges, annotation, blast_inter = blast_inter
+#' )
+classify_ssd_pairs <- function(ssd_pairs = NULL, annotation_granges = NULL,
+                               annotation = NULL,
+                               proximal_max = 10, blast_inter = NULL) {
     
-    annot <- as.data.frame(annotation)[, c("seqnames", "gene", "start", "end")]
+    annot <- as.data.frame(annotation_granges)
+    annot <- annot[, c("seqnames", "gene", "start", "end")]
     ssd_pairs <- ssd_pairs[, 1:2] # Just in case df has >2 columns
     
     # Add chromosome number and order in the chromosome for each gene pair
@@ -174,13 +353,17 @@ classify_ssd_pairs <- function(ssd_pairs = NULL, annotation = NULL,
     pd <- same_chr[same_chr$dist > 1 & same_chr$dist <= proximal_max, 1:2]
     pd$type <- "PD"
     
-    #----3) Find DD-derived gene pairs--------------------------------------
-    dd1 <- ssd_pos[ssd_pos$chr_dup1 != ssd_pos$chr_dup2, 1:2]
-    dd2 <- same_chr[same_chr$dist > proximal_max, 1:2]
-    dd <- rbind(dd1, dd2)
-    dd$type <- "DD"
-    
-    ssd_dups <- rbind(td, pd, dd)
+    #----3) Find TRD-derived and DD-derived gene pairs--------------------------
+    others <- rbind(
+        ssd_pos[ssd_pos$chr_dup1 != ssd_pos$chr_dup2, 1:2], # different chroms
+        same_chr[same_chr$dist > proximal_max, 1:2] # same chr, too distant
+    )
+    others$type <- "DD"
+    if(!is.null(blast_inter)) {
+        others <- get_transposed(others[, 1:2], blast_inter, annotation)
+    }
+
+    ssd_dups <- rbind(td, pd, others)
     return(ssd_dups)
 }
 

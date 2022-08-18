@@ -11,7 +11,8 @@ classify_gene_pairs(
   anchors = 5,
   max_gaps = 25,
   binary = FALSE,
-  proximal_max = 10
+  proximal_max = 10,
+  blast_inter = NULL
 )
 }
 \arguments{
@@ -53,9 +54,28 @@ A list of 3-column data frames of duplicated gene pairs
 Classify duplicate gene pairs based on their modes of duplication
 }
 \examples{
-data(sce_diamond)
-data(sce_annotation)
-blast_list <- sce_diamond
-annotation <- sce_annotation
-duplicates <- classify_gene_pairs(blast_list, annotation)
+data(diamond_intra)
+data(diamond_inter)
+data(yeast_annot)
+data(yeast_seq)
+blast_list <- diamond_intra
+blast_inter <- diamond_inter
+
+pdata <- syntenet::process_input(yeast_seq, yeast_annot)
+annot <- pdata$annotation["Scerevisiae"]
+
+# Binary classification scheme
+dup_binary <- classify_gene_pairs(blast_list, annot, binary = TRUE)
+table(dup_binary$Scerevisiae$type)
+
+# Expanded classification scheme
+dup_exp <- classify_gene_pairs(blast_list, annot)
+table(dup_exp$Scerevisiae$type)
+
+# Full classification scheme
+annotation <- pdata$annotation
+dup_full <- classify_gene_pairs(
+    blast_list, annotation, blast_inter = blast_inter
+)
+table(dup_full$Scerevisiae$type)
 }

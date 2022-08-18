@@ -32,18 +32,41 @@
 #' @importFrom GenomicRanges GRangesList
 #' @rdname classify_gene_pairs
 #' @examples 
-#' data(sce_diamond)
-#' data(sce_annotation)
-#' blast_list <- sce_diamond
-#' annotation <- sce_annotation
-#' duplicates <- classify_gene_pairs(blast_list, annotation)
+#' data(diamond_intra)
+#' data(diamond_inter)
+#' data(yeast_annot)
+#' data(yeast_seq)
+#' blast_list <- diamond_intra
+#' blast_inter <- diamond_inter
+#' 
+#' pdata <- syntenet::process_input(yeast_seq, yeast_annot)
+#' annot <- pdata$annotation["Scerevisiae"]
+#' 
+#' # Binary classification scheme
+#' dup_binary <- classify_gene_pairs(blast_list, annot, binary = TRUE)
+#' table(dup_binary$Scerevisiae$type)
+#' 
+#' # Expanded classification scheme
+#' dup_exp <- classify_gene_pairs(blast_list, annot)
+#' table(dup_exp$Scerevisiae$type)
+#' 
+#' # Full classification scheme
+#' annotation <- pdata$annotation
+#' dup_full <- classify_gene_pairs(
+#'     blast_list, annotation, blast_inter = blast_inter
+#' )
+#' table(dup_full$Scerevisiae$type)
 classify_gene_pairs <- function(blast_list = NULL, annotation = NULL,
                                 evalue = 1e-10, anchors = 5, max_gaps = 25,
-                                binary = FALSE, proximal_max = 10) {
+                                binary = FALSE, proximal_max = 10,
+                                blast_inter = NULL) {
     
     anchorp <- get_anchors_list(
         blast_list, annotation, evalue, anchors, max_gaps
     )
+    if(binary & !is.null(blast_inter)) {
+        message("Parameter 'binary' was set to TRUE. Ignoring 'blast_inter'...")
+    }
     
     # Get duplicate pairs and filter duplicate entries
     pairs <- lapply(blast_list, function(x) {
@@ -66,8 +89,17 @@ classify_gene_pairs <- function(blast_list = NULL, annotation = NULL,
             
             # Classify SSD-derived gene pairs
             annot <- annotation[[sp]]
-            ssd_classes <- classify_ssd_pairs(ssd, annot)
             
+            if(is.null(blast_inter)) { # expanded scheme
+                ssd_classes <- classify_ssd_pairs(
+                    ssd, annot, proximal_max = proximal_max
+                )
+            } else { # full scheme
+                ssd_classes <- classify_ssd_pairs(
+                    ssd, annot, annotation, proximal_max = proximal_max,
+                    blast_inter = blast_inter
+                )
+            }
             dups <- rbind(wgd, ssd_classes)
         }
         rownames(dups) <- NULL
@@ -89,12 +121,14 @@ classify_gene_pairs <- function(blast_list = NULL, annotation = NULL,
 #' @rdname classify_genes
 #' @export
 #' @examples
-#' data(sce_diamond)
-#' data(sce_annotation)
-#' blast_list <- sce_diamond
-#' annotation <- sce_annotation
-#' gene_pairs_list <- classify_gene_pairs(blast_list, annotation)
-#' class_genes <- classify_genes(gene_pairs_list)
+#' data(diamond_intra)
+#' data(yeast_annot)
+#' data(yeast_seq)
+#' 
+#' pdata <- syntenet::process_input(yeast_seq, yeast_annot)
+#' annot <- pdata$annotation["Scerevisiae"]
+#' duplicates <- classify_gene_pairs(diamond_intra, annot)
+#' class_genes <- classify_genes(duplicates)
 classify_genes <- function(gene_pairs_list = NULL) {
     
     # Classify genes following the order of priority: WGD > TD > PD > DD
@@ -112,6 +146,8 @@ classify_genes <- function(gene_pairs_list = NULL) {
         ref <- c("WGD", "TD", "PD", "DD")
         if(length(unique(gene_type$type)) == 2) {
             ref <- c("WGD", "SSD")
+        } else if(length(unique(gene_type$type)) == 5) {
+            ref <- c("WGD", "TD", "PD", "TRD", "DD")
         }
         gene_type <- gene_type[order(match(gene_type$type, ref)), ]
         gene_type <- gene_type[!duplicated(gene_type$gene), ]

@@ -18,10 +18,12 @@ and \strong{type} representing gene ID and duplication type, respectively.
 Classify genes into unique modes of duplication
 }
 \examples{
-data(sce_diamond)
-data(sce_annotation)
-blast_list <- sce_diamond
-annotation <- sce_annotation
-gene_pairs_list <- classify_gene_pairs(blast_list, annotation)
-class_genes <- classify_genes(gene_pairs_list)
+data(diamond_intra)
+data(yeast_annot)
+data(yeast_seq)
+
+pdata <- syntenet::process_input(yeast_seq, yeast_annot)
+annot <- pdata$annotation["Scerevisiae"]
+duplicates <- classify_gene_pairs(diamond_intra, annot)
+class_genes <- classify_genes(duplicates)
 }

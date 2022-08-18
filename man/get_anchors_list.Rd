@@ -41,9 +41,14 @@ A list of data frames representing intraspecies anchor pairs.
 Get a list of anchor pairs for each species
 }
 \examples{
-data(sce_diamond)
-data(sce_annotation)
-blast_list <- sce_diamond
-annotation <- sce_annotation
+data(diamond_intra)
+data(yeast_annot)
+data(yeast_seq)
+blast_list <- diamond_intra
+
+# Get processed annotation for S. cerevisiae
+annotation <- syntenet::process_input(yeast_seq, yeast_annot)$annotation
+
+# Get list of intraspecies anchor pairs
 anchorpairs <- get_anchors_list(blast_list, annotation)
 }

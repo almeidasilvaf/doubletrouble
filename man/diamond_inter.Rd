@@ -6,14 +6,14 @@
 \title{List of data frames containing interspecies DIAMOND output for yeast species}
 \format{
 A list of data frames (length 1) containing the output of a
-DIAMOND search of S. cerevisiae against S. pombe (outgroup).
+DIAMOND search of S. cerevisiae against C. glabrata (outgroup).
 }
 \usage{
 data(diamond_inter)
 }
 \description{
 This list contains a similarity search of S. cerevisiae against
-S. pombe, and it was obtained with \code{run_diamond()}.
+C. glabrata, and it was obtained with \code{run_diamond()}.
 }
 \examples{
 data(diamond_inter)
