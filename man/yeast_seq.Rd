@@ -3,25 +3,19 @@
 \docType{data}
 \name{yeast_seq}
 \alias{yeast_seq}
-\title{Protein sequences of the yeast species S. cerevisiae and S. pombe}
+\title{Protein sequences of the yeast species S. cerevisiae and C. glabrata}
 \format{
 A list of AAStringSet objects with the elements
-\strong{Scerevisiae} and \strong{Spombe}.
+\strong{Scerevisiae} and \strong{Cglabrata}.
 }
 \usage{
 data(yeast_seq)
 }
 \description{
-Data obtained from Pico-PLAZA 3.0. Only translated sequences of primary
+Data obtained from Ensembl Fungi. Only translated sequences of primary
 transcripts were included.
 }
 \examples{
 data(yeast_seq)
-}
-\references{
-Van Bel, M., Silvestri, F., Weitz, E. M., Kreft, L., Botzki, A.,
-Coppens, F., & Vandepoele, K. (2021). PLAZA 5.0: extending the scope
-and power of comparative and functional genomics in plants.
-Nucleic acids research.
 }
 \keyword{datasets}

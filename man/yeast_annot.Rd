@@ -3,25 +3,19 @@
 \docType{data}
 \name{yeast_annot}
 \alias{yeast_annot}
-\title{Genome annotation of the yeast species S. cerevisiae and S. pombe}
+\title{Genome annotation of the yeast species S. cerevisiae and C. glabrata}
 \format{
 A CompressedGRangesList containing
-the elements \strong{Scerevisiae} and \strong{Spombe}.
+the elements \strong{Scerevisiae} and \strong{Cglabrata}.
 }
 \usage{
 data(yeast_annot)
 }
 \description{
-Data obtained from Pico-PLAZA 3.0. Only annotation data for primary
+Data obtained from Ensembl Fungi. Only annotation data for primary
 transcripts were included.
 }
 \examples{
 data(yeast_annot)
-}
-\references{
-Van Bel, M., Silvestri, F., Weitz, E. M., Kreft, L., Botzki, A.,
-Coppens, F., & Vandepoele, K. (2021). PLAZA 5.0: extending the scope
-and power of comparative and functional genomics in plants.
-Nucleic acids research.
 }
 \keyword{datasets}

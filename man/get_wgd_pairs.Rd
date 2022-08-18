@@ -28,7 +28,19 @@ A 3-column data frame with the variables:
 Get gene pairs derived from whole-genome and small-scale duplications
 }
 \examples{
-data(sce_anchors)
-data(sce_duplicates)
-dups <- get_wgd_pairs(sce_anchors, sce_duplicates)
+data(diamond_intra)
+data(yeast_annot)
+data(yeast_seq)
+blast_list <- diamond_intra
+
+# Get processed annotation for S. cerevisiae
+annotation <- syntenet::process_input(yeast_seq, yeast_annot)$annotation[1]
+
+# Get list of intraspecies anchor pairs
+anchor_pairs <- get_anchors_list(blast_list, annotation)
+anchor_pairs <- anchor_pairs[[1]][, 1:2]
+
+# Get duplicate pairs from DIAMOND output
+duplicates <- diamond_intra[[1]][, 1:2]
+dups <- get_wgd_pairs(anchor_pairs, duplicates)
 }
