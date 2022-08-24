@@ -54,6 +54,19 @@
 "diamond_inter"
 
 
+#' Coding sequences (CDS) of S. cerevisiae
+#' 
+#' Data were obtained from Ensembl Fungi, and only CDS of primary transcripts
+#' were included.
+#' 
+#' @name cds_scerevisiae 
+#' @format A DNAStringSet object with CDS of S. cerevisiae.
+#' @examples 
+#' data(cds_scerevisiae)
+#' @usage data(cds_scerevisiae)
+"cds_scerevisiae"
+
+
 #' Duplicate pairs and Ka, Ks, and Ka/Ks values for S. cerevisiae
 #'
 #' This data set was obtained with \code{classify_gene_pairs()} followed

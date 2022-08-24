@@ -16,6 +16,7 @@
 #' @return A list of data frames containing gene pairs and their Ka, Ks,
 #' and Ka/Ks values.
 #' @importFrom MSA2dist dnastring2kaks
+#' @importFrom Biostrings width
 #' @export
 #' @rdname pairs2kaks
 #' @examples 
