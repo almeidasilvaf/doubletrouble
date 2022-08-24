@@ -155,3 +155,134 @@ diamond_inter <- run_diamond(
 usethis::use_data(diamond_intra, compress = "xz", overwrite = TRUE)
 usethis::use_data(diamond_inter, compress = "xz", overwrite = TRUE)
 ```
+
+## cds_scerevisiae.rda
+
+This is a `DNAStringSet object` containing the CDS of duplicated genes
+in the S. cerevisiae genome.
+
+``` r
+library(Biostrings)
+
+# Get duplicated genes
+data(yeast_seq)
+data(yeast_annot)
+data(diamond_intra)
+data(diamond_inter)
+pdata <- syntenet::process_input(yeast_seq, yeast_annot)
+
+c_full <- classify_gene_pairs(
+    blast_list = diamond_intra,
+    annotation = pdata$annotation,
+    binary = FALSE,
+    blast_inter = diamond_inter
+)$Scerevisiae
+
+dup_genes <- unique(c(c_full$dup1, c_full$dup2))
+dup_genes <- gsub(".*_", "", dup_genes)
+
+dup_wgd <- c_full[c_full$type == "WGD", ]
+dup_wgd <- unique(c(dup_wgd$dup1, dup_wgd$dup2))
+dup_wgd <- gsub(".*_", "", dup_wgd)
+
+# Get CDS and keep only longest isoform
+cds_scerevisiae_full <- readDNAStringSet(
+    "http://ftp.ebi.ac.uk/ensemblgenomes/pub/release-54/fungi/fasta/saccharomyces_cerevisiae/cds/Saccharomyces_cerevisiae.R64-1-1.cds.all.fa.gz"
+) |> ensembl_longest_isoform()
+
+# Keep only duplicated genes
+cds_scerevisiae_all <- cds_scerevisiae_full[names(cds_scerevisiae_full) %in% dup_genes]
+cds_scerevisiae <- cds_scerevisiae_full[names(cds_scerevisiae_full) %in% dup_wgd]
+
+writeXStringSet(
+    cds_scerevisiae,
+    filepath = paste0(tempdir(), "seq.fa")
+)
+
+cds_scerevisiae <- readDNAStringSet(paste0(tempdir(), "seq.fa"))
+
+usethis::use_data(cds_scerevisiae, compress = "xz", overwrite = TRUE)
+```
+
+## scerevisiae_kaks.rda
+
+This object is a data frame of duplicate pairs and their Ks values.
+
+``` r
+# Get all duplicated gene pairs
+library(Biostrings)
+
+data(yeast_seq)
+data(yeast_annot)
+data(diamond_intra)
+data(diamond_inter)
+pdata <- syntenet::process_input(yeast_seq, yeast_annot)
+
+c_full <- classify_gene_pairs(
+    blast_list = diamond_intra,
+    annotation = pdata$annotation,
+    binary = FALSE,
+    blast_inter = diamond_inter
+)
+
+# Get CDS
+cds <- list(Scerevisiae = cds_scerevisiae_all)
+
+# Calculate Ks values
+scerevisiae_kaks_list <- pairs2kaks(c_full, cds)
+scerevisiae_kaks <- scerevisiae_kaks_list$Scerevisiae
+
+usethis::use_data(scerevisiae_kaks, compress = "xz", overwrite = TRUE)
+```
+
+## gmax_ks.rda
+
+This object is a 3-column data frame of duplicate pairs and their Ks
+values for *Glycine max* (soybean).
+
+``` r
+# Get data
+annot <- rtracklayer::import(
+    "http://ftp.ebi.ac.uk/ensemblgenomes/pub/release-53/plants/gtf/glycine_max/Glycine_max.Glycine_max_v2.1.53.gtf.gz"
+)
+annot <- list(Gmax = annot)
+
+seq <- Biostrings::readAAStringSet(
+    "http://ftp.ebi.ac.uk/ensemblgenomes/pub/release-53/plants/fasta/glycine_max/pep/Glycine_max.Glycine_max_v2.1.pep.all.fa.gz"
+) |> ensembl_longest_isoform()
+seq <- list(Gmax = seq)
+
+cds <- Biostrings::readDNAStringSet(
+    "http://ftp.ebi.ac.uk/ensemblgenomes/pub/release-53/plants/fasta/glycine_max/cds/Glycine_max.Glycine_max_v2.1.cds.all.fa.gz"
+) |> ensembl_longest_isoform()
+
+# Process data
+pdata <- syntenet::process_input(seq, annot)
+
+# Intraspecies comparison
+diamond_intra <- run_diamond(
+    seq = pdata$seq["Gmax"],
+    compare = "intraspecies", 
+    outdir = file.path(tempdir(), "diamond_intra_data"),
+    ... = "--sensitive"
+)
+
+# Binary classification
+c_binary <- classify_gene_pairs(
+    blast_list = diamond_intra,
+    annotation = pdata$annotation,
+    binary = TRUE
+)
+
+cds <- list(Gmax = cds)
+
+# Calculate Ks values
+gmax_kaks_list <- pairs2kaks(c_binary, cds)
+gmax_ks <- gmax_kaks_list$Gmax
+gmax_ks <- gmax_ks[, c("dup1", "dup2", "Ks")]
+
+gmax_ks <- gmax_ks[gmax_ks$Ks <= 2, ]
+gmax_ks <- gmax_ks[!is.na(gmax_ks$Ks), ]
+
+usethis::use_data(gmax_ks, compress = "xz", overwrite = TRUE)
+```

@@ -2,13 +2,20 @@
 title: "Identification and classification of duplicated genes"
 author: 
   - name: Fabricio Almeida-Silva
-    affiliation: VIB-UGent Center for Plant Systems Biology, Ghent, Belgium
+    affiliation: 
+    - VIB-UGent Center for Plant Systems Biology, Ghent, Belgium
+    - Department of Plant Biotechnology and Bioinformatics, Ghent University, Ghent, Belgium
   - name: Yves Van de Peer
-    affiliation: VIB-UGent Center for Plant Systems Biology, Ghent, Belgium
+    affiliation: 
+    - VIB-UGent Center for Plant Systems Biology, Ghent, Belgium
+    - Department of Plant Biotechnology and Bioinformatics, Ghent University, Ghent, Belgium
+    - College of Horticulture, Academy for Advanced Interdisciplinary Studies, Nanjing Agricultural University, Nanjing, China
+    - Center for Microbial Ecology and Genomics, Department of Biochemistry, Genetics and Microbiology, University of Pretoria, Pretoria, South Africa
 output: 
   BiocStyle::html_document:
     toc: true
     number_sections: yes
+bibliography: bibliography.bib
 vignette: >
   %\VignetteIndexEntry{Identification and classification of duplicated genes}
   %\VignetteEngine{knitr::rmarkdown}
@@ -23,7 +30,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-# Introduction and data description
+# Introduction
 
 Intro.
 
@@ -40,14 +47,383 @@ BiocManager::install("doubletrouble")
 BiocManager::valid()
 ```
 
+Then, you can load the package:
 
-# Session information
+```{r load_package}
+library(doubletrouble)
+```
 
-This document was created under the following conditions.
+# Data description
+
+In this vignette, we will use protein sequences (primary transcripts only)
+and genome annotation for the yeast species *Saccharomyces cerevisiae*
+and *Candida glabrata*. Data were obtained from 
+Ensembl Fungi release 54 [@yates2022ensembl].
+
+The example data sets are stored in the following objects:
+
+- **yeast_seq:** A list of `AAStringSet` objects with elements
+named *Scerevisiae* and *Cglabrata*.
+
+```{r data1}
+# Load list of DIAMOND tabular output
+data(yeast_seq)
+head(yeast_seq)
+```
+
+- **yeast_annot:** A `GRangesList` object with elements 
+named *Scerevisiae* and *Cglabrata*.
+
+```{r ex_data}
+# Load annotation list processed with syntenet::process_input()
+data(yeast_annot)
+head(yeast_annot)
+```
+
+Our goal here is to identify and classify duplicated genes in 
+the *S. cerevisiae* genome. The *C. glabrata* genome will be used as an outgroup
+to identify transposed duplicates later in this vignette.
+
+# Data preparation
+
+First of all, we need to process the list of protein sequences and gene ranges
+to detect synteny with `r BiocStyle::Biocpkg("syntenet")`. We will do that
+using the function `process_input()` from 
+the `r BiocStyle::Biocpkg("syntenet")` package.
+
+```{r process_input}
+library(syntenet)
+
+# Process input data
+pdata <- process_input(yeast_seq, yeast_annot)
+
+# Inspect the output
+names(pdata)
+pdata$seq
+pdata$annotation
+```
+
+The processed data is represented as a list with the elements `seq` and
+`annotation`, each containing the protein sequences and gene ranges for
+each species, respectively.
+
+Finally, we need to perform pairwise sequence similarity searches to
+identify the whole set of paralogous gene pairs. We can do this 
+using the function `run_diamond()` from the `r BiocStyle::Biocpkg("syntenet")`
+package [^1], setting `compare = "intraspecies"` to perform only intraspecies
+comparisons.
+
+[^1]: **Note:** you need to have DIAMOND installed in your machine to run
+this function. If you don't have it, you can use 
+the `r BiocStyle::Biocpkg("Herper")` package to install DIAMOND in a Conda
+environment and run DIAMOND from this virtual environment.
+
+```{r run_diamond_intraspecies}
+data(diamond_intra)
+
+# Run DIAMOND in sensitive mode for S. cerevisiae only
+if(diamond_is_installed()) {
+    diamond_intra <- run_diamond(
+        seq = pdata$seq["Scerevisiae"],
+        compare = "intraspecies", 
+        outdir = file.path(tempdir(), "diamond_intra"),
+        ... = "--sensitive"
+    )
+}
+
+# Inspect output
+names(diamond_intra)
+head(diamond_intra$Scerevisiae_Scerevisiae)
+```
+
+And voilà! Now that we have the DIAMOND output and the processed annotation,
+you can classify the duplicated genes.
+
+# Classifying duplicated gene pairs and genes
+
+To classify duplicated gene pairs based on their modes of duplication,
+you will use the function `classify_gene_pairs()`. As input, you need to pass:
+
+- The processed annotation list as returned by
+`syntenet::process_input()`;
+- A list of data frames with DIAMOND (or BLASTp, etc.) tabular output
+as returned by `syntenet::run_diamond()`.
+
+
+The function `classify_gene_pairs` incorporates 3 classification schemes:
+
+1. **Binary:** Duplicated gene pairs are classified as either derived
+from whole-genome duplications (WGD) or small-scale duplications (SSD).
+2. **Expanded:** SSD-derived genes are divided into 3 subcategories:
+tandem duplication (TD), proximal duplication (PD), and 
+dispersed duplication (DD).
+3. **Full:** Similar to the **expanded** scheme, but an additional subcategory
+is used for SSD-derived gene pairs: transposed duplication (TRD). [^2] 
+
+[^2]: **Note:** To identify duplicated genes derived from transpositions, 
+you will need to input the DIAMOND output of a similarity search between your 
+species of interest and an outgroup. See Section \@ref(full) for details.
+
+## Binary classification
+
+To classify duplicated gene pairs into WGD- or SSD-derived, use `binary = TRUE`
+in `classify_gene_pairs()`.
+
+```{r binary_classification}
+# Binary classification
+c_binary <- classify_gene_pairs(
+    blast_list = diamond_intra,
+    annotation = pdata$annotation,
+    binary = TRUE
+)
+
+# Inspecting the output
+names(c_binary)
+head(c_binary$Scerevisiae)
+
+# How many pairs are there for each duplication mode?
+table(c_binary$Scerevisiae$type)
+```
+
+The function returns a list of data frames, each containing the duplicated
+gene pairs and their modes of duplication for each species.
+
+## Expanded classification (SSD &rarr; TD, PD, DD)
+
+To subdivide SSD-derived gene pairs into TD-, PD-, and DD-derived, 
+use `binary = FALSE` in `classify_gene_pairs()`.
+
+```{r expanded_classification}
+# Expanded classification
+c_expanded <- classify_gene_pairs(
+    blast_list = diamond_intra,
+    annotation = pdata$annotation,
+    binary = FALSE
+)
+
+# Inspecting the output
+names(c_expanded)
+head(c_expanded$Scerevisiae)
+
+# How many pairs are there for each duplication mode?
+table(c_expanded$Scerevisiae$type)
+```
+
+## Full classification (SSD &rarr; TD, PD, TRD, DD) {#full}
+
+To find transposon-derived duplicates, first you will need to perform a 
+similarity search of your target species against an outgroup species.
+You can do this with `syntenet::run_diamond()`. For the parameter `compare`,
+you will pass a 2-column data frame specifying the comparisons to be made. [^3]
+
+[^3]: **Pro tip:** If you want to identify and classify duplicated genes for
+multiple species in batch, you must include the outgroup for each of them
+in the comparisons data frame.
+
+Here, we will identify duplicated gene pairs for *Saccharomyces cerevisiae*
+using *Candida glabrata* as an outgroup.
+
+```{r blast_interspecies}
+data(diamond_inter) # load pre-computed output in case DIAMOND is not installed
+
+# Create data frame of comparisons to be made
+comparisons <- data.frame(
+    species = "Scerevisiae",
+    outgroup = "Cglabrata"
+)
+comparisons
+
+# Run DIAMOND for the comparison we specified
+if(diamond_is_installed()) {
+    diamond_inter <- run_diamond(
+        seq = pdata$seq,
+        compare = comparisons,
+        outdir = file.path(tempdir(), "diamond_inter"),
+        ... = "--sensitive"
+    )
+}
+
+names(diamond_inter)
+head(diamond_inter$Scerevisiae_Cglabrata)
+```
+
+Now, we will pass this interspecies DIAMOND output as an argument to 
+the parameter `blast_inter` of `classify_gene_pairs()`.
+
+```{r full_classification}
+# Full classification
+c_full <- classify_gene_pairs(
+    blast_list = diamond_intra,
+    annotation = pdata$annotation,
+    binary = FALSE,
+    blast_inter = diamond_inter
+)
+
+# Inspecting the output
+names(c_full)
+head(c_full$Scerevisiae)
+
+# How many pairs are there for each duplication mode?
+table(c_full$Scerevisiae$type)
+```
+
+# Classifying genes into unique modes of duplication
+
+If you look carefully at the output of `classify_gene_pairs()`, you will notice
+that some genes appear in more than one duplicate pair, and these pairs can
+have different duplication modes assigned. There's nothing wrong with it.
+Consider, for example, a gene that was originated by a whole-genome duplication
+event some 60 million years ago, and then it underwent a tandem duplication
+5 million years ago. In the output of `classify_gene_pairs()`, you'd see
+this gene in two pairs, one with **WGD** in the *type* column, and one
+with **TD**.
+
+If you want to assign each gene to a unique mode of duplication, you can
+use the function `classify_genes()`. This function assigns duplication modes
+hierarchically in this level of priority: WGD > TD > PD > TRD > DD.
+
+The input for `classify_genes()` is the list of gene pairs returned by
+`classify_gene_pairs()`.
+
+```{r classify_genes}
+# Classify genes into unique modes of duplication
+c_genes <- classify_genes(c_full)
+
+# Inspecting the output
+names(c_genes)
+head(c_genes$Scerevisiae)
+
+# Number of genes per mode
+table(c_genes$Scerevisiae$type)
+```
+
+# Calculating Ka, Ks, and Ka/Ks for duplicated gene pairs
+
+You can use the function `pairs2kaks()` to calculate rates of nonsynonymous 
+substitutions per nonsynonymous site (Ka), synonymouys substitutions per
+synonymous site (Ks), and their ratios (Ka/Ks). These rates are calculated
+using the Bioconductor package `r BiocStyle::Biocpkg("MSA2dist")`, which
+implements all codon models in KaKs_Calculator 2.0 [@wang2010kaks_calculator].
+
+
+For the purpose of demonstration, we will only calculate Ka, Ks, and Ka/Ks
+for 5 WGD-derived gene pairs. The CDS for WGD-derived genes were obtained
+from Ensembl Fungi [@yates2022ensembl], and 
+they are stored in `cds_scerevisiae`.
+
+```{r kaks_calculation}
+data(cds_scerevisiae)
+head(cds_scerevisiae)
+
+# Store DNAStringSet object in a list
+cds_list <- list(Scerevisiae = cds_scerevisiae)
+
+# Keep only top give gene pairs for demonstration purposes
+gene_pairs <- list(Scerevisiae = c_binary$Scerevisiae[1:5, ])
+
+# Calculate Ka, Ks, and Ka/Ks
+kaks <- pairs2kaks(gene_pairs, cds_list)
+
+# Inpsect the output
+head(kaks)
+```
+
+
+# Identifying and visualizing Ks peaks
+
+Peaks in Ks distributions typically indicate whole-genome duplication (WGD) 
+events, and they can identified by fitting Gaussian mixture models (GMMs) to 
+Ks distributions. In `r BiocStyle::Githubpkg("doubletrouble")`, this can be 
+performed with the function `find_ks_peaks()`.
+
+
+However, because of saturation at higher Ks values, only **recent WGD**
+events can be reliably identified from Ks 
+distributions [@vanneste2013inference]. Recent WGD events are commonly found 
+in plant species, such as maize, soybean, apple, etc.
+Although the genomes of yeast species have signatures of WGD,
+these events are ancient, so it is very hard to find evidence for them
+using Ks distributions. [^4] 
+
+[^4]: **Tip:** You might be asking yourself: "How does one identify ancient
+WGD, then?". A common approach is to look for syntenic blocks (i.e.,
+regions with conserved gene content and order) within genomes. This is what
+`classify_gene_pairs()` does under the hood to find WGD-derived gene pairs.
+
+To demonstrate how you can find peaks in Ks distributions
+with `find_ks_peaks()`, we will use a data frame containing Ks values for
+duplicate pairs in the soybean (*Glycine max*) genome, which has undergone 
+2 WGDs events ~13 and ~58 million years ago [@schmutz2010genome]. 
+Then, we will visualize Ks distributions with peaks using the function
+`plot_ks_peaks()`.
+
+First of all, let's look at the data and have a quick look at the distribution.
+
+```{r ks_eda}
+# Load data and inspect it
+data(gmax_ks)
+head(gmax_ks)
+
+# Plot distribution
+library(ggplot2)
+ggplot(gmax_ks, aes(x = Ks)) +
+    geom_histogram(color = "black", fill = "grey90", bins = 50) +
+    theme_bw()
+```
+
+By visual inspection, we can see 2 or 3 peaks. Based on our prior knowledge,
+we know that 2 WGD events have occurred in the ancestral of the *Glycine* genus
+and in the ancestral of all Fabaceae, which seem to correspond to the
+peaks we see at Ks values around 0.1 and 0.5, respectively. There could be
+a third, flattened peak at around 1.6, which would represent the WGD shared
+by all eudicots. Let's test which number of peaks has more support: 2 or 3.
+
+```{r find_ks_peaks}
+# Find 2 and 3 peaks and test which one has more support
+peaks <- find_ks_peaks(gmax_ks$Ks, npeaks = 2:3, verbose = TRUE)
+names(peaks)
+str(peaks)
+
+# Visualize Ks distribution
+plot_ks_peaks(peaks)
+```
+
+As we can see, the presence of 3 peaks is more supported (lowest BIC). The
+function returns the mean, variance and amplitude of mixture components 
+(i.e., peaks), as well as the Ks distribution itself.
+
+Now, suppose you just want to get the first 2 peaks. You can do that by
+explictly saying to `find_ks_peaks()` how many peaks there are. You will
+probably need to filter you Ks values by a maximum value as well.
+
+```{r find_peaks_explicit}
+# Find 2 peaks ignoring Ks values > 1
+peaks <- find_ks_peaks(gmax_ks$Ks, npeaks = 2, max_ks = 1)
+plot_ks_peaks(peaks)
+```
+
+**Important consideration on GMMs and Ks distributions:**
+Peaks identified with GMMs should not be blindly regarded as "the truth".
+Using GMMs to find peaks in Ks distributions can lead to problems such as
+overfitting and overclustering [@tiley2018assessing]. Some general 
+recommendations are:
+
+1. Use your prior knowledge. If you know how many peaks there are (e.g.,
+based on literature evidence), just tell the number to `find_ks_peaks()`.
+GMMs can incorrectly identify more peaks than the actual number.
+
+2. Test the significance of each peak with SiZer maps [@chaudhuri1999sizer].
+This can be done with the function `SiZer()` from 
+the R package `r BiocStyle::CRANpkg("feature")`.
+
+
+# Session information {.unnumbered}
+
+This document was created under the following conditions:
 
 ```{r session_info}
 sessionInfo()
 ```
 
-# References
+# References {.unnumbered}
 
