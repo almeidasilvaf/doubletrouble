@@ -1,31 +1,44 @@
 
 #----Load data------------------------------------------------------------------
-data(gma_dups_kaks)
-ks <- gma_dups_kaks$Ks
-ks <- ks[!is.na(ks)]
+data(scerevisiae_kaks)
+data(diamond_intra)
+data(diamond_inter)
+data(yeast_annot)
+data(yeast_seq)
+data(cds_scerevisiae)
+blast_list <- diamond_intra
+blast_inter <- diamond_inter
  
-# Remove Ks values > 1 for testing purposes
-ks <- ks[ks <= 1]
+pdata <- syntenet::process_input(yeast_seq, yeast_annot)
+annot <- pdata$annotation["Scerevisiae"]
+
+gene_pairs_list <- classify_gene_pairs(blast_list, annot, binary = TRUE)
+gene_pairs_list <- list(Scerevisiae = gene_pairs_list[[1]][1:2, ])
+
+cds <- list(Scerevisiae = cds_scerevisiae)
+
+ks <- scerevisiae_kaks$Ks
 
 
 #----Start tests----------------------------------------------------------------
-test_that("find_peak_number() returns a non-negative integer", {
+test_that("pairs2kaks() returns a data frame with Ka, Ks, and Ka/Ks", {
     
-    # Using everything small for testing purposes
-    bootstraps <- 1
-    npeaks <- find_peak_number(ks[ks < 0.4], bootstraps, max_components = 1)
+    kaks <- pairs2kaks(gene_pairs_list, cds)
     
-    expect_equal(class(npeaks), "numeric")
-    expect_equal(npeaks, round(npeaks))
-    expect_true(npeaks > 0)
+    expect_equal(class(kaks), "list")
+    expect_equal(class(kaks[[1]]), "data.frame")
+    expect_equal(nrow(kaks[[1]]), 2)
+    expect_true("Ks" %in% names(kaks[[1]]))
+    expect_true("Ka" %in% names(kaks[[1]]))
+    expect_true("Ka_Ks" %in% names(kaks[[1]]))
 })
 
-test_that("find_ks_peaks() returns a list of mean, sd, and amplitudes", {
+test_that("find_ks_peaks() returns a list of mean, sd, amplitudes, ks vals", {
     
     peaks <- find_ks_peaks(ks, npeaks = 2)
     
     expect_equal(class(peaks), "list")
-    expect_equal(names(peaks), c("mean", "sd", "lambda"))
+    expect_equal(names(peaks), c("mean", "sd", "lambda", "ks"))
     expect_equal(length(peaks$mean), 2)
 })
 
@@ -37,7 +50,7 @@ test_that("plot_ks_peaks() returns a ggplot object", {
         lambda = c(0.49001230165837, 0.509987698341629)
     )
     
-    peaks_plot <- plot_ks_peaks(ks, peaks, binwidth = 0.05)
+    peaks_plot <- plot_ks_peaks(peaks, binwidth = 0.05)
     expect_true("ggplot" %in% class(peaks_plot))
         
 })
@@ -45,22 +58,17 @@ test_that("plot_ks_peaks() returns a ggplot object", {
 test_that("find_intersect_mixtures() returns a numeric scalar", {
     
     peaks <- find_ks_peaks(ks, npeaks = 2)
-    inters <- find_intersect_mixtures(ks, peaks)
+    inters <- find_intersect_mixtures(peaks)
     
-    expect_equal(class(inter), "numeric")
-    expect_equal(length(inter), 1)
+    expect_equal(class(inters), "numeric")
+    expect_equal(length(inters), 1)
 })
 
 test_that("split_pairs_by_peak() returns a list", {
     
-    # Create a data frame of duplicate pairs and Ks values
-    ks_df <- gma_dups_kaks[!is.na(gma_dups_kaks$Ks), c("dup1", "dup2", "Ks")]
-     
-    # Remove Ks values >1 for testing purposes
-    ks_df <- ks_df[ks_df$Ks <= 1, ]
-    
-    # Create list of peaks
+    ks_df <- scerevisiae_kaks[, c("dup1", "dup2", "Ks")]
     peaks <- find_ks_peaks(ks_df$Ks, npeaks = 2)
+    
     spairs <- split_pairs_by_peak(ks_df, peaks) 
     
     expect_equal(class(spairs), "list")
