@@ -40,7 +40,8 @@ data(yeast_annot)
 blast_inter <- diamond_inter
 
 # Get processed annotation
-annotation <- syntenet::process_input(yeast_seq, yeast_annot)$annotation
+pdata <- syntenet::process_input(yeast_seq, yeast_annot)
+annotation <- pdata$annotation
 
 # Get duplicated pairs
 annot <- pdata$annotation["Scerevisiae"] 
