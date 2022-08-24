@@ -45,6 +45,12 @@ duplications. Default: FALSE.}
 \item{proximal_max}{Numeric scalar with the maximum distance (in number
 of genes) between two genes to consider them as proximal duplicates.
 Default: 10.}
+
+\item{blast_inter}{A list of data frames containing BLAST tabular output
+for the comparison between target species and outgroups.
+Names of list elements must match the names of
+list elements in \code{annotation}. BLASTp, DIAMOND or simular programs must
+be run on processed sequence data as returned by \code{process_input()}.}
 }
 \value{
 A list of 3-column data frames of duplicated gene pairs

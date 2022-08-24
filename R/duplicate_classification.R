@@ -25,6 +25,11 @@
 #' @param proximal_max Numeric scalar with the maximum distance (in number
 #' of genes) between two genes to consider them as proximal duplicates.
 #' Default: 10.
+#' @param blast_inter A list of data frames containing BLAST tabular output 
+#' for the comparison between target species and outgroups. 
+#' Names of list elements must match the names of 
+#' list elements in `annotation`. BLASTp, DIAMOND or simular programs must 
+#' be run on processed sequence data as returned by \code{process_input()}.
 #'  
 #' @return A list of 3-column data frames of duplicated gene pairs 
 #' (columns 1 and 2), and their modes of duplication (column 3).
@@ -95,9 +100,10 @@ classify_gene_pairs <- function(blast_list = NULL, annotation = NULL,
                     ssd, annot, proximal_max = proximal_max
                 )
             } else { # full scheme
+                binter <- blast_inter[startsWith(names(blast_inter), sp)]
                 ssd_classes <- classify_ssd_pairs(
                     ssd, annot, annotation, proximal_max = proximal_max,
-                    blast_inter = blast_inter
+                    blast_inter = binter
                 )
             }
             dups <- rbind(wgd, ssd_classes)
@@ -131,7 +137,7 @@ classify_gene_pairs <- function(blast_list = NULL, annotation = NULL,
 #' class_genes <- classify_genes(duplicates)
 classify_genes <- function(gene_pairs_list = NULL) {
     
-    # Classify genes following the order of priority: WGD > TD > PD > DD
+    # Classify genes following the order of priority: WGD > TD > PD > TRD > DD
     class_genes <- lapply(gene_pairs_list, function(x) {
 
         pairs_by_type <- split(x, x$type)

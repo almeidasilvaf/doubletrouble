@@ -4,18 +4,28 @@
 \alias{find_ks_peaks}
 \title{Find peaks in a Ks distribution by fitting Gaussian Mixture Models (GMMs)}
 \usage{
-find_ks_peaks(ks, npeaks = 2, epsilon = 0.001)
+find_ks_peaks(ks, npeaks = 2, min_ks = 0.01, max_ks = 4, verbose = FALSE)
 }
 \arguments{
 \item{ks}{A numeric vector of Ks values.}
 
 \item{npeaks}{Numeric scalar indicating the number of peaks in
-the distribution. If you don't know how many peaks there are,
-the optimal number of peaks can be estimated with \code{find_peak_number}.
-Default: 2.}
+the Ks distribution. If you don't know how many peaks there are,
+you can include a range of values, and the number of peaks that produces
+the lowest BIC (Bayesian Information Criterion) will be selected as the
+optimal. Default: 2.}
 
-\item{epsilon}{Numeric scalar with the convergence criterion for the
-expectation-maximization algorithm.}
+\item{min_ks}{Numeric scalar with the minimum Ks value. Removing
+very small Ks values is generally used to avoid the incorporation of allelic
+and/or splice variants and to prevent the fitting of a component to infinity.
+Default: 0.01.}
+
+\item{max_ks}{Numeric scalar indicating the maximum Ks value. Removing
+very large Ks values is usually performed to account for Ks saturation.
+Default: 4.}
+
+\item{verbose}{Logical indicating if messages should be printed on screen.
+Default: FALSE.}
 }
 \value{
 A list with the following elements:
@@ -23,19 +33,20 @@ A list with the following elements:
 \item{mean}{Numeric with the estimated means.}
 \item{sd}{Numeric with the estimated standard deviations.}
 \item{lambda}{Numeric with the estimated mixture weights.}
+\item{ks}{Numeric vector of filtered Ks distribution based on
+arguments passed to min_ks and max_ks.}
 }
 }
 \description{
 Find peaks in a Ks distribution by fitting Gaussian Mixture Models (GMMs)
 }
 \examples{
-data(gma_dups_kaks)
-ks <- gma_dups_kaks$Ks
-ks <- ks[!is.na(ks)]
-
-# Remove Ks values >1 for testing purposes
-ks <- ks[ks <= 1]
+data(scerevisiae_kaks)
+ks <- scerevisiae_kaks$Ks
 
 # Find 2 peaks in Ks distribution
 peaks <- find_ks_peaks(ks, npeaks = 2)
+
+# From 2 to 4 peaks, verbose = TRUE to show BIC values
+peaks <- find_ks_peaks(ks, npeaks = 2:4, verbose = TRUE)
 }

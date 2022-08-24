@@ -192,6 +192,7 @@ collinearity2blocks <- function(collinearity_paths = NULL) {
 #'               "TRD" (transposed duplication) or 
 #'               "DD" (dispersed duplication).}
 #' }
+#' @importFrom syntenet interspecies_synteny
 #' @export
 #' @rdname get_transposed
 #' @examples 
@@ -207,7 +208,7 @@ collinearity2blocks <- function(collinearity_paths = NULL) {
 #' # Get duplicated pairs
 #' annot <- pdata$annotation["Scerevisiae"] 
 #' pairs_all <- classify_gene_pairs(diamond_intra, annot)
-#' pairs <- pairs_all$Scerevisiae[pairs_all$Scerevisiae$type == "DD", ]
+#' pairs <- pairs_all$Scerevisiae[pairs_all$Scerevisiae$type == "DD", 1:2]
 #'
 #' trd <- get_transposed(pairs, blast_inter, annotation)
 get_transposed <- function(pairs, blast_inter, annotation) {
@@ -221,13 +222,14 @@ get_transposed <- function(pairs, blast_inter, annotation) {
     target <- unlist(strsplit(names(blast_inter), "_"))[1]
     outgroup <- unlist(strsplit(names(blast_inter), "_"))[2]
     
-    syn <- interspecies_synteny(
+    syn <- syntenet::interspecies_synteny(
         blast_inter,
         annot_list = annotation[c(target, outgroup)]
     )
     
     # Read and parse interspecies synteny results
     parsed_syn <- collinearity2blocks(syn)[, c("anchor2", "block")]
+    parsed_syn <- parsed_syn[!duplicated(parsed_syn$anchor2), ]
     final <- NULL
     
     if(!is.null(parsed_syn)) {

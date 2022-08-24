@@ -39,13 +39,10 @@ certain number of standard deviations from the highest peak,
 and older genes are found close within smaller peaks.
 }
 \examples{
-data(gma_dups_kaks)
+data(scerevisiae_kaks)
 
 # Create a data frame of duplicate pairs and Ks values
-ks_df <- gma_dups_kaks[!is.na(gma_dups_kaks$Ks), c("dup1", "dup2", "Ks")]
-
-# Remove Ks values >1 for testing purposes
-ks_df <- ks_df[ks_df$Ks <= 1, ]
+ks_df <- scerevisiae_kaks[, c("dup1", "dup2", "Ks")]
 
 # Create list of peaks
 peaks <- find_ks_peaks(ks_df$Ks, npeaks = 2)

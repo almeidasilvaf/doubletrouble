@@ -1,100 +1,146 @@
 
 
-#' Find optimal number of peaks in Ks distribution
-#' 
-#' @param ks A numeric vector of Ks values.
-#' @param bootstraps Numeric scalar with the number of bootstrap realizations 
-#' of the likelihood ratio statistic. We recommend using a minimum of 1000 
-#' bootstraps. Default: 1000.
-#' @param max_components Numeric scalar with the maximum number of components 
-#' to test. Default: 2. 
-#' @param signif Numeric scalar with the significance level for the 
-#' likelihood ratio test. Default: 0.05.
-#' @param epsilon Numeric scalar with the convergence criterion for the
-#' expectation-maximization algorithm.
+#' Calculate Ka, Ks, and Ka/Ks from duplicate gene pairs
 #'
-#' @importFrom mixtools boot.comp
-#' @export
-#' @rdname find_peak_number
-#' @return A numeric scalar with the optimal number of peaks.
+#' @param gene_pairs_list List of data frames containing duplicated gene pairs
+#' as returned by \code{classify_gene_pairs()}.
+#' @param cds List of DNAStringSet objects containing the coding sequences 
+#' of each gene.
+#' @param model Character scalar indicating which codon model to use.
+#' Possible values are "Li", "NG86", "NG", "LWL", "LPB", "MLWL", "MLPB", "GY", 
+#' "YN", "MYN", "MS", "MA", "GNG", "GLWL", "GLPB", "GMLWL", "GMLPB", "GYN", 
+#' and "GMYN". Default: "MYN".
+#' @param threads Numeric scalar indicating the number of threads to use.
+#' Default: 1.
+#' 
+#' @return A list of data frames containing gene pairs and their Ka, Ks,
+#' and Ka/Ks values.
 #' @examples 
-#' data(gma_dups_kaks)
-#' ks <- gma_dups_kaks$Ks
-#' ks <- ks[!is.na(ks)]
+#' data(diamond_intra)
+#' data(diamond_inter)
+#' data(yeast_annot)
+#' data(yeast_seq)
+#' data(cds_scerevisiae)
+#' blast_list <- diamond_intra
+#' blast_inter <- diamond_inter
 #' 
-#' # Remove Ks values > 1 for testing purposes
-#' ks <- ks[ks <= 1]
-#'
-#' # Using only 5 bootstraps for testing purposes
-#' bootstraps <- 5
-#' npeaks <- find_peak_number(ks, bootstraps, max_components = 2)
-#'
-find_peak_number <- function(ks, bootstraps = 1000, max_components = 2,
-                             signif = 0.05, epsilon = 1e-3) {
+#' pdata <- syntenet::process_input(yeast_seq, yeast_annot)
+#' annot <- pdata$annotation["Scerevisiae"]
+#' 
+#' # Binary classification scheme
+#' gene_pairs_list <- classify_gene_pairs(blast_list, annot, binary = TRUE)
+#' gene_pairs_list <- list(Scerevisiae = gene_pairs_list[[1]][1:5, ])
+#' 
+#' cds <- list(Scerevisiae = cds_scerevisiae)
+#' 
+#' kaks <- pairs2kaks(gene_pairs_list, cds)
+pairs2kaks <- function(gene_pairs_list, cds, model = "MYN", threads = 1) {
     
-    # Find the optimal number of peaks
-    npeaks <- mixtools::boot.comp(
-        ks, max.comp = max_components, B = bootstraps, 
-        mix.type = "normalmix", sig = signif, epsilon = epsilon,
-        verb = FALSE, hist = FALSE
-    )
-    
-    pvals <- npeaks$p.values
-    n_pvals <- length(pvals)
-    
-    number <- n_pvals
-    if(pvals[n_pvals] < signif) {
-        number <- n_pvals + 1
-    } 
-    return(number)
+    kaks_list <- lapply(seq_along(gene_pairs_list), function(x) {
+        species <- names(gene_pairs_list)[x]
+        pairs <- gene_pairs_list[[x]]
+        names(pairs)[1:2] <- c("dup1", "dup2")
+        
+        # Remove species ID from gene IDs in gene pairs
+        pairs$dup1 <- gsub("[a-zA-Z]{2,5}_", "", pairs$dup1)
+        pairs$dup2 <- gsub("[a-zA-Z]{2,5}_", "", pairs$dup2)
+        
+        kaks <- Reduce(rbind, lapply(seq_len(nrow(pairs)), function(y) {
+            genes <- as.character(pairs[y, 1:2])
+            cds_genes <- cds[[species]][genes]
+            
+            multiple_3 <- Biostrings::width(cds_genes) %% 3
+            if(sum(multiple_3) > 0) {
+                vals <- NULL
+                pgenes <- paste0(genes, collapse = ", ")
+                message("CDS length is not a multiple of 3 for pair ", pgenes)
+            } else {
+                vals <- MSA2dist::dnastring2kaks(
+                    cds_genes, model = "MYN", isMSA = FALSE, threads = threads
+                )
+                vals <- as.data.frame(t(vals))
+                vals <- vals[, c("seq1", "seq2", "Ka", "Ks", "Ka/Ks")]
+                names(vals) <- c("dup1", "dup2", "Ka", "Ks", "Ka_Ks")
+                rownames(vals) <- NULL
+                if("type" %in% names(pairs)) { vals$type <- pairs[y, "type"] }
+            }
+            return(vals)
+        }))
+        kaks$Ka <- gsub("NA", NA, kaks$Ka)
+        kaks$Ka <- as.numeric(kaks$Ka)
+        kaks$Ks <- gsub("NA", NA, kaks$Ks)
+        kaks$Ks <- as.numeric(kaks$Ks)
+        kaks$Ka_Ks <- gsub("NA", NA, kaks$Ka_Ks)
+        kaks$Ka_Ks <- as.numeric(kaks$Ka_Ks)
+        return(kaks)
+    })
+    names(kaks_list) <- names(gene_pairs_list)
+    return(kaks_list)
 }
-
 
 
 #' Find peaks in a Ks distribution by fitting Gaussian Mixture Models (GMMs)
 #'
 #' @param ks A numeric vector of Ks values.
 #' @param npeaks Numeric scalar indicating the number of peaks in 
-#' the distribution. If you don't know how many peaks there are, 
-#' the optimal number of peaks can be estimated with \code{find_peak_number}. 
-#' Default: 2.
-#' @param epsilon Numeric scalar with the convergence criterion for the
-#' expectation-maximization algorithm.
-#'
+#' the Ks distribution. If you don't know how many peaks there are, 
+#' you can include a range of values, and the number of peaks that produces
+#' the lowest BIC (Bayesian Information Criterion) will be selected as the
+#' optimal. Default: 2.
+#' @param min_ks Numeric scalar with the minimum Ks value. Removing
+#' very small Ks values is generally used to avoid the incorporation of allelic 
+#' and/or splice variants and to prevent the fitting of a component to infinity.
+#' Default: 0.01.
+#' @param max_ks Numeric scalar indicating the maximum Ks value. Removing
+#' very large Ks values is usually performed to account for Ks saturation.
+#' Default: 4.
+#' @param verbose Logical indicating if messages should be printed on screen.
+#' Default: FALSE.
 #' 
 #' @return A list with the following elements:
 #' \describe{
 #'   \item{mean}{Numeric with the estimated means.}
 #'   \item{sd}{Numeric with the estimated standard deviations.}
 #'   \item{lambda}{Numeric with the estimated mixture weights.}
+#'   \item{ks}{Numeric vector of filtered Ks distribution based on
+#'             arguments passed to min_ks and max_ks.}
 #' }
-#' @importFrom mixtools normalmixEM
+#' @importFrom mclust densityMclust
 #' @export
 #' @rdname find_ks_peaks
 #' @examples 
-#' data(gma_dups_kaks)
-#' ks <- gma_dups_kaks$Ks
-#' ks <- ks[!is.na(ks)]
-#' 
-#' # Remove Ks values >1 for testing purposes
-#' ks <- ks[ks <= 1]
+#' data(scerevisiae_kaks)
+#' ks <- scerevisiae_kaks$Ks
 #' 
 #' # Find 2 peaks in Ks distribution
 #' peaks <- find_ks_peaks(ks, npeaks = 2)
-find_ks_peaks <- function(ks, npeaks = 2, epsilon = 1e-3) {
+#' 
+#' # From 2 to 4 peaks, verbose = TRUE to show BIC values
+#' peaks <- find_ks_peaks(ks, npeaks = 2:4, verbose = TRUE)
+find_ks_peaks <- function(ks, npeaks = 2, min_ks = 0.01, max_ks = 4,
+                          verbose = FALSE) {
+    
+    # Data preprocessing
+    ks <- ks[!is.na(ks)]
+    fks <- ks[ks >= min_ks]
+    fks <- fks[fks <= max_ks]
     
     # Find peaks
-    peaks <- mixtools::normalmixEM(
-        ks, 
-        k = npeaks, 
-        epsilon = epsilon
+    peaks <- mclust::densityMclust(
+        fks, G = npeaks, verbose = FALSE, plot = FALSE
     )
+    
+    if(verbose & length(npeaks) > 1) {
+        message("Optimal number of peaks: ", peaks$G)
+        print(peaks$BIC)
+    }
     
     # Create result list
     peak_list <- list(
-        mean = peaks$mu, 
-        sd = peaks$sigma, 
-        lambda = peaks$lambda
+        mean = peaks$parameters$mean, 
+        sd = sqrt(peaks$parameters$variance$sigmasq), 
+        lambda = peaks$parameters$pro,
+        ks = as.numeric(peaks$data[,1])
     )
     return(peak_list)
 }
@@ -102,9 +148,9 @@ find_ks_peaks <- function(ks, npeaks = 2, epsilon = 1e-3) {
 
 #' Plot histogram of Ks distribution with peaks
 #'
-#' @param ks A numeric vector of Ks values.
-#' @param peaks A list with mean, standard deviation, and amplitude of Ks
-#' peaks as generated by \code{find_ks_peaks}.
+#' @param peaks A list with elements \strong{mean}, \strong{sd}, 
+#' \strong{lambda}, and \strong{ks}, as returned by the 
+#' function \code{fins_ks_peaks()}.
 #' @param binwidth Numeric scalar with binwidth for the histogram.
 #' Default: 0.05.
 #'
@@ -116,21 +162,17 @@ find_ks_peaks <- function(ks, npeaks = 2, epsilon = 1e-3) {
 #' @rdname plot_ks_peaks
 #' @export
 #' @examples 
-#' data(gma_dups_kaks)
-#' ks <- gma_dups_kaks$Ks
-#' ks <- ks[!is.na(ks)]
+#' data(scerevisiae_kaks)
+#' ks <- scerevisiae_kaks$Ks
 #' 
-#' # Remove Ks values >1 for testing purposes
-#' ks <- ks[ks <= 1]
-#'
-#' # Create list of peaks
+#' # Find 2 peaks in Ks distribution
 #' peaks <- find_ks_peaks(ks, npeaks = 2)
 #'
 #' # Plot
-#' plot_ks_peaks(ks, peaks, binwidth = 0.05)
-plot_ks_peaks <- function(ks, peaks = NULL, binwidth = 0.05) {
+#' plot_ks_peaks(peaks, binwidth = 0.05)
+plot_ks_peaks <- function(peaks = NULL, binwidth = 0.05) {
     
-    ks_df <- data.frame(ks = ks)
+    ks_df <- data.frame(ks = peaks$ks)
     
     # Define color palette
     pal <- c("#6A6599FF", "#79AF97FF", "#B24745FF", "#00A1D5FF", 
@@ -163,31 +205,27 @@ plot_ks_peaks <- function(ks, peaks = NULL, binwidth = 0.05) {
 #' of n Gaussian mixtures. Thus, it will find 1 intersection for Ks distros
 #' with 2 peaks, 2 intersections for distros with 2 peaks, and so on.
 #' 
-#'
-#' @param ks A numeric vector of Ks values.
-#' @param peaks A list with mean, standard deviation, and amplitude of Ks
+#' @param peaks A list with elements \strong{mean}, \strong{sd}, 
+#' \strong{lambda}, and \strong{ks}, as returned by the 
+#' function \code{fins_ks_peaks()}.
 #'
 #' @return A numeric scalar or vector with the x-axis coordinates of the 
 #' intersections.
 #' @importFrom ggplot2 ggplot_build
-#' @export
+#' @noRd
 #' @rdname find_intersect_mixtures
 #' @examples
-#' data(gma_dups_kaks)
-#' ks <- gma_dups_kaks$Ks
-#' ks <- ks[!is.na(ks)]
+#' data(scerevisiae_kaks)
+#' ks <- scerevisiae_kaks$Ks
 #' 
-#' # Remove Ks values >2 for testing purposes
-#' ks <- ks[ks <= 2]
-#' 
-#' # Create list of peaks
-#' peaks <- find_ks_peaks(ks, npeaks = 3)
+#' # Find 2 peaks in Ks distribution
+#' peaks <- find_ks_peaks(ks, npeaks = 2)
 #'
 #' # Get intersects
-#' inter <- find_intersect_mixtures(ks, peaks)
-find_intersect_mixtures <- function(ks, peaks) {
+#' inter <- find_intersect_mixtures(peaks)
+find_intersect_mixtures <- function(peaks) {
     
-    p <- plot_ks_peaks(ks, peaks)
+    p <- plot_ks_peaks(peaks)
     npeaks <- length(peaks$mean)
     if(npeaks == 1) {
         stop("Cannot find intersect of peaks with only 1 peak.")
@@ -251,13 +289,10 @@ find_intersect_mixtures <- function(ks, peaks) {
 #' @export
 #' @rdname split_pairs_by_peak
 #' @examples
-#' data(gma_dups_kaks)
+#' data(scerevisiae_kaks)
 #'
 #' # Create a data frame of duplicate pairs and Ks values
-#' ks_df <- gma_dups_kaks[!is.na(gma_dups_kaks$Ks), c("dup1", "dup2", "Ks")]
-#' 
-#' # Remove Ks values >1 for testing purposes
-#' ks_df <- ks_df[ks_df$Ks <= 1, ]
+#' ks_df <- scerevisiae_kaks[, c("dup1", "dup2", "Ks")]
 #'
 #' # Create list of peaks
 #' peaks <- find_ks_peaks(ks_df$Ks, npeaks = 2)
@@ -269,16 +304,27 @@ split_pairs_by_peak <- function(ks_df, peaks, nsd = 2, binwidth = 0.05) {
     names(ks_df) <- c("dup1", "dup2", "ks")
     npeaks <- length(peaks$mean)
     
-    # Get minimum, intersection points, and maximum 
-    inter <- find_intersect_mixtures(ks_df$ks, peaks)
+    # Filter Ks data frame as done in find_ks_peaks()
+    max_ks <- max(peaks$ks)
+    min_ks <- min(peaks$ks)
+    ks_df <- ks_df[!is.na(ks_df$ks), ]
+    ks_df <- ks_df[ks_df$ks >= min_ks & ks_df$ks <= max_ks, ]
+    
+    # Get minimum, intersection points, and maximum
     min_boun <- peaks$mean[1] - nsd * peaks$sd[1]
     if(min_boun < 0) { min_boun <- 0 }
     max_boun <- peaks$mean[npeaks] + nsd * peaks$sd[npeaks]
     if(max_boun > max(ks_df$ks)) { max_boun <- max(ks_df$ks) }
-    cutpoints <- c(min_boun, inter, max_boun)
     
+    if(npeaks == 1) {
+        cutpoints <- c(min_boun, max_boun)
+    } else {
+        inter <- find_intersect_mixtures(peaks)
+        cutpoints <- c(min_boun, inter, max_boun)
+    }
+
     # Plot histogram with cutpoints in "brown2" dashed lines
-    p <- plot_ks_peaks(ks_df$ks, peaks, binwidth = binwidth)
+    p <- plot_ks_peaks(peaks, binwidth = binwidth)
     for(i in seq_along(cutpoints)) {
         p <- p + geom_vline(xintercept = cutpoints[i],
                             linetype = "dashed", color = "brown2")
@@ -298,7 +344,6 @@ split_pairs_by_peak <- function(ks_df, peaks, nsd = 2, binwidth = 0.05) {
     }))
     
     result_list <- list(pairs = split_pairs, plot = p)
-    
 }
 
 
