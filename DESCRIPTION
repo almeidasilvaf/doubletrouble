@@ -44,6 +44,7 @@ RoxygenNote: 7.2.0
 Imports:
     syntenet,
     GenomicRanges,
+    Biostrings,
     mclust,
     MSA2dist (>= 1.1.4),
     ggplot2,
