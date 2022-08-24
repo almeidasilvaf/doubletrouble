@@ -53,3 +53,42 @@
 #' @usage data(diamond_inter)
 "diamond_inter"
 
+
+#' Duplicate pairs and Ka, Ks, and Ka/Ks values for S. cerevisiae
+#'
+#' This data set was obtained with \code{classify_gene_pairs()} followed
+#' by \code{pairs2kaks()}.
+#' 
+#' @name scerevisiae_kaks
+#' @format A data frame with the following variables:
+#' \describe{
+#'   \item{dup1}{Character, duplicated gene 1.}
+#'   \item{dup2}{Character, duplicated gene 2.}
+#'   \item{Ka}{Numeric, Ka values.}
+#'   \item{Ks}{Numeric, Ks values.}
+#'   \item{Ka_Ks}{Numeric, Ka/Ks values.}
+#'   \item{type}{Character, mode of duplication}
+#' }
+#' @examples 
+#' data(scerevisiae_kaks)
+#' @usage data(scerevisiae_kaks)
+"scerevisiae_kaks"
+
+
+#' Duplicate pairs and Ks values for Glycine max
+#'
+#' This data set was obtained with \code{classify_gene_pairs()} followed
+#' by \code{pairs2kaks()}.
+#' 
+#' @name gmax_ks
+#' @format A data frame with the following variables:
+#' \describe{
+#'   \item{dup1}{Character, duplicated gene 1.}
+#'   \item{dup2}{Character, duplicated gene 2.}
+#'   \item{Ks}{Numeric, Ks values.}
+#' }
+#' @examples 
+#' data(gmax_ks)
+#' @usage data(gmax_ks)
+"gmax_ks"
+
