@@ -1,7 +1,7 @@
-pandoc: 2.17.1.1
-pkgdown: 2.0.4
+pandoc: '2.18'
+pkgdown: 2.0.6
 pkgdown_sha: ~
 articles:
   doubletrouble: doubletrouble.html
-last_built: 2022-06-24T07:26Z
+last_built: 2022-08-24T20:24Z
 

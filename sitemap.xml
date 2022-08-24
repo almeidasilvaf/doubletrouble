@@ -28,6 +28,9 @@
     <loc>/news/index.html</loc>
   </url>
   <url>
+    <loc>/reference/cds_scerevisiae.html</loc>
+  </url>
+  <url>
     <loc>/reference/classify_gene_pairs.html</loc>
   </url>
   <url>
@@ -37,36 +40,45 @@
     <loc>/reference/classify_ssd_pairs.html</loc>
   </url>
   <url>
-    <loc>/reference/find_ks_peaks.html</loc>
+    <loc>/reference/diamond_inter.html</loc>
   </url>
   <url>
-    <loc>/reference/find_peak_number.html</loc>
+    <loc>/reference/diamond_intra.html</loc>
+  </url>
+  <url>
+    <loc>/reference/find_ks_peaks.html</loc>
   </url>
   <url>
     <loc>/reference/get_anchors_list.html</loc>
   </url>
   <url>
+    <loc>/reference/get_transposed.html</loc>
+  </url>
+  <url>
     <loc>/reference/get_wgd_pairs.html</loc>
   </url>
   <url>
-    <loc>/reference/gma_dups_kaks.html</loc>
+    <loc>/reference/gmax_ks.html</loc>
   </url>
   <url>
     <loc>/reference/index.html</loc>
   </url>
   <url>
-    <loc>/reference/plot_ks_distro.html</loc>
+    <loc>/reference/pairs2kaks.html</loc>
   </url>
   <url>
-    <loc>/reference/sce_anchors.html</loc>
+    <loc>/reference/plot_ks_peaks.html</loc>
   </url>
   <url>
-    <loc>/reference/sce_annotation.html</loc>
+    <loc>/reference/scerevisiae_kaks.html</loc>
   </url>
   <url>
-    <loc>/reference/sce_diamond.html</loc>
+    <loc>/reference/split_pairs_by_peak.html</loc>
   </url>
   <url>
-    <loc>/reference/sce_duplicates.html</loc>
+    <loc>/reference/yeast_annot.html</loc>
+  </url>
+  <url>
+    <loc>/reference/yeast_seq.html</loc>
   </url>
 </urlset>

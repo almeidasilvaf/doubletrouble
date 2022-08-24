@@ -58,7 +58,13 @@ duplicates (TD, PD, and DD, respectively).</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">classify_ssd_pairs</span><span class="op">(</span>ssd_pairs <span class="op">=</span> <span class="cn">NULL</span>, annotation <span class="op">=</span> <span class="cn">NULL</span>, proximal_max <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">classify_ssd_pairs</span><span class="op">(</span></span>
+<span>  ssd_pairs <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  annotation_granges <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  annotation <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  proximal_max <span class="op">=</span> <span class="fl">10</span>,</span>
+<span>  blast_inter <span class="op">=</span> <span class="cn">NULL</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -69,15 +75,30 @@ This data frame can be obtained by filtering the output of
 <code><a href="get_wgd_pairs.html">get_wgd_pairs()</a></code> to keep only rows where type == "SSD".</p></dd>
 
 
+<dt>annotation_granges</dt>
+<dd><p>A processed GRanges object as in each element
+of the list returned by <code><a href="https://rdrr.io/pkg/syntenet/man/process_input.html" class="external-link">syntenet::process_input()</a></code>.</p></dd>
+
+
 <dt>annotation</dt>
-<dd><p>A processed GRanges object as in each element of the list
-returned by <code><a href="https://rdrr.io/pkg/syntenet/man/process_input.html" class="external-link">syntenet::process_input()</a></code>.</p></dd>
+<dd><p>A processed GRangesList or CompressedGRangesList
+object as returned by <code><a href="https://rdrr.io/pkg/syntenet/man/process_input.html" class="external-link">syntenet::process_input()</a></code>, which must
+contain the gene ranges for all species.</p></dd>
 
 
 <dt>proximal_max</dt>
 <dd><p>Numeric scalar with the maximum distance (in number
 of genes) between two genes to consider them as proximal duplicates.
 Default: 10.</p></dd>
+
+
+<dt>blast_inter</dt>
+<dd><p>A list of data frames containing the tabular output
+of interspecies BLAST/DIAMOND searches, as returned by <code>run_diamond()</code>.
+Each element must contain the pairwise comparison between a target species
+and its outgroup, which will be used to identify duplicated genes
+derived from transpositions (TRD). If this parameter is NULL,
+this function will not identify TRD genes.</p></dd>
 
 </dl></div>
     <div id="value">
@@ -91,8 +112,10 @@ Default: 10.</p></dd>
 <dd><p>Duplicated gene 2</p></dd>
 
 <dt>type</dt>
-<dd><p>Duplication type, which can be either
-"TD" (tandem duplication), "PD" (proximal duplication), and
+<dd><p>Duplication type, which can be
+"TD" (tandem duplication),
+"PD" (proximal duplication),
+"TRD" (transposed duplication), and
 "DD" (dispersed duplication).</p></dd>
 
 
@@ -100,16 +123,36 @@ Default: 10.</p></dd>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">sce_annotation</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">annotation</span> <span class="op">&lt;-</span> <span class="va">sce_annotation</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">sce_anchors</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">sce_duplicates</span><span class="op">)</span></span>
-<span class="r-in"><span class="co"># Get SSD-derived gene pairs</span></span>
-<span class="r-in"><span class="va">dups</span> <span class="op">&lt;-</span> <span class="fu"><a href="get_wgd_pairs.html">get_wgd_pairs</a></span><span class="op">(</span><span class="va">sce_anchors</span>, <span class="va">sce_duplicates</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">ssd_pairs</span> <span class="op">&lt;-</span> <span class="va">dups</span><span class="op">[</span><span class="va">dups</span><span class="op">$</span><span class="va">type</span> <span class="op">==</span> <span class="st">"SSD"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">]</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Classify SSD-derived gene pairs</span></span>
-<span class="r-in"><span class="va">ssd_classes</span> <span class="op">&lt;-</span> <span class="fu">classify_ssd_pairs</span><span class="op">(</span><span class="va">ssd_pairs</span>, <span class="va">annotation</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">diamond_intra</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">diamond_inter</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">yeast_annot</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">yeast_seq</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">blast_list</span> <span class="op">&lt;-</span> <span class="va">diamond_intra</span></span></span>
+<span class="r-in"><span><span class="va">blast_inter</span> <span class="op">&lt;-</span> <span class="va">diamond_inter</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Get processed annotation for S. cerevisiae</span></span></span>
+<span class="r-in"><span><span class="va">pdata</span> <span class="op">&lt;-</span> <span class="va">annotation</span> <span class="op">&lt;-</span> <span class="fu">syntenet</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/syntenet/man/process_input.html" class="external-link">process_input</a></span><span class="op">(</span><span class="va">yeast_seq</span>, <span class="va">yeast_annot</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">annotation</span> <span class="op">&lt;-</span> <span class="va">pdata</span><span class="op">$</span><span class="va">annotation</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Get list of intraspecies anchor pairs</span></span></span>
+<span class="r-in"><span><span class="va">anchor_pairs</span> <span class="op">&lt;-</span> <span class="fu"><a href="get_anchors_list.html">get_anchors_list</a></span><span class="op">(</span><span class="va">blast_list</span>, <span class="va">annotation</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">anchor_pairs</span> <span class="op">&lt;-</span> <span class="va">anchor_pairs</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">[</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">]</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Get duplicate pairs from DIAMOND output and classify them</span></span></span>
+<span class="r-in"><span><span class="va">duplicates</span> <span class="op">&lt;-</span> <span class="va">diamond_intra</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">[</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">]</span></span></span>
+<span class="r-in"><span><span class="va">dups</span> <span class="op">&lt;-</span> <span class="fu"><a href="get_wgd_pairs.html">get_wgd_pairs</a></span><span class="op">(</span><span class="va">anchor_pairs</span>, <span class="va">duplicates</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">ssd_pairs</span> <span class="op">&lt;-</span> <span class="va">dups</span><span class="op">[</span><span class="va">dups</span><span class="op">$</span><span class="va">type</span> <span class="op">==</span> <span class="st">"SSD"</span>, <span class="op">]</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Get GRanges</span></span></span>
+<span class="r-in"><span><span class="va">annotation_granges</span> <span class="op">&lt;-</span> <span class="va">pdata</span><span class="op">$</span><span class="va">annotation</span><span class="op">[[</span><span class="st">"Scerevisiae"</span><span class="op">]</span><span class="op">]</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Get annotation list</span></span></span>
+<span class="r-in"><span><span class="va">annotation</span> <span class="op">&lt;-</span> <span class="va">pdata</span><span class="op">$</span><span class="va">annotation</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Classify SSD-derived gene pairs</span></span></span>
+<span class="r-in"><span><span class="va">ssd_classes</span> <span class="op">&lt;-</span> <span class="fu">classify_ssd_pairs</span><span class="op">(</span></span></span>
+<span class="r-in"><span>    <span class="va">ssd_pairs</span>, <span class="va">annotation_granges</span>, <span class="va">annotation</span>, blast_inter <span class="op">=</span> <span class="va">blast_inter</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -124,7 +167,7 @@ Default: 10.</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

@@ -56,7 +56,7 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">classify_genes</span><span class="op">(</span>gene_pairs_list <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">classify_genes</span><span class="op">(</span>gene_pairs_list <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -78,12 +78,14 @@ by <code><a href="classify_gene_pairs.html">classify_gene_pairs()</a></code>.</p
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">sce_diamond</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">sce_annotation</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">blast_list</span> <span class="op">&lt;-</span> <span class="va">sce_diamond</span></span>
-<span class="r-in"><span class="va">annotation</span> <span class="op">&lt;-</span> <span class="va">sce_annotation</span></span>
-<span class="r-in"><span class="va">gene_pairs_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="classify_gene_pairs.html">classify_gene_pairs</a></span><span class="op">(</span><span class="va">blast_list</span>, <span class="va">annotation</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">class_genes</span> <span class="op">&lt;-</span> <span class="fu">classify_genes</span><span class="op">(</span><span class="va">gene_pairs_list</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">diamond_intra</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">yeast_annot</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">yeast_seq</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">pdata</span> <span class="op">&lt;-</span> <span class="fu">syntenet</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/syntenet/man/process_input.html" class="external-link">process_input</a></span><span class="op">(</span><span class="va">yeast_seq</span>, <span class="va">yeast_annot</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">annot</span> <span class="op">&lt;-</span> <span class="va">pdata</span><span class="op">$</span><span class="va">annotation</span><span class="op">[</span><span class="st">"Scerevisiae"</span><span class="op">]</span></span></span>
+<span class="r-in"><span><span class="va">duplicates</span> <span class="op">&lt;-</span> <span class="fu"><a href="classify_gene_pairs.html">classify_gene_pairs</a></span><span class="op">(</span><span class="va">diamond_intra</span>, <span class="va">annot</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">class_genes</span> <span class="op">&lt;-</span> <span class="fu">classify_genes</span><span class="op">(</span><span class="va">duplicates</span><span class="op">)</span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -98,7 +100,7 @@ by <code><a href="classify_gene_pairs.html">classify_gene_pairs()</a></code>.</p
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>
