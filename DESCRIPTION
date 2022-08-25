@@ -26,7 +26,11 @@ Description: doubletrouble aims to identify duplicated genes from
     If users want a simpler classification scheme, duplicates can also be
     classified into WGD- and SSD-derived (small-scale duplication) gene pairs.
     Besides classifying gene pairs, users can also classify genes, so that
-    each gene is assigned a unique mode of duplication.
+    each gene is assigned a unique mode of duplication. 
+    Users can also calculate substitution rates per substitution site (i.e., Ka
+    and Ks) from duplicate pairs, find peaks in Ks distributions with Gaussian
+    Mixture Models (GMMs), and classify gene pairs into age groups based on Ks
+    peaks.
 License: GPL-3
 URL: https://github.com/almeidasilvaf/doubletrouble
 BugReports: https://support.bioconductor.org/t/doubletrouble
@@ -55,6 +59,7 @@ Depends:
 Suggests: 
     testthat (>= 3.0.0),
     knitr,
+    feature,
     BiocStyle,
     rmarkdown,
     covr,

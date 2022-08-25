@@ -35,6 +35,11 @@ be:
 Besides classifying gene pairs, users can also classify genes, so that
 each gene is assigned a unique mode of duplication.
 
+Users can also calculate substitution rates per substitution site (i.e.,
+Ka and Ks) from duplicate pairs, find peaks in Ks distributions with
+Gaussian Mixture Models (GMMs), and classify gene pairs into age groups
+based on Ks peaks.
+
 ## Installation instructions
 
 Get the latest stable `R` release from

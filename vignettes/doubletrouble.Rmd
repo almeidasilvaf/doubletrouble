@@ -32,7 +32,15 @@ knitr::opts_chunk$set(
 
 # Introduction
 
-Intro.
+Gene and genome duplications are a source of raw genetic material for evolution
+[@ohno2013evolution]. However, whole-genome duplications (WGD) and small-scale
+duplications (SSD) contribute to genome evolution in different manners. To
+help you explore the different contributions of WGD and SSD to evolution, we
+developed `r BiocStyle::Githubpkg("doubletrouble")`, a package that can be
+used to identify and classify duplicated genes from whole-genome 
+protein sequences, calculate substitution rates per substitution site (i.e.,
+Ka and Ks) for gene pairs, find peaks in Ks distributions, and classify
+gene pairs by age groups.
 
 # Installation
 
@@ -332,7 +340,7 @@ head(kaks)
 # Identifying and visualizing Ks peaks
 
 Peaks in Ks distributions typically indicate whole-genome duplication (WGD) 
-events, and they can identified by fitting Gaussian mixture models (GMMs) to 
+events, and they can be identified by fitting Gaussian mixture models (GMMs) to 
 Ks distributions. In `r BiocStyle::Githubpkg("doubletrouble")`, this can be 
 performed with the function `find_ks_peaks()`.
 
@@ -389,12 +397,11 @@ plot_ks_peaks(peaks)
 ```
 
 As we can see, the presence of 3 peaks is more supported (lowest BIC). The
-function returns the mean, variance and amplitude of mixture components 
-(i.e., peaks), as well as the Ks distribution itself.
+function returns a list with the mean, variance and amplitude 
+of mixture components (i.e., peaks), as well as the Ks distribution itself.
 
 Now, suppose you just want to get the first 2 peaks. You can do that by
-explictly saying to `find_ks_peaks()` how many peaks there are. You will
-probably need to filter you Ks values by a maximum value as well.
+explictly saying to `find_ks_peaks()` how many peaks there are. 
 
 ```{r find_peaks_explicit}
 # Find 2 peaks ignoring Ks values > 1
@@ -410,11 +417,55 @@ recommendations are:
 
 1. Use your prior knowledge. If you know how many peaks there are (e.g.,
 based on literature evidence), just tell the number to `find_ks_peaks()`.
+Likewise, if you are not sure about how many peaks there are, but you know
+the maximum number of peaks is N, don't test for the presence of >N peaks.
 GMMs can incorrectly identify more peaks than the actual number.
 
-2. Test the significance of each peak with SiZer maps [@chaudhuri1999sizer].
+2. Test the significance of each peak with SiZer (Significant ZERo crossings
+of derivatives) maps [@chaudhuri1999sizer].
 This can be done with the function `SiZer()` from 
 the R package `r BiocStyle::CRANpkg("feature")`.
+
+As an example of a SiZer map, let's use `feature::SiZer()` to assess
+the significance of the 2 peaks we found previously.
+
+```{r sizer}
+# Get numeric vector of Ks values <= 1
+ks <- gmax_ks$Ks[gmax_ks$Ks <= 1]
+
+# Get SiZer map
+feature::SiZer(ks)
+```
+
+The blue regions in the SiZer map indicate significantly increasing regions
+of the curve, which support the 2 peaks we found. 
+
+# Classifying genes by age groups
+
+Finally, you can use the peaks you obtained before to classify gene pairs
+by age group. Age groups are defined based on the Ks peak to which pairs belong.
+This is useful if you want to analyze duplicate pairs 
+from a specific WGD event, for instance. You can do this with
+the function `split_pairs_by_peak()`. This function returns a list containing
+the classified pairs in a data frame, and a ggplot object with the 
+age boundaries highlighted in the histogram of Ks values.
+
+```{r split_by_peak}
+# Gene pairs without age-based classification
+head(gmax_ks)
+
+# Classify gene pairs by age group
+pairs_age_group <- split_pairs_by_peak(gmax_ks, peaks)
+
+# Inspecting the output
+names(pairs_age_group)
+
+# Take a look at the classified gene pairs
+head(pairs_age_group$pairs)
+
+# Visualize Ks distro with age boundaries
+pairs_age_group$plot
+```
 
 
 # Session information {.unnumbered}
@@ -422,7 +473,7 @@ the R package `r BiocStyle::CRANpkg("feature")`.
 This document was created under the following conditions:
 
 ```{r session_info}
-sessionInfo()
+sessioninfo::session_info()
 ```
 
 # References {.unnumbered}
