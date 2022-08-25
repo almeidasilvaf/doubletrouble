@@ -105,7 +105,16 @@ Pretoria, South Africa<br><small class="dont-index">Source: <a href="https://git
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
-<p>Intro.</p>
+<p>Gene and genome duplications are a source of raw genetic material for
+evolution <span class="citation">(Ohno 2013)</span>. However,
+whole-genome duplications (WGD) and small-scale duplications (SSD)
+contribute to genome evolution in different manners. To help you explore
+the different contributions of WGD and SSD to evolution, we developed
+<em><a href="https://github.com/doubletrouble" class="external-link">doubletrouble</a></em>, a
+package that can be used to identify and classify duplicated genes from
+whole-genome protein sequences, calculate substitution rates per
+substitution site (i.e., Ka and Ks) for gene pairs, find peaks in Ks
+distributions, and classify gene pairs by age groups.</p>
 </div>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
@@ -610,8 +619,8 @@ obtained from Ensembl Fungi <span class="citation">(Yates et al.
 <h2 id="identifying-and-visualizing-ks-peaks">Identifying and visualizing Ks peaks<a class="anchor" aria-label="anchor" href="#identifying-and-visualizing-ks-peaks"></a>
 </h2>
 <p>Peaks in Ks distributions typically indicate whole-genome duplication
-(WGD) events, and they can identified by fitting Gaussian mixture models
-(GMMs) to Ks distributions. In <em><a href="https://github.com/doubletrouble" class="external-link">doubletrouble</a></em>, this can
+(WGD) events, and they can be identified by fitting Gaussian mixture
+models (GMMs) to Ks distributions. In <em><a href="https://github.com/doubletrouble" class="external-link">doubletrouble</a></em>, this can
 be performed with the function <code><a href="../reference/find_ks_peaks.html">find_ks_peaks()</a></code>.</p>
 <p>However, because of saturation at higher Ks values, only
 <strong>recent WGD</strong> events can be reliably identified from Ks
@@ -659,19 +668,19 @@ number of peaks has more support: 2 or 3.</p>
 <span><span class="co">#&gt; Optimal number of peaks: 3</span></span>
 <span><span class="co">#&gt; Bayesian Information Criterion (BIC): </span></span>
 <span><span class="co">#&gt;           E         V</span></span>
-<span><span class="co">#&gt; 2 -86950.22 -67759.57</span></span>
-<span><span class="co">#&gt; 3 -86977.54 -54202.79</span></span>
+<span><span class="co">#&gt; 2 -86950.22 -67759.78</span></span>
+<span><span class="co">#&gt; 3 -86978.18 -54202.88</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Top 3 models based on the BIC criterion: </span></span>
 <span><span class="co">#&gt;       V,3       V,2       E,2 </span></span>
-<span><span class="co">#&gt; -54202.79 -67759.57 -86950.22</span></span>
+<span><span class="co">#&gt; -54202.88 -67759.78 -86950.22</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">peaks</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "mean"   "sd"     "lambda" "ks"</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">peaks</span><span class="op">)</span></span>
 <span><span class="co">#&gt; List of 4</span></span>
 <span><span class="co">#&gt;  $ mean  : Named num [1:3] 0.118 0.531 1.482</span></span>
 <span><span class="co">#&gt;   ..- attr(*, "names")= chr [1:3] "1" "2" "3"</span></span>
-<span><span class="co">#&gt;  $ sd    : num [1:3] 0.0549 0.2443 0.3133</span></span>
+<span><span class="co">#&gt;  $ sd    : num [1:3] 0.0549 0.2443 0.3134</span></span>
 <span><span class="co">#&gt;  $ lambda: num [1:3] 0.352 0.433 0.215</span></span>
 <span><span class="co">#&gt;  $ ks    : num [1:71231] 0.375 0.0453 0.1041 0.4733 1.2292 ...</span></span>
 <span></span>
@@ -679,12 +688,12 @@ number of peaks has more support: 2 or 3.</p>
 <span><span class="fu"><a href="../reference/plot_ks_peaks.html">plot_ks_peaks</a></span><span class="op">(</span><span class="va">peaks</span><span class="op">)</span></span></code></pre></div>
 <p><img src="doubletrouble_files/figure-html/find_ks_peaks-1.png" width="700"></p>
 <p>As we can see, the presence of 3 peaks is more supported (lowest
-BIC). The function returns the mean, variance and amplitude of mixture
-components (i.e., peaks), as well as the Ks distribution itself.</p>
+BIC). The function returns a list with the mean, variance and amplitude
+of mixture components (i.e., peaks), as well as the Ks distribution
+itself.</p>
 <p>Now, suppose you just want to get the first 2 peaks. You can do that
 by explictly saying to <code><a href="../reference/find_ks_peaks.html">find_ks_peaks()</a></code> how many peaks there
-are. You will probably need to filter you Ks values by a maximum value
-as well.</p>
+are.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Find 2 peaks ignoring Ks values &gt; 1</span></span>
 <span><span class="va">peaks</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/find_ks_peaks.html">find_ks_peaks</a></span><span class="op">(</span><span class="va">gmax_ks</span><span class="op">$</span><span class="va">Ks</span>, npeaks <span class="op">=</span> <span class="fl">2</span>, max_ks <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
@@ -698,74 +707,197 @@ recommendations are:</p>
 <ol style="list-style-type: decimal">
 <li><p>Use your prior knowledge. If you know how many peaks there are
 (e.g., based on literature evidence), just tell the number to
-<code><a href="../reference/find_ks_peaks.html">find_ks_peaks()</a></code>. GMMs can incorrectly identify more peaks
-than the actual number.</p></li>
-<li><p>Test the significance of each peak with SiZer maps <span class="citation">(Chaudhuri and Marron 1999)</span>. This can be done
-with the function <code>SiZer()</code> from the R package <em><a href="https://CRAN.R-project.org/package=feature" class="external-link">feature</a></em>.</p></li>
+<code><a href="../reference/find_ks_peaks.html">find_ks_peaks()</a></code>. Likewise, if you are not sure about how
+many peaks there are, but you know the maximum number of peaks is N,
+don’t test for the presence of &gt;N peaks. GMMs can incorrectly
+identify more peaks than the actual number.</p></li>
+<li><p>Test the significance of each peak with SiZer (Significant ZERo
+crossings of derivatives) maps <span class="citation">(Chaudhuri and
+Marron 1999)</span>. This can be done with the function
+<code>SiZer()</code> from the R package <em><a href="https://CRAN.R-project.org/package=feature" class="external-link">feature</a></em>.</p></li>
 </ol>
+<p>As an example of a SiZer map, let’s use <code><a href="https://rdrr.io/pkg/feature/man/SiZer.html" class="external-link">feature::SiZer()</a></code>
+to assess the significance of the 2 peaks we found previously.</p>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Get numeric vector of Ks values &lt;= 1</span></span>
+<span><span class="va">ks</span> <span class="op">&lt;-</span> <span class="va">gmax_ks</span><span class="op">$</span><span class="va">Ks</span><span class="op">[</span><span class="va">gmax_ks</span><span class="op">$</span><span class="va">Ks</span> <span class="op">&lt;=</span> <span class="fl">1</span><span class="op">]</span></span>
+<span></span>
+<span><span class="co"># Get SiZer map</span></span>
+<span><span class="fu">feature</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/feature/man/SiZer.html" class="external-link">SiZer</a></span><span class="op">(</span><span class="va">ks</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning: no DISPLAY variable so Tk is not available</span></span></code></pre></div>
+<p><img src="doubletrouble_files/figure-html/sizer-1.png" width="700"></p>
+<p>The blue regions in the SiZer map indicate significantly increasing
+regions of the curve, which support the 2 peaks we found.</p>
+</div>
+<div class="section level2">
+<h2 id="classifying-genes-by-age-groups">Classifying genes by age groups<a class="anchor" aria-label="anchor" href="#classifying-genes-by-age-groups"></a>
+</h2>
+<p>Finally, you can use the peaks you obtained before to classify gene
+pairs by age group. Age groups are defined based on the Ks peak to which
+pairs belong. This is useful if you want to analyze duplicate pairs from
+a specific WGD event, for instance. You can do this with the function
+<code><a href="../reference/split_pairs_by_peak.html">split_pairs_by_peak()</a></code>. This function returns a list
+containing the classified pairs in a data frame, and a ggplot object
+with the age boundaries highlighted in the histogram of Ks values.</p>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Gene pairs without age-based classification</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">gmax_ks</span><span class="op">)</span></span>
+<span><span class="co">#&gt;               dup1            dup2        Ks</span></span>
+<span><span class="co">#&gt; 1  GLYMA_01G000100 GLYMA_15G276800 0.3749860</span></span>
+<span><span class="co">#&gt; 3  GLYMA_01G000400 GLYMA_02G312300 0.0452761</span></span>
+<span><span class="co">#&gt; 8  GLYMA_01G000600 GLYMA_14G000400 0.1040900</span></span>
+<span><span class="co">#&gt; 10 GLYMA_01G000800 GLYMA_03G188200 0.4732800</span></span>
+<span><span class="co">#&gt; 11 GLYMA_01G000800 GLYMA_05G115300 1.2292300</span></span>
+<span><span class="co">#&gt; 12 GLYMA_01G000800 GLYMA_17G191100 1.6607100</span></span>
+<span></span>
+<span><span class="co"># Classify gene pairs by age group</span></span>
+<span><span class="va">pairs_age_group</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/split_pairs_by_peak.html">split_pairs_by_peak</a></span><span class="op">(</span><span class="va">gmax_ks</span>, <span class="va">peaks</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Inspecting the output</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">pairs_age_group</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "pairs" "plot"</span></span>
+<span></span>
+<span><span class="co"># Take a look at the classified gene pairs</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">pairs_age_group</span><span class="op">$</span><span class="va">pairs</span><span class="op">)</span></span>
+<span><span class="co">#&gt;               dup1            dup2        ks peak</span></span>
+<span><span class="co">#&gt; 1  GLYMA_01G000100 GLYMA_15G276800 0.3749860    1</span></span>
+<span><span class="co">#&gt; 3  GLYMA_01G000400 GLYMA_02G312300 0.0452761    1</span></span>
+<span><span class="co">#&gt; 8  GLYMA_01G000600 GLYMA_14G000400 0.1040900    1</span></span>
+<span><span class="co">#&gt; 10 GLYMA_01G000800 GLYMA_03G188200 0.4732800    1</span></span>
+<span><span class="co">#&gt; 16 GLYMA_01G001000 GLYMA_08G359900 0.1300750    1</span></span>
+<span><span class="co">#&gt; 18 GLYMA_01G001100 GLYMA_08G359700 0.0856404    1</span></span>
+<span></span>
+<span><span class="co"># Visualize Ks distro with age boundaries</span></span>
+<span><span class="va">pairs_age_group</span><span class="op">$</span><span class="va">plot</span></span></code></pre></div>
+<p><img src="doubletrouble_files/figure-html/split_by_peak-1.png" width="700"></p>
 </div>
 <div class="section level2">
 <h2 class="unnumbered" id="session-information">Session information<a class="anchor" aria-label="anchor" href="#session-information"></a>
 </h2>
 <p>This document was created under the following conditions:</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; R version 4.2.1 (2022-06-23)</span></span>
-<span><span class="co">#&gt; Platform: x86_64-pc-linux-gnu (64-bit)</span></span>
-<span><span class="co">#&gt; Running under: Ubuntu 20.04.4 LTS</span></span>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">sessioninfo</span><span class="fu">::</span><span class="fu"><a href="https://r-lib.github.io/sessioninfo/reference/session_info.html" class="external-link">session_info</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB; font-weight: bold;">─ Session info ───────────────────────────────────────────────────────────────</span></span></span>
+<span><span class="co">#&gt;  <span style="color: #555555; font-style: italic;">setting </span> <span style="color: #555555; font-style: italic;">value</span></span></span>
+<span><span class="co">#&gt;  version  R version 4.2.1 (2022-06-23)</span></span>
+<span><span class="co">#&gt;  os       Ubuntu 20.04.4 LTS</span></span>
+<span><span class="co">#&gt;  system   x86_64, linux-gnu</span></span>
+<span><span class="co">#&gt;  ui       X11</span></span>
+<span><span class="co">#&gt;  language en</span></span>
+<span><span class="co">#&gt;  collate  en_US.UTF-8</span></span>
+<span><span class="co">#&gt;  ctype    en_US.UTF-8</span></span>
+<span><span class="co">#&gt;  tz       UTC</span></span>
+<span><span class="co">#&gt;  date     2022-08-25</span></span>
+<span><span class="co">#&gt;  pandoc   2.18 @ /usr/local/bin/ (via rmarkdown)</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Matrix products: default</span></span>
-<span><span class="co">#&gt; BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3</span></span>
-<span><span class="co">#&gt; LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/liblapack.so.3</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB; font-weight: bold;">─ Packages ───────────────────────────────────────────────────────────────────</span></span></span>
+<span><span class="co">#&gt;  <span style="color: #555555; font-style: italic;">package         </span> <span style="color: #555555; font-style: italic;">*</span> <span style="color: #555555; font-style: italic;">version </span> <span style="color: #555555; font-style: italic;">date (UTC)</span> <span style="color: #555555; font-style: italic;">lib</span> <span style="color: #555555; font-style: italic;">source</span></span></span>
+<span><span class="co">#&gt;  ade4               1.7-19   <span style="color: #555555;">2022-04-19</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
+<span><span class="co">#&gt;  ape                5.6-2    <span style="color: #555555;">2022-03-02</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
+<span><span class="co">#&gt;  BiocGenerics       0.43.1   <span style="color: #555555;">2022-07-26</span> <span style="color: #555555;">[1]</span> <span style="color: #555555;">Bioconductor</span></span></span>
+<span><span class="co">#&gt;  BiocManager        1.30.18  <span style="color: #555555;">2022-05-18</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.2.1)</span></span></span>
+<span><span class="co">#&gt;  BiocStyle        * 2.25.0   <span style="color: #555555;">2022-04-26</span> <span style="color: #555555;">[1]</span> <span style="color: #555555;">Bioconductor</span></span></span>
+<span><span class="co">#&gt;  Biostrings         2.65.2   <span style="color: #555555;">2022-08-18</span> <span style="color: #555555;">[1]</span> <span style="color: #555555;">Bioconductor</span></span></span>
+<span><span class="co">#&gt;  bitops             1.0-7    <span style="color: #555555;">2021-04-24</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
+<span><span class="co">#&gt;  bookdown           0.28     <span style="color: #555555;">2022-08-09</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
+<span><span class="co">#&gt;  bslib              0.4.0    <span style="color: #555555;">2022-07-16</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
+<span><span class="co">#&gt;  cachem             1.0.6    <span style="color: #555555;">2021-08-19</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
+<span><span class="co">#&gt;  cli                3.3.0    <span style="color: #555555;">2022-04-25</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
+<span><span class="co">#&gt;  cluster            2.1.4    <span style="color: #555555;">2022-08-22</span> <span style="color: #555555;">[3]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
+<span><span class="co">#&gt;  coda               0.19-4   <span style="color: #555555;">2020-09-30</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
+<span><span class="co">#&gt;  codetools          0.2-18   <span style="color: #555555;">2020-11-04</span> <span style="color: #555555;">[3]</span> <span style="color: #555555;">CRAN (R 4.2.1)</span></span></span>
+<span><span class="co">#&gt;  colorspace         2.0-3    <span style="color: #555555;">2022-02-21</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
+<span><span class="co">#&gt;  crayon             1.5.1    <span style="color: #555555;">2022-03-26</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
+<span><span class="co">#&gt;  desc               1.4.1    <span style="color: #555555;">2022-03-06</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
+<span><span class="co">#&gt;  digest             0.6.29   <span style="color: #555555;">2021-12-01</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
+<span><span class="co">#&gt;  doParallel         1.0.17   <span style="color: #555555;">2022-02-07</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
+<span><span class="co">#&gt;  doubletrouble    * 0.99.0   <span style="color: #555555;">2022-08-25</span> <span style="color: #555555;">[1]</span> <span style="color: #555555;">Bioconductor</span></span></span>
+<span><span class="co">#&gt;  dplyr              1.0.9    <span style="color: #555555;">2022-04-28</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
+<span><span class="co">#&gt;  evaluate           0.16     <span style="color: #555555;">2022-08-09</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
+<span><span class="co">#&gt;  fansi              1.0.3    <span style="color: #555555;">2022-03-24</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
+<span><span class="co">#&gt;  farver             2.1.1    <span style="color: #555555;">2022-07-06</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
+<span><span class="co">#&gt;  fastmap            1.1.0    <span style="color: #555555;">2021-01-25</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
+<span><span class="co">#&gt;  feature            1.2.15   <span style="color: #555555;">2021-02-10</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
+<span><span class="co">#&gt;  foreach            1.5.2    <span style="color: #555555;">2022-02-02</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
+<span><span class="co">#&gt;  fs                 1.5.2    <span style="color: #555555;">2021-12-08</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
+<span><span class="co">#&gt;  generics           0.1.3    <span style="color: #555555;">2022-07-05</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
+<span><span class="co">#&gt;  GenomeInfoDb       1.33.5   <span style="color: #555555;">2022-08-10</span> <span style="color: #555555;">[1]</span> <span style="color: #555555;">Bioconductor</span></span></span>
+<span><span class="co">#&gt;  GenomeInfoDbData   1.2.8    <span style="color: #555555;">2022-05-03</span> <span style="color: #555555;">[1]</span> <span style="color: #555555;">Bioconductor</span></span></span>
+<span><span class="co">#&gt;  GenomicRanges      1.49.1   <span style="color: #555555;">2022-08-18</span> <span style="color: #555555;">[1]</span> <span style="color: #555555;">Bioconductor</span></span></span>
+<span><span class="co">#&gt;  ggnetwork          0.5.10   <span style="color: #555555;">2021-07-06</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
+<span><span class="co">#&gt;  ggplot2          * 3.3.6    <span style="color: #555555;">2022-05-03</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
+<span><span class="co">#&gt;  glue               1.6.2    <span style="color: #555555;">2022-02-24</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
+<span><span class="co">#&gt;  gtable             0.3.0    <span style="color: #555555;">2019-03-25</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
+<span><span class="co">#&gt;  highr              0.9      <span style="color: #555555;">2021-04-16</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
+<span><span class="co">#&gt;  htmltools          0.5.3    <span style="color: #555555;">2022-07-18</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
+<span><span class="co">#&gt;  htmlwidgets        1.5.4    <span style="color: #555555;">2021-09-08</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
+<span><span class="co">#&gt;  igraph             1.3.4    <span style="color: #555555;">2022-07-19</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
+<span><span class="co">#&gt;  intergraph         2.0-2    <span style="color: #555555;">2016-12-05</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
+<span><span class="co">#&gt;  IRanges            2.31.2   <span style="color: #555555;">2022-08-18</span> <span style="color: #555555;">[1]</span> <span style="color: #555555;">Bioconductor</span></span></span>
+<span><span class="co">#&gt;  iterators          1.0.14   <span style="color: #555555;">2022-02-05</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
+<span><span class="co">#&gt;  jquerylib          0.1.4    <span style="color: #555555;">2021-04-26</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
+<span><span class="co">#&gt;  jsonlite           1.8.0    <span style="color: #555555;">2022-02-22</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
+<span><span class="co">#&gt;  KernSmooth         2.23-20  <span style="color: #555555;">2021-05-03</span> <span style="color: #555555;">[3]</span> <span style="color: #555555;">CRAN (R 4.2.1)</span></span></span>
+<span><span class="co">#&gt;  knitr              1.39     <span style="color: #555555;">2022-04-26</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
+<span><span class="co">#&gt;  ks                 1.13.5   <span style="color: #555555;">2022-04-14</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
+<span><span class="co">#&gt;  labeling           0.4.2    <span style="color: #555555;">2020-10-20</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
+<span><span class="co">#&gt;  lattice            0.20-45  <span style="color: #555555;">2021-09-22</span> <span style="color: #555555;">[3]</span> <span style="color: #555555;">CRAN (R 4.2.1)</span></span></span>
+<span><span class="co">#&gt;  lifecycle          1.0.1    <span style="color: #555555;">2021-09-24</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
+<span><span class="co">#&gt;  magrittr           2.0.3    <span style="color: #555555;">2022-03-30</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
+<span><span class="co">#&gt;  MASS               7.3-58.1 <span style="color: #555555;">2022-08-03</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
+<span><span class="co">#&gt;  Matrix             1.4-1    <span style="color: #555555;">2022-03-23</span> <span style="color: #555555;">[3]</span> <span style="color: #555555;">CRAN (R 4.2.1)</span></span></span>
+<span><span class="co">#&gt;  mclust             5.4.10   <span style="color: #555555;">2022-05-20</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
+<span><span class="co">#&gt;  memoise            2.0.1    <span style="color: #555555;">2021-11-26</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
+<span><span class="co">#&gt;  mgcv               1.8-40   <span style="color: #555555;">2022-03-29</span> <span style="color: #555555;">[3]</span> <span style="color: #555555;">CRAN (R 4.2.1)</span></span></span>
+<span><span class="co">#&gt;  MSA2dist           1.1.4    <span style="color: #555555;">2022-07-17</span> <span style="color: #555555;">[1]</span> <span style="color: #555555;">Bioconductor</span></span></span>
+<span><span class="co">#&gt;  munsell            0.5.0    <span style="color: #555555;">2018-06-12</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
+<span><span class="co">#&gt;  mvtnorm            1.1-3    <span style="color: #555555;">2021-10-08</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
+<span><span class="co">#&gt;  network            1.17.2   <span style="color: #555555;">2022-05-21</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
+<span><span class="co">#&gt;  networkD3          0.4      <span style="color: #555555;">2017-03-18</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
+<span><span class="co">#&gt;  nlme               3.1-159  <span style="color: #555555;">2022-08-09</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
+<span><span class="co">#&gt;  permute            0.9-7    <span style="color: #555555;">2022-01-27</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
+<span><span class="co">#&gt;  pheatmap           1.0.12   <span style="color: #555555;">2019-01-04</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
+<span><span class="co">#&gt;  pillar             1.8.1    <span style="color: #555555;">2022-08-19</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
+<span><span class="co">#&gt;  pkgconfig          2.0.3    <span style="color: #555555;">2019-09-22</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
+<span><span class="co">#&gt;  pkgdown            2.0.6    <span style="color: #555555;">2022-07-16</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
+<span><span class="co">#&gt;  pracma             2.3.8    <span style="color: #555555;">2022-03-04</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
+<span><span class="co">#&gt;  purrr              0.3.4    <span style="color: #555555;">2020-04-17</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
+<span><span class="co">#&gt;  R6                 2.5.1    <span style="color: #555555;">2021-08-19</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
+<span><span class="co">#&gt;  ragg               1.2.2    <span style="color: #555555;">2022-02-21</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
+<span><span class="co">#&gt;  RColorBrewer       1.1-3    <span style="color: #555555;">2022-04-03</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
+<span><span class="co">#&gt;  Rcpp               1.0.9    <span style="color: #555555;">2022-07-08</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
+<span><span class="co">#&gt;  RCurl              1.98-1.8 <span style="color: #555555;">2022-07-30</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
+<span><span class="co">#&gt;  rlang              1.0.4    <span style="color: #555555;">2022-07-12</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
+<span><span class="co">#&gt;  rmarkdown          2.15     <span style="color: #555555;">2022-08-16</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
+<span><span class="co">#&gt;  rprojroot          2.0.3    <span style="color: #555555;">2022-04-02</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
+<span><span class="co">#&gt;  S4Vectors          0.35.1   <span style="color: #555555;">2022-06-08</span> <span style="color: #555555;">[1]</span> <span style="color: #555555;">Bioconductor</span></span></span>
+<span><span class="co">#&gt;  sass               0.4.2    <span style="color: #555555;">2022-07-16</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
+<span><span class="co">#&gt;  scales             1.2.1    <span style="color: #555555;">2022-08-20</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
+<span><span class="co">#&gt;  seqinr             4.2-16   <span style="color: #555555;">2022-05-19</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
+<span><span class="co">#&gt;  sessioninfo        1.2.2    <span style="color: #555555;">2021-12-06</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
+<span><span class="co">#&gt;  statnet.common     4.6.0    <span style="color: #555555;">2022-05-02</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
+<span><span class="co">#&gt;  stringi            1.7.8    <span style="color: #555555;">2022-07-11</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
+<span><span class="co">#&gt;  stringr            1.4.1    <span style="color: #555555;">2022-08-20</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
+<span><span class="co">#&gt;  syntenet         * 0.99.4   <span style="color: #555555;">2022-08-11</span> <span style="color: #555555;">[1]</span> <span style="color: #555555;">Bioconductor</span></span></span>
+<span><span class="co">#&gt;  systemfonts        1.0.4    <span style="color: #555555;">2022-02-11</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
+<span><span class="co">#&gt;  textshaping        0.3.6    <span style="color: #555555;">2021-10-13</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
+<span><span class="co">#&gt;  tibble             3.1.8    <span style="color: #555555;">2022-07-22</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
+<span><span class="co">#&gt;  tidyr              1.2.0    <span style="color: #555555;">2022-02-01</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
+<span><span class="co">#&gt;  tidyselect         1.1.2    <span style="color: #555555;">2022-02-21</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
+<span><span class="co">#&gt;  utf8               1.2.2    <span style="color: #555555;">2021-07-24</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
+<span><span class="co">#&gt;  vctrs              0.4.1    <span style="color: #555555;">2022-04-13</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
+<span><span class="co">#&gt;  vegan              2.6-2    <span style="color: #555555;">2022-04-17</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
+<span><span class="co">#&gt;  withr              2.5.0    <span style="color: #555555;">2022-03-03</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
+<span><span class="co">#&gt;  xfun               0.32     <span style="color: #555555;">2022-08-10</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
+<span><span class="co">#&gt;  XVector            0.37.0   <span style="color: #555555;">2022-04-26</span> <span style="color: #555555;">[1]</span> <span style="color: #555555;">Bioconductor</span></span></span>
+<span><span class="co">#&gt;  yaml               2.3.5    <span style="color: #555555;">2022-02-21</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
+<span><span class="co">#&gt;  zlibbioc           1.43.0   <span style="color: #555555;">2022-04-26</span> <span style="color: #555555;">[1]</span> <span style="color: #555555;">Bioconductor</span></span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; locale:</span></span>
-<span><span class="co">#&gt;  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              </span></span>
-<span><span class="co">#&gt;  [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    </span></span>
-<span><span class="co">#&gt;  [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   </span></span>
-<span><span class="co">#&gt;  [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 </span></span>
-<span><span class="co">#&gt;  [9] LC_ADDRESS=C               LC_TELEPHONE=C            </span></span>
-<span><span class="co">#&gt; [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       </span></span>
+<span><span class="co">#&gt; <span style="color: #555555;"> [1] /__w/_temp/Library</span></span></span>
+<span><span class="co">#&gt; <span style="color: #555555;"> [2] /usr/local/lib/R/site-library</span></span></span>
+<span><span class="co">#&gt; <span style="color: #555555;"> [3] /usr/local/lib/R/library</span></span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; attached base packages:</span></span>
-<span><span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; other attached packages:</span></span>
-<span><span class="co">#&gt; [1] ggplot2_3.3.6        syntenet_0.99.4      doubletrouble_0.99.0</span></span>
-<span><span class="co">#&gt; [4] BiocStyle_2.25.0    </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
-<span><span class="co">#&gt;  [1] nlme_3.1-159           bitops_1.0-7           fs_1.5.2              </span></span>
-<span><span class="co">#&gt;  [4] doParallel_1.0.17      RColorBrewer_1.1-3     rprojroot_2.0.3       </span></span>
-<span><span class="co">#&gt;  [7] GenomeInfoDb_1.33.5    tools_4.2.1            bslib_0.4.0           </span></span>
-<span><span class="co">#&gt; [10] utf8_1.2.2             R6_2.5.1               vegan_2.6-2           </span></span>
-<span><span class="co">#&gt; [13] BiocGenerics_0.43.1    mgcv_1.8-40            colorspace_2.0-3      </span></span>
-<span><span class="co">#&gt; [16] permute_0.9-7          ade4_1.7-19            withr_2.5.0           </span></span>
-<span><span class="co">#&gt; [19] tidyselect_1.1.2       compiler_4.2.1         textshaping_0.3.6     </span></span>
-<span><span class="co">#&gt; [22] cli_3.3.0              intergraph_2.0-2       network_1.17.2        </span></span>
-<span><span class="co">#&gt; [25] desc_1.4.1             labeling_0.4.2         bookdown_0.28         </span></span>
-<span><span class="co">#&gt; [28] sass_0.4.2             scales_1.2.1           MSA2dist_1.1.4        </span></span>
-<span><span class="co">#&gt; [31] pkgdown_2.0.6          systemfonts_1.0.4      stringr_1.4.1         </span></span>
-<span><span class="co">#&gt; [34] digest_0.6.29          rmarkdown_2.15         XVector_0.37.0        </span></span>
-<span><span class="co">#&gt; [37] pkgconfig_2.0.3        htmltools_0.5.3        highr_0.9             </span></span>
-<span><span class="co">#&gt; [40] fastmap_1.1.0          htmlwidgets_1.5.4      rlang_1.0.4           </span></span>
-<span><span class="co">#&gt; [43] farver_2.1.1           jquerylib_0.1.4        generics_0.1.3        </span></span>
-<span><span class="co">#&gt; [46] jsonlite_1.8.0         mclust_5.4.10          statnet.common_4.6.0  </span></span>
-<span><span class="co">#&gt; [49] dplyr_1.0.9            RCurl_1.98-1.8         magrittr_2.0.3        </span></span>
-<span><span class="co">#&gt; [52] ggnetwork_0.5.10       GenomeInfoDbData_1.2.8 Matrix_1.4-1          </span></span>
-<span><span class="co">#&gt; [55] Rcpp_1.0.9             munsell_0.5.0          S4Vectors_0.35.1      </span></span>
-<span><span class="co">#&gt; [58] fansi_1.0.3            ape_5.6-2              lifecycle_1.0.1       </span></span>
-<span><span class="co">#&gt; [61] stringi_1.7.8          yaml_2.3.5             MASS_7.3-58.1         </span></span>
-<span><span class="co">#&gt; [64] zlibbioc_1.43.0        grid_4.2.1             parallel_4.2.1        </span></span>
-<span><span class="co">#&gt; [67] crayon_1.5.1           lattice_0.20-45        Biostrings_2.65.2     </span></span>
-<span><span class="co">#&gt; [70] splines_4.2.1          knitr_1.39             pillar_1.8.1          </span></span>
-<span><span class="co">#&gt; [73] igraph_1.3.4           GenomicRanges_1.49.1   seqinr_4.2-16         </span></span>
-<span><span class="co">#&gt; [76] codetools_0.2-18       stats4_4.2.1           glue_1.6.2            </span></span>
-<span><span class="co">#&gt; [79] evaluate_0.16          BiocManager_1.30.18    vctrs_0.4.1           </span></span>
-<span><span class="co">#&gt; [82] foreach_1.5.2          networkD3_0.4          gtable_0.3.0          </span></span>
-<span><span class="co">#&gt; [85] purrr_0.3.4            tidyr_1.2.0            cachem_1.0.6          </span></span>
-<span><span class="co">#&gt; [88] xfun_0.32              coda_0.19-4            ragg_1.2.2            </span></span>
-<span><span class="co">#&gt; [91] tibble_3.1.8           pheatmap_1.0.12        iterators_1.0.14      </span></span>
-<span><span class="co">#&gt; [94] memoise_2.0.1          IRanges_2.31.2         cluster_2.1.4</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #00BBBB; font-weight: bold;">──────────────────────────────────────────────────────────────────────────────</span></span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
@@ -775,6 +907,10 @@ with the function <code>SiZer()</code> from the R package <em><a href="https://C
 Chaudhuri, Probal, and James S Marron. 1999. <span>“SiZer for
 Exploration of Structures in Curves.”</span> <em>Journal of the American
 Statistical Association</em> 94 (447): 807–23.
+</div>
+<div id="ref-ohno2013evolution" class="csl-entry">
+Ohno, Susumu. 2013. <em>Evolution by Gene Duplication</em>. Springer
+Science &amp; Business Media.
 </div>
 <div id="ref-schmutz2010genome" class="csl-entry">
 Schmutz, Jeremy, Steven B Cannon, Jessica Schlueter, Jianxin Ma, Therese
