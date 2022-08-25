@@ -251,7 +251,7 @@ find_intersect_mixtures <- function(peaks) {
             line2 = ggplot_build(p)$data[[l2]]$y
         )
         # Get minimal distance between lines along y axis
-        line_df$delta = line_df$line1 - line_df$line2
+        line_df$delta <- line_df$line1 - line_df$line2
         
         # Get x value for minimal delta y
         int <- line_df$x[which(diff(sign(diff((abs(line_df$delta))))) == 2)+1]
