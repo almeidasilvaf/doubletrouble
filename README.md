@@ -7,11 +7,11 @@
 
 [![GitHub
 issues](https://img.shields.io/github/issues/almeidasilvaf/doubletrouble)](https://github.com/almeidasilvaf/doubletrouble/issues)
-[![GitHub
-pulls](https://img.shields.io/github/issues-pr/almeidasilvaf/doubletrouble)](https://github.com/almeidasilvaf/doubletrouble/pulls)
 [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
-[![R-CMD-check-bioc](https://github.com/almeidasilvaf/doubletrouble/actions/workflows/R-CMD-check-bioc.yaml/badge.svg)](https://github.com/almeidasilvaf/doubletrouble/actions/workflows/R-CMD-check-bioc.yaml)
+[![R-CMD-check-bioc](https://github.com/almeidasilvaf/doubletrouble/workflows/R-CMD-check-bioc/badge.svg)](https://github.com/almeidasilvaf/doubletrouble/actions)
+[![Codecov test
+coverage](https://codecov.io/gh/almeidasilvaf/doubletrouble/branch/master/graph/badge.svg)](https://codecov.io/gh/almeidasilvaf/doubletrouble?branch=master)
 <!-- badges: end -->
 
 The major goal of `doubletrouble` is to identify duplicated genes from
@@ -29,7 +29,8 @@ be:
 1.  Whole-genome duplication (WGD);
 2.  Tandem duplication (TD);
 3.  Proximal duplication (PD);
-4.  Dispersed duplication.
+4.  Transposed duplication (TRD);
+5.  Dispersed duplication (DD).
 
 Besides classifying gene pairs, users can also classify genes, so that
 each gene is assigned a unique mode of duplication.
