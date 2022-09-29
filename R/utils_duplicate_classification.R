@@ -251,7 +251,6 @@ get_transposed <- function(pairs, blast_inter, annotation) {
         final$type <- ifelse(final$block1 == final$block2, "TRD", "DD")
         final$type[is.na(final$type)] <- "DD"
         final <- final[, c("dup1", "dup2", "type")]
-        return(final)
     }
     return(final)
 }

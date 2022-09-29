@@ -44,6 +44,14 @@ test_that("get_wgd_pairs() returns a data frame with WGD and SSD pairs", {
 test_that("get_transposed() finds transposon-derived pairs", {
     trd <- get_transposed(ssd, blast_inter, annotation)
     
+    expect_error(
+        get_transposed(
+            ssd, 
+            blast_inter = list(A = blast_inter[[1]], B = blast_inter[[1]]),
+            annotation
+        )
+    )
+    
     expect_equal(class(trd), "data.frame")
     expect_equal(ncol(trd), 3)
     expect_equal(names(trd), c("dup1", "dup2", "type"))
@@ -66,16 +74,31 @@ test_that("classify_ssd_pairs() returns a data frame of SSD subclasses", {
 test_that("classify_gene_pairs() returns a data frame", {
     duplicates <- classify_gene_pairs(blast_list, annotation)
     
+    expect_message(
+        duplicates2 <- classify_gene_pairs(
+            blast_list, annotation, binary = TRUE, blast_inter = blast_inter
+        )
+    )
+    
     expect_equal(class(duplicates), "list")
     expect_equal(class(duplicates[[1]]), "data.frame")
     expect_equal(ncol(duplicates[[1]]), 3)
     expect_equal(names(duplicates[[1]]), c("dup1", "dup2", "type"))
     expect_true(length(unique(duplicates[[1]]$type)) > 2)
+    expect_equal(class(duplicates2), "list")
 })
 
 test_that("classify_genes() returns a unique duplication mode for each gene", {
+    
     gene_pairs_list <- classify_gene_pairs(blast_list, annotation)
+    gene_pairs_l2 <- classify_gene_pairs(blast_list, annotation, binary = TRUE)
+    gene_pairs_l3 <- classify_gene_pairs(
+        blast_list, annotation, blast_inter = blast_inter
+    )
+    
     class_genes <- classify_genes(gene_pairs_list)
+    class_genes2 <- classify_genes(gene_pairs_l2)
+    class_genes3 <- classify_genes(gene_pairs_l3)
     
     n_dup_genes <- length(unique(c(gene_pairs_list[[1]]$dup1,
                                    gene_pairs_list[[1]]$dup2)))
@@ -84,6 +107,9 @@ test_that("classify_genes() returns a unique duplication mode for each gene", {
     expect_equal(class(class_genes[[1]]), "data.frame")
     expect_equal(ncol(class_genes[[1]]), 2)
     expect_equal(nrow(class_genes[[1]]), n_dup_genes)
+    
+    expect_equal(class(class_genes2), "list")
+    expect_equal(class(class_genes3), "list")
 })
 
 

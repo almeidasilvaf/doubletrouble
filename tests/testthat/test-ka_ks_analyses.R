@@ -19,11 +19,17 @@ cds <- list(Scerevisiae = cds_scerevisiae)
 
 ks <- scerevisiae_kaks$Ks
 
+## Simulate gene with CDS that is not a multiple of 3
+cds2 <- cds
+cds2$Scerevisiae$YGR032W <- Biostrings::subseq(
+    cds2$Scerevisiae$YGR032W, 1, length(cds2$Scerevisiae$YGR032W)-1
+)
 
 #----Start tests----------------------------------------------------------------
 test_that("pairs2kaks() returns a data frame with Ka, Ks, and Ka/Ks", {
     
     kaks <- pairs2kaks(gene_pairs_list, cds)
+    kaks2 <- pairs2kaks(gene_pairs_list, cds2)
     
     expect_equal(class(kaks), "list")
     expect_equal(class(kaks[[1]]), "data.frame")
@@ -31,16 +37,21 @@ test_that("pairs2kaks() returns a data frame with Ka, Ks, and Ka/Ks", {
     expect_true("Ks" %in% names(kaks[[1]]))
     expect_true("Ka" %in% names(kaks[[1]]))
     expect_true("Ka_Ks" %in% names(kaks[[1]]))
+    expect_equal(class(kaks2), "list")
 })
+
 
 test_that("find_ks_peaks() returns a list of mean, sd, amplitudes, ks vals", {
     
-    peaks <- find_ks_peaks(ks, npeaks = 2)
-    
+    expect_message(
+        peaks <- find_ks_peaks(ks, npeaks = 1:2, verbose = TRUE)
+    )
+
     expect_equal(class(peaks), "list")
     expect_equal(names(peaks), c("mean", "sd", "lambda", "ks"))
     expect_equal(length(peaks$mean), 2)
 })
+
 
 test_that("plot_ks_peaks() returns a ggplot object", {
     
@@ -58,7 +69,12 @@ test_that("plot_ks_peaks() returns a ggplot object", {
 test_that("find_intersect_mixtures() returns a numeric scalar", {
     
     peaks <- find_ks_peaks(ks, npeaks = 2)
+    peak1 <- find_ks_peaks(ks, npeaks = 1)
     inters <- find_intersect_mixtures(peaks)
+    
+    expect_error(
+        find_intersect_mixtures(peak1)
+    )
     
     expect_equal(class(inters), "numeric")
     expect_equal(length(inters), 1)
@@ -68,12 +84,16 @@ test_that("split_pairs_by_peak() returns a list", {
     
     ks_df <- scerevisiae_kaks[, c("dup1", "dup2", "Ks")]
     peaks <- find_ks_peaks(ks_df$Ks, npeaks = 2)
+    peak1 <- find_ks_peaks(ks, npeaks = 1)
     
     spairs <- split_pairs_by_peak(ks_df, peaks) 
+    spairs1 <- split_pairs_by_peak(ks_df, peak1) 
     
+    expect_equal(class(spairs1), "list")
     expect_equal(class(spairs), "list")
     expect_equal(names(spairs), c("pairs", "plot"))
     expect_equal(class(spairs$pairs), "data.frame")
     expect_equal(ncol(spairs$pairs), 4)
     expect_true("ggplot" %in% class(spairs$plot))
+    
 })
