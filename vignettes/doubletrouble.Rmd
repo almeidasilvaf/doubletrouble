@@ -330,10 +330,10 @@ cds_list <- list(Scerevisiae = cds_scerevisiae)
 gene_pairs <- list(Scerevisiae = c_binary$Scerevisiae[1:5, ])
 
 # Calculate Ka, Ks, and Ka/Ks
-#kaks <- pairs2kaks(gene_pairs, cds_list)
+kaks <- pairs2kaks(gene_pairs, cds_list)
 
-# Inpsect the output
-#head(kaks)
+# Inspect the output
+head(kaks)
 ```
 
 
