@@ -50,7 +50,7 @@ Imports:
     GenomicRanges,
     Biostrings,
     mclust,
-    MSA2dist (>= 1.1.4),
+    MSA2dist (>= 1.1.5),
     ggplot2,
     stats,
     utils
