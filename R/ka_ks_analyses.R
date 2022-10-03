@@ -62,7 +62,7 @@ pairs2kaks <- function(gene_pairs_list, cds, model = "MYN", threads = 1) {
                 vals <- MSA2dist::dnastring2kaks(
                     cds_genes, model = "MYN", isMSA = FALSE, threads = threads
                 )
-                vals <- as.data.frame(t(vals))
+                vals <- as.data.frame(vals)
                 vals <- vals[, c("seq1", "seq2", "Ka", "Ks", "Ka/Ks")]
                 names(vals) <- c("dup1", "dup2", "Ka", "Ks", "Ka_Ks")
                 rownames(vals) <- NULL
