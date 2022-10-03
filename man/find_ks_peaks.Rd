@@ -2,7 +2,7 @@
 % Please edit documentation in R/ka_ks_analyses.R
 \name{find_ks_peaks}
 \alias{find_ks_peaks}
-\title{Find peaks in a Ks distribution by fitting Gaussian Mixture Models (GMMs)}
+\title{Find peaks in a Ks distribution with Gaussian Mixture Models}
 \usage{
 find_ks_peaks(ks, npeaks = 2, min_ks = 0.01, max_ks = 4, verbose = FALSE)
 }
@@ -38,7 +38,7 @@ arguments passed to min_ks and max_ks.}
 }
 }
 \description{
-Find peaks in a Ks distribution by fitting Gaussian Mixture Models (GMMs)
+Find peaks in a Ks distribution with Gaussian Mixture Models
 }
 \examples{
 data(scerevisiae_kaks)

@@ -153,7 +153,9 @@ collinearity2blocks <- function(collinearity_paths = NULL) {
         
         df <- NULL
         if(nlines > 0) {
-            df <- read.table(collinearity_paths[x], sep = "\t", comment.char = "#")
+            df <- read.table(
+                collinearity_paths[x], sep = "\t", comment.char = "#"
+            )
             df <- df[, c(1:3)]
             names(df)[2:3] <- c("anchor1", "anchor2")
             

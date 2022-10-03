@@ -83,7 +83,7 @@ pairs2kaks <- function(gene_pairs_list, cds, model = "MYN", threads = 1) {
 }
 
 
-#' Find peaks in a Ks distribution by fitting Gaussian Mixture Models (GMMs)
+#' Find peaks in a Ks distribution with Gaussian Mixture Models
 #'
 #' @param ks A numeric vector of Ks values.
 #' @param npeaks Numeric scalar indicating the number of peaks in 

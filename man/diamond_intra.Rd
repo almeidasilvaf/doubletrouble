@@ -3,7 +3,7 @@
 \docType{data}
 \name{diamond_intra}
 \alias{diamond_intra}
-\title{List of data frames containing intraspecies DIAMOND output for S. cerevisiae}
+\title{Intraspecies DIAMOND output for S. cerevisiae}
 \format{
 A list of data frames (length 1) containing the whole paranome of
 S. cerevisiae resulting from intragenome similarity searches.

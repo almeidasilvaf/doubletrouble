@@ -3,7 +3,7 @@
 \docType{data}
 \name{diamond_inter}
 \alias{diamond_inter}
-\title{List of data frames containing interspecies DIAMOND output for yeast species}
+\title{Interspecies DIAMOND output for yeast species}
 \format{
 A list of data frames (length 1) containing the output of a
 DIAMOND search of S. cerevisiae against C. glabrata (outgroup).

@@ -27,7 +27,7 @@
 "yeast_annot"
 
 
-#' List of data frames containing intraspecies DIAMOND output for S. cerevisiae
+#' Intraspecies DIAMOND output for S. cerevisiae
 #'
 #' List obtained with \code{run_diamond()}.
 #' 
@@ -40,7 +40,7 @@
 "diamond_intra"
 
 
-#' List of data frames containing interspecies DIAMOND output for yeast species
+#' Interspecies DIAMOND output for yeast species
 #' 
 #' This list contains a similarity search of S. cerevisiae against
 #' C. glabrata, and it was obtained with \code{run_diamond()}.
