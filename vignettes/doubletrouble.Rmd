@@ -45,9 +45,9 @@ gene pairs by age groups.
 # Installation
 
 ```{r install, eval = FALSE}
-if (!requireNamespace("BiocManager", quietly = TRUE)) {
-      install.packages("BiocManager")
-  }
+if(!requireNamespace("BiocManager", quietly = TRUE)) {
+    install.packages("BiocManager")
+}
 
 BiocManager::install("doubletrouble")
 

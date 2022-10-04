@@ -179,11 +179,13 @@ plot_ks_peaks <- function(peaks = NULL, binwidth = 0.05) {
     ks_df <- data.frame(ks = peaks$ks)
     
     # Define color palette
-    pal <- c("#6A6599FF", "#79AF97FF", "#B24745FF", "#00A1D5FF", 
-             "#DF8F44FF", "#374E55FF", "#F39B7FFF", "#3C5488FF")
+    pal <- c(
+        "#6A6599FF", "#79AF97FF", "#B24745FF", "#00A1D5FF", 
+        "#DF8F44FF", "#374E55FF", "#F39B7FFF", "#3C5488FF"
+    )
     
     pal <- as.list(rev(pal[seq_along(peaks$mean)]))
-
+    
     # Plot 
     p <- ggplot(ks_df, aes_(x = ~ks)) +
         geom_histogram(binwidth = binwidth, color = "black", fill = "grey80") +
