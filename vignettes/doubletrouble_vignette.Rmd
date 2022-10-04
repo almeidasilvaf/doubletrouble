@@ -44,7 +44,10 @@ gene pairs by age groups.
 
 # Installation
 
-```{r install, eval = FALSE}
+You can install `r BiocStyle::Githubpkg("doubletrouble")` from Bioconductor
+with the following code:
+
+```{r installation, eval = FALSE}
 if(!requireNamespace("BiocManager", quietly = TRUE)) {
     install.packages("BiocManager")
 }
