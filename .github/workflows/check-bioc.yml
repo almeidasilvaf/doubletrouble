@@ -256,7 +256,7 @@ jobs:
         
       - name: (Temporarily) Install correct version of BiocCheck
         run: |
-          remotes::install_github("Bioconductor/BiocCheck@v1.33.16")
+          remotes::install_github("Bioconductor/BiocCheck@0a217b4")
         shell: Rscript {0}
         
       - name: Run BiocCheck
