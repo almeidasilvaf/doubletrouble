@@ -253,11 +253,16 @@ jobs:
         run: |
           BiocGenerics:::testPackage()
         shell: Rscript {0}
-
+        
       - name: Run BiocCheck
         env:
           DISPLAY: 99.0
         run: |
+          .BAD_INSTALL_CALLS <- c(
+              "biocLite", "install.packages", "install_packages",
+              "update.packages", "install$"
+          )
+    
           BiocCheck::BiocCheck(
               package = ".",
               `quit-with-status` = TRUE,
