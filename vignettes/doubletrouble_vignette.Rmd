@@ -2,15 +2,13 @@
 title: "Identification and classification of duplicated genes"
 author: 
   - name: Fabricio Almeida-Silva
-    affiliation: 
-    - VIB-UGent Center for Plant Systems Biology, Ghent, Belgium
-    - Department of Plant Biotechnology and Bioinformatics, Ghent University, Ghent, Belgium
+    affiliation: |
+      VIB-UGent Center for Plant Systems Biology, Ghent University, 
+      Ghent, Belgium
   - name: Yves Van de Peer
-    affiliation: 
-    - VIB-UGent Center for Plant Systems Biology, Ghent, Belgium
-    - Department of Plant Biotechnology and Bioinformatics, Ghent University, Ghent, Belgium
-    - College of Horticulture, Academy for Advanced Interdisciplinary Studies, Nanjing Agricultural University, Nanjing, China
-    - Center for Microbial Ecology and Genomics, Department of Biochemistry, Genetics and Microbiology, University of Pretoria, Pretoria, South Africa
+    affiliation: |
+      VIB-UGent Center for Plant Systems Biology, Ghent University, 
+      Ghent, Belgium
 output: 
   BiocStyle::html_document:
     toc: true
@@ -26,7 +24,8 @@ vignette: >
 knitr::opts_chunk$set(
     collapse = TRUE,
     comment = "#>",
-    crop = NULL ## Related to https://stat.ethz.ch/pipermail/bioc-devel/2020-April/016656.html
+    crop = NULL,
+    eval = FALSE
 )
 ```
 

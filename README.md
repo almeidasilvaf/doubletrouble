@@ -8,7 +8,7 @@
 [![GitHub
 issues](https://img.shields.io/github/issues/almeidasilvaf/doubletrouble)](https://github.com/almeidasilvaf/doubletrouble/issues)
 [![Lifecycle:
-experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
+stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
 [![R-CMD-check-bioc](https://github.com/almeidasilvaf/doubletrouble/workflows/R-CMD-check-bioc/badge.svg)](https://github.com/almeidasilvaf/doubletrouble/actions)
 [![Codecov test
 coverage](https://codecov.io/gh/almeidasilvaf/doubletrouble/branch/master/graph/badge.svg)](https://codecov.io/gh/almeidasilvaf/doubletrouble?branch=master)
