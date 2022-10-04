@@ -44,16 +44,6 @@ gene pairs by age groups.
 
 # Installation
 
-```{r install, eval = FALSE}
-if(!requireNamespace("BiocManager", quietly = TRUE)) {
-    install.packages("BiocManager")
-}
-
-BiocManager::install("doubletrouble")
-
-## Check that you have a valid Bioconductor installation
-BiocManager::valid()
-```
 
 Then, you can load the package:
 
