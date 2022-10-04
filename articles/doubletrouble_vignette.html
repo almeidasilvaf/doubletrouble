@@ -84,19 +84,15 @@
                         <h4 data-toc-skip class="author">Fabricio
 Almeida-Silva</h4>
             <address class="author_afil">
-      VIB-UGent Center for Plant Systems Biology, Ghent,
-BelgiumDepartment of Plant Biotechnology and Bioinformatics, Ghent
-University, Ghent,
-Belgium<br><h4 data-toc-skip class="author">Yves
+      <p>VIB-UGent Center for Plant Systems Biology, Ghent University,
+Ghent,
+Belgium</p>
+<br><h4 data-toc-skip class="author">Yves
 Van de Peer</h4>
             <address class="author_afil">
-      VIB-UGent Center for Plant Systems Biology, Ghent,
-BelgiumDepartment of Plant Biotechnology and Bioinformatics, Ghent
-University, Ghent, BelgiumCollege of Horticulture, Academy for Advanced
-Interdisciplinary Studies, Nanjing Agricultural University, Nanjing,
-ChinaCenter for Microbial Ecology and Genomics, Department of
-Biochemistry, Genetics and Microbiology, University of Pretoria,
-Pretoria, South Africa<br><small class="dont-index">Source: <a href="https://github.com/almeidasilvaf/doubletrouble/blob/HEAD/vignettes/doubletrouble_vignette.Rmd" class="external-link"><code>vignettes/doubletrouble_vignette.Rmd</code></a></small>
+      <p>VIB-UGent Center for Plant Systems Biology, Ghent University,
+Ghent, Belgium</p>
+<br><small class="dont-index">Source: <a href="https://github.com/almeidasilvaf/doubletrouble/blob/HEAD/vignettes/doubletrouble_vignette.Rmd" class="external-link"><code>vignettes/doubletrouble_vignette.Rmd</code></a></small>
       <div class="d-none name"><code>doubletrouble_vignette.Rmd</code></div>
     </address>
 </address>
@@ -134,10 +130,7 @@ Bioconductor with the following code:</p>
 <span><span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/BiocManager/man/valid.html" class="external-link">valid</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p>Then, you can load the package:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/almeidasilvaf/doubletrouble" class="external-link">doubletrouble</a></span><span class="op">)</span></span>
-<span><span class="co">#&gt; Registered S3 method overwritten by 'labdsv':</span></span>
-<span><span class="co">#&gt;   method       from</span></span>
-<span><span class="co">#&gt;   summary.dist ade4</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/almeidasilvaf/doubletrouble" class="external-link">doubletrouble</a></span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="data-description">Data description<a class="anchor" aria-label="anchor" href="#data-description"></a>
@@ -157,36 +150,7 @@ objects with elements named <em>Scerevisiae</em> and
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Load list of DIAMOND tabular output</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">yeast_seq</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">yeast_seq</span><span class="op">)</span></span>
-<span><span class="co">#&gt; $Scerevisiae</span></span>
-<span><span class="co">#&gt; AAStringSet object of length 6600:</span></span>
-<span><span class="co">#&gt;        width seq                                            names               </span></span>
-<span><span class="co">#&gt;    [1]  4910 MSQDRILLDLDVVNQRLILFNS...SELPEMLSLILRQYFTDLASS YLR106C</span></span>
-<span><span class="co">#&gt;    [2]  4092 MCKNEARLANELIEFVAATVTG...NYERLQAKEVASSTEQLLQEM YKR054C</span></span>
-<span><span class="co">#&gt;    [3]  3744 MSLTEQIEQFASRFRDDDATLQ...IGSAVSPRNLARTDVNFMPWF YHR099W</span></span>
-<span><span class="co">#&gt;    [4]  3268 MVLFTRCEKARKEKLAAGYKPL...ETLRGSLLLAINEGHEGFGLA YDR457W</span></span>
-<span><span class="co">#&gt;    [5]  3144 MLESLAANLLNRLLGSYVENFD...SLYRNIAIAVREYNKYCEAIL YLL040C</span></span>
-<span><span class="co">#&gt;    ...   ... ...</span></span>
-<span><span class="co">#&gt; [6596]    25 MFSLSNSQYTCQDYISDHIWKTSSH                      YOR302W</span></span>
-<span><span class="co">#&gt; [6597]    25 MRAKWRKKRTRRLKRKRRKVRARSK                      YDL133C-A</span></span>
-<span><span class="co">#&gt; [6598]    24 MHSNNSRQILIPHQNENMFLTELY                       YDL247W-A</span></span>
-<span><span class="co">#&gt; [6599]    24 MLVLYRKRFSGFRFYFLSIFKYII                       YBR191W-A</span></span>
-<span><span class="co">#&gt; [6600]    16 MLSLIFYLRFPSYIRG                               YJR151W-A</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $Cglabrata</span></span>
-<span><span class="co">#&gt; AAStringSet object of length 5293:</span></span>
-<span><span class="co">#&gt;        width seq                                            names               </span></span>
-<span><span class="co">#&gt;    [1]  4880 MSIQSADTVVFDLDKAFQRRDE...VELPEMLALILRQYFSDLASQ CAGL0M11616g</span></span>
-<span><span class="co">#&gt;    [2]  4336 MYCIIRLCLLLLYMVRFAAAIV...ITFLGIKKCIILLIIVVVSIA CAGL0I10147g</span></span>
-<span><span class="co">#&gt;    [3]  4041 MVQRNIELARYITTLLIGVCPK...NDIESKVLDDTKQLLNSIEYV CAGL0K08294g</span></span>
-<span><span class="co">#&gt;    [4]  3743 MASADQISEYAEKLKDDQQSLA...ISASVNPRNLAKTDISFMPWF CAGL0A01914g</span></span>
-<span><span class="co">#&gt;    [5]  3247 MVKLTRFEKLQKEKNAEYFKPF...DTLRGSLLIAINEGHEGFGLA CAGL0K06303g</span></span>
-<span><span class="co">#&gt;    ...   ... ...</span></span>
-<span><span class="co">#&gt; [5289]    43 MLGAPISRDTPRKTRSKTQFFQGPIVSLITEKCTYEWGNPSIN    CAGL0M02541g</span></span>
-<span><span class="co">#&gt; [5290]    39 MLPGGPIVVLILVGLAACIIVATIIYRKWQERQRALARF        CAGL0M03305g</span></span>
-<span><span class="co">#&gt; [5291]    39 MLPGGVILVFILVGLAACAIVAVIIYRKWQERQRSLQRF        CAGL0L08008g</span></span>
-<span><span class="co">#&gt; [5292]    37 MINEGQLQTLVIGFGLAMVVLVVVYHAVASTMAVKRD          CAGL0C05461g</span></span>
-<span><span class="co">#&gt; [5293]    34 MQPTIEATQKDNTQEKRDNYIVKGFFWSPDCVIA             CAGL0C01919g</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">yeast_seq</span><span class="op">)</span></span></code></pre></div>
 <ul>
 <li>
 <strong>yeast_annot:</strong> A <code>GRangesList</code> object with
@@ -195,43 +159,7 @@ elements named <em>Scerevisiae</em> and <em>Cglabrata</em>.</li>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Load annotation list processed with syntenet::process_input()</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">yeast_annot</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">yeast_annot</span><span class="op">)</span></span>
-<span><span class="co">#&gt; GRangesList object of length 2:</span></span>
-<span><span class="co">#&gt; $Scerevisiae</span></span>
-<span><span class="co">#&gt; GRanges object with 6600 ranges and 2 metadata columns:</span></span>
-<span><span class="co">#&gt;          seqnames        ranges strand |     type     gene_id</span></span>
-<span><span class="co">#&gt;             &lt;Rle&gt;     &lt;IRanges&gt;  &lt;Rle&gt; | &lt;factor&gt; &lt;character&gt;</span></span>
-<span><span class="co">#&gt;      [1]        I       335-649      + |     gene     YAL069W</span></span>
-<span><span class="co">#&gt;      [2]        I       538-792      + |     gene   YAL068W-A</span></span>
-<span><span class="co">#&gt;      [3]        I     1807-2169      - |     gene     YAL068C</span></span>
-<span><span class="co">#&gt;      [4]        I     2480-2707      + |     gene   YAL067W-A</span></span>
-<span><span class="co">#&gt;      [5]        I     7235-9016      - |     gene     YAL067C</span></span>
-<span><span class="co">#&gt;      ...      ...           ...    ... .      ...         ...</span></span>
-<span><span class="co">#&gt;   [6596]      XVI 939922-941136      + |     gene     YPR201W</span></span>
-<span><span class="co">#&gt;   [6597]      XVI 943032-943896      + |     gene     YPR202W</span></span>
-<span><span class="co">#&gt;   [6598]      XVI 943880-944188      + |     gene     YPR203W</span></span>
-<span><span class="co">#&gt;   [6599]      XVI 944603-947701      + |     gene     YPR204W</span></span>
-<span><span class="co">#&gt;   [6600]      XVI 946856-947338      - |     gene   YPR204C-A</span></span>
-<span><span class="co">#&gt;   -------</span></span>
-<span><span class="co">#&gt;   seqinfo: 31 sequences from an unspecified genome; no seqlengths</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $Cglabrata</span></span>
-<span><span class="co">#&gt; GRanges object with 5293 ranges and 2 metadata columns:</span></span>
-<span><span class="co">#&gt;                        seqnames      ranges strand |     type      gene_id</span></span>
-<span><span class="co">#&gt;                           &lt;Rle&gt;   &lt;IRanges&gt;  &lt;Rle&gt; | &lt;factor&gt;  &lt;character&gt;</span></span>
-<span><span class="co">#&gt;      [1] ChrA_C_glabrata_CBS138   1608-2636      - |     gene CAGL0A00105g</span></span>
-<span><span class="co">#&gt;      [2] ChrA_C_glabrata_CBS138   2671-4809      - |     gene CAGL0A00116g</span></span>
-<span><span class="co">#&gt;      [3] ChrA_C_glabrata_CBS138 11697-13042      + |     gene CAGL0A00132g</span></span>
-<span><span class="co">#&gt;      [4] ChrA_C_glabrata_CBS138 14977-15886      + |     gene CAGL0A00154g</span></span>
-<span><span class="co">#&gt;      [5] ChrA_C_glabrata_CBS138 17913-19017      - |     gene CAGL0A00165g</span></span>
-<span><span class="co">#&gt;      ...                    ...         ...    ... .      ...          ...</span></span>
-<span><span class="co">#&gt;   [5289] mito_C_glabrata_CBS138 13275-13421      + |     gene    CaglfMp08</span></span>
-<span><span class="co">#&gt;   [5290] mito_C_glabrata_CBS138 13614-14396      + |     gene    CaglfMp09</span></span>
-<span><span class="co">#&gt;   [5291] mito_C_glabrata_CBS138 14631-14861      + |     gene    CaglfMp10</span></span>
-<span><span class="co">#&gt;   [5292] mito_C_glabrata_CBS138 15384-16067      + |     gene    CaglfMp11</span></span>
-<span><span class="co">#&gt;   [5293] mito_C_glabrata_CBS138 16756-17565      + |     gene    CaglfMp12</span></span>
-<span><span class="co">#&gt;   -------</span></span>
-<span><span class="co">#&gt;   seqinfo: 31 sequences from an unspecified genome; no seqlengths</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">yeast_annot</span><span class="op">)</span></span></code></pre></div>
 <p>Our goal here is to identify and classify duplicated genes in the
 <em>S. cerevisiae</em> genome. The <em>C. glabrata</em> genome will be
 used as an outgroup to identify transposed duplicates later in this
@@ -253,73 +181,8 @@ package.</p>
 <span></span>
 <span><span class="co"># Inspect the output</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">pdata</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "seq"        "annotation"</span></span>
 <span><span class="va">pdata</span><span class="op">$</span><span class="va">seq</span></span>
-<span><span class="co">#&gt; $Scerevisiae</span></span>
-<span><span class="co">#&gt; AAStringSet object of length 6600:</span></span>
-<span><span class="co">#&gt;        width seq                                            names               </span></span>
-<span><span class="co">#&gt;    [1]  4910 MSQDRILLDLDVVNQRLILFNS...SELPEMLSLILRQYFTDLASS Sce_YLR106C</span></span>
-<span><span class="co">#&gt;    [2]  4092 MCKNEARLANELIEFVAATVTG...NYERLQAKEVASSTEQLLQEM Sce_YKR054C</span></span>
-<span><span class="co">#&gt;    [3]  3744 MSLTEQIEQFASRFRDDDATLQ...IGSAVSPRNLARTDVNFMPWF Sce_YHR099W</span></span>
-<span><span class="co">#&gt;    [4]  3268 MVLFTRCEKARKEKLAAGYKPL...ETLRGSLLLAINEGHEGFGLA Sce_YDR457W</span></span>
-<span><span class="co">#&gt;    [5]  3144 MLESLAANLLNRLLGSYVENFD...SLYRNIAIAVREYNKYCEAIL Sce_YLL040C</span></span>
-<span><span class="co">#&gt;    ...   ... ...</span></span>
-<span><span class="co">#&gt; [6596]    25 MFSLSNSQYTCQDYISDHIWKTSSH                      Sce_YOR302W</span></span>
-<span><span class="co">#&gt; [6597]    25 MRAKWRKKRTRRLKRKRRKVRARSK                      Sce_YDL133C-A</span></span>
-<span><span class="co">#&gt; [6598]    24 MHSNNSRQILIPHQNENMFLTELY                       Sce_YDL247W-A</span></span>
-<span><span class="co">#&gt; [6599]    24 MLVLYRKRFSGFRFYFLSIFKYII                       Sce_YBR191W-A</span></span>
-<span><span class="co">#&gt; [6600]    16 MLSLIFYLRFPSYIRG                               Sce_YJR151W-A</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $Cglabrata</span></span>
-<span><span class="co">#&gt; AAStringSet object of length 5293:</span></span>
-<span><span class="co">#&gt;        width seq                                            names               </span></span>
-<span><span class="co">#&gt;    [1]  4880 MSIQSADTVVFDLDKAFQRRDE...VELPEMLALILRQYFSDLASQ Cgl_CAGL0M11616g</span></span>
-<span><span class="co">#&gt;    [2]  4336 MYCIIRLCLLLLYMVRFAAAIV...ITFLGIKKCIILLIIVVVSIA Cgl_CAGL0I10147g</span></span>
-<span><span class="co">#&gt;    [3]  4041 MVQRNIELARYITTLLIGVCPK...NDIESKVLDDTKQLLNSIEYV Cgl_CAGL0K08294g</span></span>
-<span><span class="co">#&gt;    [4]  3743 MASADQISEYAEKLKDDQQSLA...ISASVNPRNLAKTDISFMPWF Cgl_CAGL0A01914g</span></span>
-<span><span class="co">#&gt;    [5]  3247 MVKLTRFEKLQKEKNAEYFKPF...DTLRGSLLIAINEGHEGFGLA Cgl_CAGL0K06303g</span></span>
-<span><span class="co">#&gt;    ...   ... ...</span></span>
-<span><span class="co">#&gt; [5289]    43 MLGAPISRDTPRKTRSKTQFFQGPIVSLITEKCTYEWGNPSIN    Cgl_CAGL0M02541g</span></span>
-<span><span class="co">#&gt; [5290]    39 MLPGGPIVVLILVGLAACIIVATIIYRKWQERQRALARF        Cgl_CAGL0M03305g</span></span>
-<span><span class="co">#&gt; [5291]    39 MLPGGVILVFILVGLAACAIVAVIIYRKWQERQRSLQRF        Cgl_CAGL0L08008g</span></span>
-<span><span class="co">#&gt; [5292]    37 MINEGQLQTLVIGFGLAMVVLVVVYHAVASTMAVKRD          Cgl_CAGL0C05461g</span></span>
-<span><span class="co">#&gt; [5293]    34 MQPTIEATQKDNTQEKRDNYIVKGFFWSPDCVIA             Cgl_CAGL0C01919g</span></span>
-<span><span class="va">pdata</span><span class="op">$</span><span class="va">annotation</span></span>
-<span><span class="co">#&gt; $Scerevisiae</span></span>
-<span><span class="co">#&gt; GRanges object with 6600 ranges and 1 metadata column:</span></span>
-<span><span class="co">#&gt;          seqnames        ranges strand |          gene</span></span>
-<span><span class="co">#&gt;             &lt;Rle&gt;     &lt;IRanges&gt;  &lt;Rle&gt; |   &lt;character&gt;</span></span>
-<span><span class="co">#&gt;      [1]    Sce_I       335-649      * |   Sce_YAL069W</span></span>
-<span><span class="co">#&gt;      [2]    Sce_I       538-792      * | Sce_YAL068W-A</span></span>
-<span><span class="co">#&gt;      [3]    Sce_I     1807-2169      * |   Sce_YAL068C</span></span>
-<span><span class="co">#&gt;      [4]    Sce_I     2480-2707      * | Sce_YAL067W-A</span></span>
-<span><span class="co">#&gt;      [5]    Sce_I     7235-9016      * |   Sce_YAL067C</span></span>
-<span><span class="co">#&gt;      ...      ...           ...    ... .           ...</span></span>
-<span><span class="co">#&gt;   [6596]  Sce_XVI 939922-941136      * |   Sce_YPR201W</span></span>
-<span><span class="co">#&gt;   [6597]  Sce_XVI 943032-943896      * |   Sce_YPR202W</span></span>
-<span><span class="co">#&gt;   [6598]  Sce_XVI 943880-944188      * |   Sce_YPR203W</span></span>
-<span><span class="co">#&gt;   [6599]  Sce_XVI 944603-947701      * |   Sce_YPR204W</span></span>
-<span><span class="co">#&gt;   [6600]  Sce_XVI 946856-947338      * | Sce_YPR204C-A</span></span>
-<span><span class="co">#&gt;   -------</span></span>
-<span><span class="co">#&gt;   seqinfo: 17 sequences from an unspecified genome; no seqlengths</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $Cglabrata</span></span>
-<span><span class="co">#&gt; GRanges object with 5293 ranges and 1 metadata column:</span></span>
-<span><span class="co">#&gt;                        seqnames      ranges strand |             gene</span></span>
-<span><span class="co">#&gt;                           &lt;Rle&gt;   &lt;IRanges&gt;  &lt;Rle&gt; |      &lt;character&gt;</span></span>
-<span><span class="co">#&gt;      [1] Cgl_ChrA_C_glabrata_..   1608-2636      * | Cgl_CAGL0A00105g</span></span>
-<span><span class="co">#&gt;      [2] Cgl_ChrA_C_glabrata_..   2671-4809      * | Cgl_CAGL0A00116g</span></span>
-<span><span class="co">#&gt;      [3] Cgl_ChrA_C_glabrata_.. 11697-13042      * | Cgl_CAGL0A00132g</span></span>
-<span><span class="co">#&gt;      [4] Cgl_ChrA_C_glabrata_.. 14977-15886      * | Cgl_CAGL0A00154g</span></span>
-<span><span class="co">#&gt;      [5] Cgl_ChrA_C_glabrata_.. 17913-19017      * | Cgl_CAGL0A00165g</span></span>
-<span><span class="co">#&gt;      ...                    ...         ...    ... .              ...</span></span>
-<span><span class="co">#&gt;   [5289] Cgl_mito_C_glabrata_.. 13275-13421      * |    Cgl_CaglfMp08</span></span>
-<span><span class="co">#&gt;   [5290] Cgl_mito_C_glabrata_.. 13614-14396      * |    Cgl_CaglfMp09</span></span>
-<span><span class="co">#&gt;   [5291] Cgl_mito_C_glabrata_.. 14631-14861      * |    Cgl_CaglfMp10</span></span>
-<span><span class="co">#&gt;   [5292] Cgl_mito_C_glabrata_.. 15384-16067      * |    Cgl_CaglfMp11</span></span>
-<span><span class="co">#&gt;   [5293] Cgl_mito_C_glabrata_.. 16756-17565      * |    Cgl_CaglfMp12</span></span>
-<span><span class="co">#&gt;   -------</span></span>
-<span><span class="co">#&gt;   seqinfo: 14 sequences from an unspecified genome; no seqlengths</span></span></code></pre></div>
+<span><span class="va">pdata</span><span class="op">$</span><span class="va">annotation</span></span></code></pre></div>
 <p>The processed data is represented as a list with the elements
 <code>seq</code> and <code>annotation</code>, each containing the
 protein sequences and gene ranges for each species, respectively.</p>
@@ -348,22 +211,7 @@ comparisons.</p>
 <span></span>
 <span><span class="co"># Inspect output</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">diamond_intra</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "Scerevisiae_Scerevisiae"</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">diamond_intra</span><span class="op">$</span><span class="va">Scerevisiae_Scerevisiae</span><span class="op">)</span></span>
-<span><span class="co">#&gt;         query          db perc_identity length mismatches gap_open qstart qend</span></span>
-<span><span class="co">#&gt; 1 Sce_YLR106C Sce_YLR106C         100.0   4910          0        0      1 4910</span></span>
-<span><span class="co">#&gt; 2 Sce_YLR106C Sce_YKR054C          22.4    420        254       19    804 1195</span></span>
-<span><span class="co">#&gt; 3 Sce_YKR054C Sce_YKR054C         100.0   4092          0        0      1 4092</span></span>
-<span><span class="co">#&gt; 4 Sce_YKR054C Sce_YLR106C          22.4    420        254       19   1823 2198</span></span>
-<span><span class="co">#&gt; 5 Sce_YHR099W Sce_YHR099W         100.0   3744          0        0      1 3744</span></span>
-<span><span class="co">#&gt; 6 Sce_YHR099W Sce_YJR066W          22.7    339        201       12   3351 3674</span></span>
-<span><span class="co">#&gt;   tstart tend   evalue bitscore</span></span>
-<span><span class="co">#&gt; 1      1 4910 0.00e+00   9095.0</span></span>
-<span><span class="co">#&gt; 2   1823 2198 1.30e-06     53.1</span></span>
-<span><span class="co">#&gt; 3      1 4092 0.00e+00   7940.0</span></span>
-<span><span class="co">#&gt; 4    804 1195 1.09e-06     53.1</span></span>
-<span><span class="co">#&gt; 5      1 3744 0.00e+00   7334.0</span></span>
-<span><span class="co">#&gt; 6   2074 2366 6.46e-08     57.0</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">diamond_intra</span><span class="op">$</span><span class="va">Scerevisiae_Scerevisiae</span><span class="op">)</span></span></code></pre></div>
 <p>And voilà! Now that we have the DIAMOND output and the processed
 annotation, you can classify the duplicated genes.</p>
 </div>
@@ -414,21 +262,10 @@ See Section @ref(full) for details.&lt;/p&gt;"><sup>2</sup></a>
 <span></span>
 <span><span class="co"># Inspecting the output</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">c_binary</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "Scerevisiae"</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">c_binary</span><span class="op">$</span><span class="va">Scerevisiae</span><span class="op">)</span></span>
-<span><span class="co">#&gt;          dup1        dup2 type</span></span>
-<span><span class="co">#&gt; 1 Sce_YGR032W Sce_YLR342W  WGD</span></span>
-<span><span class="co">#&gt; 2 Sce_YOR396W Sce_YPL283C  WGD</span></span>
-<span><span class="co">#&gt; 3 Sce_YJL225C Sce_YIL177C  WGD</span></span>
-<span><span class="co">#&gt; 4 Sce_YNR031C Sce_YCR073C  WGD</span></span>
-<span><span class="co">#&gt; 5 Sce_YOR326W Sce_YAL029C  WGD</span></span>
-<span><span class="co">#&gt; 6 Sce_YJL222W Sce_YIL173W  WGD</span></span>
 <span></span>
 <span><span class="co"># How many pairs are there for each duplication mode?</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">c_binary</span><span class="op">$</span><span class="va">Scerevisiae</span><span class="op">$</span><span class="va">type</span><span class="op">)</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  SSD  WGD </span></span>
-<span><span class="co">#&gt; 3246  342</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">c_binary</span><span class="op">$</span><span class="va">Scerevisiae</span><span class="op">$</span><span class="va">type</span><span class="op">)</span></span></code></pre></div>
 <p>The function returns a list of data frames, each containing the
 duplicated gene pairs and their modes of duplication for each
 species.</p>
@@ -449,21 +286,10 @@ use <code>binary = FALSE</code> in
 <span></span>
 <span><span class="co"># Inspecting the output</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">c_expanded</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "Scerevisiae"</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">c_expanded</span><span class="op">$</span><span class="va">Scerevisiae</span><span class="op">)</span></span>
-<span><span class="co">#&gt;          dup1        dup2 type</span></span>
-<span><span class="co">#&gt; 1 Sce_YGR032W Sce_YLR342W  WGD</span></span>
-<span><span class="co">#&gt; 2 Sce_YOR396W Sce_YPL283C  WGD</span></span>
-<span><span class="co">#&gt; 3 Sce_YJL225C Sce_YIL177C  WGD</span></span>
-<span><span class="co">#&gt; 4 Sce_YNR031C Sce_YCR073C  WGD</span></span>
-<span><span class="co">#&gt; 5 Sce_YOR326W Sce_YAL029C  WGD</span></span>
-<span><span class="co">#&gt; 6 Sce_YJL222W Sce_YIL173W  WGD</span></span>
 <span></span>
 <span><span class="co"># How many pairs are there for each duplication mode?</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">c_expanded</span><span class="op">$</span><span class="va">Scerevisiae</span><span class="op">$</span><span class="va">type</span><span class="op">)</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;   DD   PD   TD  WGD </span></span>
-<span><span class="co">#&gt; 3124   80   42  342</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">c_expanded</span><span class="op">$</span><span class="va">Scerevisiae</span><span class="op">$</span><span class="va">type</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="full">Full classification (SSD → TD, PD, TRD, DD)<a class="anchor" aria-label="anchor" href="#full"></a>
@@ -486,8 +312,6 @@ cerevisiae</em> using <em>Candida glabrata</em> as an outgroup.</p>
 <span>    outgroup <span class="op">=</span> <span class="st">"Cglabrata"</span></span>
 <span><span class="op">)</span></span>
 <span><span class="va">comparisons</span></span>
-<span><span class="co">#&gt;       species  outgroup</span></span>
-<span><span class="co">#&gt; 1 Scerevisiae Cglabrata</span></span>
 <span></span>
 <span><span class="co"># Run DIAMOND for the comparison we specified</span></span>
 <span><span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/syntenet/man/diamond_is_installed.html" class="external-link">diamond_is_installed</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
@@ -500,22 +324,7 @@ cerevisiae</em> using <em>Candida glabrata</em> as an outgroup.</p>
 <span><span class="op">}</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">diamond_inter</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "Scerevisiae_Cglabrata"</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">diamond_inter</span><span class="op">$</span><span class="va">Scerevisiae_Cglabrata</span><span class="op">)</span></span>
-<span><span class="co">#&gt;         query               db perc_identity length mismatches gap_open qstart</span></span>
-<span><span class="co">#&gt; 1 Sce_YLR106C Cgl_CAGL0M11616g          52.3   4989       2183       50      2</span></span>
-<span><span class="co">#&gt; 2 Sce_YLR106C Cgl_CAGL0K08294g          23.1    347        215       12   1064</span></span>
-<span><span class="co">#&gt; 3 Sce_YKR054C Cgl_CAGL0K08294g          26.5   4114       2753       81     83</span></span>
-<span><span class="co">#&gt; 4 Sce_YKR054C Cgl_CAGL0M11616g          22.7    419        254       17   1823</span></span>
-<span><span class="co">#&gt; 5 Sce_YHR099W Cgl_CAGL0A01914g          70.2   3761       1087       17      1</span></span>
-<span><span class="co">#&gt; 6 Sce_YDR457W Cgl_CAGL0K06303g          55.5   3318       1355       39      1</span></span>
-<span><span class="co">#&gt;   qend tstart tend   evalue bitscore</span></span>
-<span><span class="co">#&gt; 1 4909      5 4879 0.00e+00   4439.0</span></span>
-<span><span class="co">#&gt; 2 1389   1770 2085 9.10e-07     53.5</span></span>
-<span><span class="co">#&gt; 3 4089     87 4035 0.00e+00   1376.0</span></span>
-<span><span class="co">#&gt; 4 2198    803 1194 7.59e-07     53.5</span></span>
-<span><span class="co">#&gt; 5 3744      1 3743 0.00e+00   5200.0</span></span>
-<span><span class="co">#&gt; 6 3268      1 3247 0.00e+00   3302.0</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">diamond_inter</span><span class="op">$</span><span class="va">Scerevisiae_Cglabrata</span><span class="op">)</span></span></code></pre></div>
 <p>Now, we will pass this interspecies DIAMOND output as an argument to
 the parameter <code>blast_inter</code> of
 <code><a href="../reference/classify_gene_pairs.html">classify_gene_pairs()</a></code>.</p>
@@ -530,21 +339,10 @@ the parameter <code>blast_inter</code> of
 <span></span>
 <span><span class="co"># Inspecting the output</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">c_full</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "Scerevisiae"</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">c_full</span><span class="op">$</span><span class="va">Scerevisiae</span><span class="op">)</span></span>
-<span><span class="co">#&gt;          dup1        dup2 type</span></span>
-<span><span class="co">#&gt; 1 Sce_YGR032W Sce_YLR342W  WGD</span></span>
-<span><span class="co">#&gt; 2 Sce_YOR396W Sce_YPL283C  WGD</span></span>
-<span><span class="co">#&gt; 3 Sce_YJL225C Sce_YIL177C  WGD</span></span>
-<span><span class="co">#&gt; 4 Sce_YNR031C Sce_YCR073C  WGD</span></span>
-<span><span class="co">#&gt; 5 Sce_YOR326W Sce_YAL029C  WGD</span></span>
-<span><span class="co">#&gt; 6 Sce_YJL222W Sce_YIL173W  WGD</span></span>
 <span></span>
 <span><span class="co"># How many pairs are there for each duplication mode?</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">c_full</span><span class="op">$</span><span class="va">Scerevisiae</span><span class="op">$</span><span class="va">type</span><span class="op">)</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;   DD   PD   TD  TRD  WGD </span></span>
-<span><span class="co">#&gt; 3121   80   42    3  342</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">c_full</span><span class="op">$</span><span class="va">Scerevisiae</span><span class="op">$</span><span class="va">type</span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -572,21 +370,10 @@ returned by <code><a href="../reference/classify_gene_pairs.html">classify_gene_
 <span></span>
 <span><span class="co"># Inspecting the output</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">c_genes</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "Scerevisiae"</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">c_genes</span><span class="op">$</span><span class="va">Scerevisiae</span><span class="op">)</span></span>
-<span><span class="co">#&gt;             gene type</span></span>
-<span><span class="co">#&gt; 2360 Sce_YGR032W  WGD</span></span>
-<span><span class="co">#&gt; 2361 Sce_YOR396W  WGD</span></span>
-<span><span class="co">#&gt; 2362 Sce_YJL225C  WGD</span></span>
-<span><span class="co">#&gt; 2363 Sce_YNR031C  WGD</span></span>
-<span><span class="co">#&gt; 2364 Sce_YOR326W  WGD</span></span>
-<span><span class="co">#&gt; 2365 Sce_YJL222W  WGD</span></span>
 <span></span>
 <span><span class="co"># Number of genes per mode</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">c_genes</span><span class="op">$</span><span class="va">Scerevisiae</span><span class="op">$</span><span class="va">type</span><span class="op">)</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;   DD   PD   TD  TRD  WGD </span></span>
-<span><span class="co">#&gt; 1784   70   67    6  683</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">c_genes</span><span class="op">$</span><span class="va">Scerevisiae</span><span class="op">$</span><span class="va">type</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="calculating-ka-ks-and-kaks-for-duplicated-gene-pairs">Calculating Ka, Ks, and Ka/Ks for duplicated gene pairs<a class="anchor" aria-label="anchor" href="#calculating-ka-ks-and-kaks-for-duplicated-gene-pairs"></a>
@@ -603,14 +390,6 @@ obtained from Ensembl Fungi <span class="citation">(Yates et al.
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">cds_scerevisiae</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">cds_scerevisiae</span><span class="op">)</span></span>
-<span><span class="co">#&gt; DNAStringSet object of length 6:</span></span>
-<span><span class="co">#&gt;     width seq                                               names               </span></span>
-<span><span class="co">#&gt; [1]  5688 <span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFAF;">CC</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFAFAF;">AA</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFAF;">CC</span><span style="color: #000000; background-color: #FFAFAF;">AAA</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFD7AF;">TT</span>...<span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFAF;">CC</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFAFAF;">AAA</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span> YGR032W</span></span>
-<span><span class="co">#&gt; [2]  5631 <span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">AA</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFAFAF;">AA</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFAFAF;">AA</span><span style="color: #000000; background-color: #AFFFAF;">CC</span><span style="color: #000000; background-color: #FFD7AF;">TT</span><span style="color: #000000; background-color: #FFAFAF;">A</span>...<span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFAF;">CC</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFAFAF;">AA</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #FFAFAF;">AAAA</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #FFAFAF;">AA</span> YLR342W</span></span>
-<span><span class="co">#&gt; [3]  5580 <span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #FFAFAF;">AAA</span><span style="color: #000000; background-color: #FFD7AF;">TT</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">AAAA</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">AA</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #FFD7AF;">T</span>...<span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">AA</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFD7AF;">TT</span><span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span> YPL283C</span></span>
-<span><span class="co">#&gt; [4]  5391 <span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">AAA</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFD7AF;">TTT</span><span style="color: #000000; background-color: #AFFFAF;">CC</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #FFAFAF;">AA</span>...<span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">AA</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFD7AF;">TT</span><span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span> YOR396W</span></span>
-<span><span class="co">#&gt; [5]  5277 <span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">AAA</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFD7AF;">TTT</span><span style="color: #000000; background-color: #AFFFAF;">CC</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #FFAFAF;">AA</span>...<span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">AA</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFD7AF;">TT</span><span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span> YJL225C</span></span>
-<span><span class="co">#&gt; [6]  5277 <span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">AAA</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFD7AF;">TTT</span><span style="color: #000000; background-color: #AFFFAF;">CC</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #FFAFAF;">AA</span>...<span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">AA</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFD7AF;">TT</span><span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span> YIL177C</span></span>
 <span></span>
 <span><span class="co"># Store DNAStringSet object in a list</span></span>
 <span><span class="va">cds_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>Scerevisiae <span class="op">=</span> <span class="va">cds_scerevisiae</span><span class="op">)</span></span>
@@ -622,14 +401,7 @@ obtained from Ensembl Fungi <span class="citation">(Yates et al.
 <span><span class="va">kaks</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/pairs2kaks.html">pairs2kaks</a></span><span class="op">(</span><span class="va">gene_pairs</span>, <span class="va">cds_list</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Inspect the output</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">kaks</span><span class="op">)</span></span>
-<span><span class="co">#&gt; $Scerevisiae</span></span>
-<span><span class="co">#&gt;      dup1    dup2          Ka         Ks     Ka_Ks type</span></span>
-<span><span class="co">#&gt; 1 YGR032W YLR342W 0.058810200 5.23576000 0.0112324  WGD</span></span>
-<span><span class="co">#&gt; 2 YOR396W YPL283C 0.004007600 0.00991618 0.4041470  WGD</span></span>
-<span><span class="co">#&gt; 3 YJL225C YIL177C 0.000253203 0.00075777 0.3341420  WGD</span></span>
-<span><span class="co">#&gt; 4 YNR031C YCR073C 0.364041000 5.07223000 0.0717714  WGD</span></span>
-<span><span class="co">#&gt; 5 YOR326W YAL029C 0.395973000 5.15058000 0.0768793  WGD</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">kaks</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="identifying-and-visualizing-ks-peaks">Identifying and visualizing Ks peaks<a class="anchor" aria-label="anchor" href="#identifying-and-visualizing-ks-peaks"></a>
@@ -661,20 +433,12 @@ distribution.</p>
 <code class="sourceCode R"><span><span class="co"># Load data and inspect it</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">gmax_ks</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">gmax_ks</span><span class="op">)</span></span>
-<span><span class="co">#&gt;               dup1            dup2        Ks</span></span>
-<span><span class="co">#&gt; 1  GLYMA_01G000100 GLYMA_15G276800 0.3749860</span></span>
-<span><span class="co">#&gt; 3  GLYMA_01G000400 GLYMA_02G312300 0.0452761</span></span>
-<span><span class="co">#&gt; 8  GLYMA_01G000600 GLYMA_14G000400 0.1040900</span></span>
-<span><span class="co">#&gt; 10 GLYMA_01G000800 GLYMA_03G188200 0.4732800</span></span>
-<span><span class="co">#&gt; 11 GLYMA_01G000800 GLYMA_05G115300 1.2292300</span></span>
-<span><span class="co">#&gt; 12 GLYMA_01G000800 GLYMA_17G191100 1.6607100</span></span>
 <span></span>
 <span><span class="co"># Plot distribution</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">gmax_ks</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">Ks</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_histogram.html" class="external-link">geom_histogram</a></span><span class="op">(</span>color <span class="op">=</span> <span class="st">"black"</span>, fill <span class="op">=</span> <span class="st">"grey90"</span>, bins <span class="op">=</span> <span class="fl">50</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p><img src="doubletrouble_vignette_files/figure-html/ks_eda-1.png" width="700"></p>
 <p>By visual inspection, we can see 2 or 3 peaks. Based on our prior
 knowledge, we know that 2 WGD events have occurred in the ancestral of
 the <em>Glycine</em> genus and in the ancestral of all Fabaceae, which
@@ -685,28 +449,11 @@ number of peaks has more support: 2 or 3.</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Find 2 and 3 peaks and test which one has more support</span></span>
 <span><span class="va">peaks</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/find_ks_peaks.html">find_ks_peaks</a></span><span class="op">(</span><span class="va">gmax_ks</span><span class="op">$</span><span class="va">Ks</span>, npeaks <span class="op">=</span> <span class="fl">2</span><span class="op">:</span><span class="fl">3</span>, verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Optimal number of peaks: 3</span></span>
-<span><span class="co">#&gt; Bayesian Information Criterion (BIC): </span></span>
-<span><span class="co">#&gt;           E         V</span></span>
-<span><span class="co">#&gt; 2 -86950.25 -67759.65</span></span>
-<span><span class="co">#&gt; 3 -86977.46 -54202.76</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Top 3 models based on the BIC criterion: </span></span>
-<span><span class="co">#&gt;       V,3       V,2       E,2 </span></span>
-<span><span class="co">#&gt; -54202.76 -67759.65 -86950.25</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">peaks</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "mean"   "sd"     "lambda" "ks"</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">peaks</span><span class="op">)</span></span>
-<span><span class="co">#&gt; List of 4</span></span>
-<span><span class="co">#&gt;  $ mean  : Named num [1:3] 0.118 0.531 1.482</span></span>
-<span><span class="co">#&gt;   ..- attr(*, "names")= chr [1:3] "1" "2" "3"</span></span>
-<span><span class="co">#&gt;  $ sd    : num [1:3] 0.0549 0.2443 0.3132</span></span>
-<span><span class="co">#&gt;  $ lambda: num [1:3] 0.352 0.433 0.215</span></span>
-<span><span class="co">#&gt;  $ ks    : num [1:71231] 0.375 0.0453 0.1041 0.4733 1.2292 ...</span></span>
 <span></span>
 <span><span class="co"># Visualize Ks distribution</span></span>
 <span><span class="fu"><a href="../reference/plot_ks_peaks.html">plot_ks_peaks</a></span><span class="op">(</span><span class="va">peaks</span><span class="op">)</span></span></code></pre></div>
-<p><img src="doubletrouble_vignette_files/figure-html/find_ks_peaks-1.png" width="700"></p>
 <p>As we can see, the presence of 3 peaks is more supported (lowest
 BIC). The function returns a list with the mean, variance and amplitude
 of mixture components (i.e., peaks), as well as the Ks distribution
@@ -718,7 +465,6 @@ are.</p>
 <code class="sourceCode R"><span><span class="co"># Find 2 peaks ignoring Ks values &gt; 1</span></span>
 <span><span class="va">peaks</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/find_ks_peaks.html">find_ks_peaks</a></span><span class="op">(</span><span class="va">gmax_ks</span><span class="op">$</span><span class="va">Ks</span>, npeaks <span class="op">=</span> <span class="fl">2</span>, max_ks <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/plot_ks_peaks.html">plot_ks_peaks</a></span><span class="op">(</span><span class="va">peaks</span><span class="op">)</span></span></code></pre></div>
-<p><img src="doubletrouble_vignette_files/figure-html/find_peaks_explicit-1.png" width="700"></p>
 <p><strong>Important consideration on GMMs and Ks
 distributions:</strong> Peaks identified with GMMs should not be blindly
 regarded as “the truth”. Using GMMs to find peaks in Ks distributions
@@ -743,9 +489,7 @@ to assess the significance of the 2 peaks we found previously.</p>
 <span><span class="va">ks</span> <span class="op">&lt;-</span> <span class="va">gmax_ks</span><span class="op">$</span><span class="va">Ks</span><span class="op">[</span><span class="va">gmax_ks</span><span class="op">$</span><span class="va">Ks</span> <span class="op">&lt;=</span> <span class="fl">1</span><span class="op">]</span></span>
 <span></span>
 <span><span class="co"># Get SiZer map</span></span>
-<span><span class="fu">feature</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/feature/man/SiZer.html" class="external-link">SiZer</a></span><span class="op">(</span><span class="va">ks</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning: no DISPLAY variable so Tk is not available</span></span></code></pre></div>
-<p><img src="doubletrouble_vignette_files/figure-html/sizer-1.png" width="700"></p>
+<span><span class="fu">feature</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/feature/man/SiZer.html" class="external-link">SiZer</a></span><span class="op">(</span><span class="va">ks</span><span class="op">)</span></span></code></pre></div>
 <p>The blue regions in the SiZer map indicate significantly increasing
 regions of the curve, which support the 2 peaks we found.</p>
 </div>
@@ -762,162 +506,25 @@ with the age boundaries highlighted in the histogram of Ks values.</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Gene pairs without age-based classification</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">gmax_ks</span><span class="op">)</span></span>
-<span><span class="co">#&gt;               dup1            dup2        Ks</span></span>
-<span><span class="co">#&gt; 1  GLYMA_01G000100 GLYMA_15G276800 0.3749860</span></span>
-<span><span class="co">#&gt; 3  GLYMA_01G000400 GLYMA_02G312300 0.0452761</span></span>
-<span><span class="co">#&gt; 8  GLYMA_01G000600 GLYMA_14G000400 0.1040900</span></span>
-<span><span class="co">#&gt; 10 GLYMA_01G000800 GLYMA_03G188200 0.4732800</span></span>
-<span><span class="co">#&gt; 11 GLYMA_01G000800 GLYMA_05G115300 1.2292300</span></span>
-<span><span class="co">#&gt; 12 GLYMA_01G000800 GLYMA_17G191100 1.6607100</span></span>
 <span></span>
 <span><span class="co"># Classify gene pairs by age group</span></span>
 <span><span class="va">pairs_age_group</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/split_pairs_by_peak.html">split_pairs_by_peak</a></span><span class="op">(</span><span class="va">gmax_ks</span>, <span class="va">peaks</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Inspecting the output</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">pairs_age_group</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "pairs" "plot"</span></span>
 <span></span>
 <span><span class="co"># Take a look at the classified gene pairs</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">pairs_age_group</span><span class="op">$</span><span class="va">pairs</span><span class="op">)</span></span>
-<span><span class="co">#&gt;               dup1            dup2        ks peak</span></span>
-<span><span class="co">#&gt; 1  GLYMA_01G000100 GLYMA_15G276800 0.3749860    1</span></span>
-<span><span class="co">#&gt; 3  GLYMA_01G000400 GLYMA_02G312300 0.0452761    1</span></span>
-<span><span class="co">#&gt; 8  GLYMA_01G000600 GLYMA_14G000400 0.1040900    1</span></span>
-<span><span class="co">#&gt; 10 GLYMA_01G000800 GLYMA_03G188200 0.4732800    1</span></span>
-<span><span class="co">#&gt; 16 GLYMA_01G001000 GLYMA_08G359900 0.1300750    1</span></span>
-<span><span class="co">#&gt; 18 GLYMA_01G001100 GLYMA_08G359700 0.0856404    1</span></span>
 <span></span>
 <span><span class="co"># Visualize Ks distro with age boundaries</span></span>
 <span><span class="va">pairs_age_group</span><span class="op">$</span><span class="va">plot</span></span></code></pre></div>
-<p><img src="doubletrouble_vignette_files/figure-html/split_by_peak-1.png" width="700"></p>
 </div>
 <div class="section level2">
 <h2 class="unnumbered" id="session-information">Session information<a class="anchor" aria-label="anchor" href="#session-information"></a>
 </h2>
 <p>This document was created under the following conditions:</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">sessioninfo</span><span class="fu">::</span><span class="fu"><a href="https://r-lib.github.io/sessioninfo/reference/session_info.html" class="external-link">session_info</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB; font-weight: bold;">─ Session info ───────────────────────────────────────────────────────────────</span></span></span>
-<span><span class="co">#&gt;  <span style="color: #555555; font-style: italic;">setting </span> <span style="color: #555555; font-style: italic;">value</span></span></span>
-<span><span class="co">#&gt;  version  R version 4.2.1 (2022-06-23)</span></span>
-<span><span class="co">#&gt;  os       Ubuntu 20.04.5 LTS</span></span>
-<span><span class="co">#&gt;  system   x86_64, linux-gnu</span></span>
-<span><span class="co">#&gt;  ui       X11</span></span>
-<span><span class="co">#&gt;  language en</span></span>
-<span><span class="co">#&gt;  collate  en_US.UTF-8</span></span>
-<span><span class="co">#&gt;  ctype    en_US.UTF-8</span></span>
-<span><span class="co">#&gt;  tz       UTC</span></span>
-<span><span class="co">#&gt;  date     2022-10-04</span></span>
-<span><span class="co">#&gt;  pandoc   2.19.2 @ /usr/local/bin/ (via rmarkdown)</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB; font-weight: bold;">─ Packages ───────────────────────────────────────────────────────────────────</span></span></span>
-<span><span class="co">#&gt;  <span style="color: #555555; font-style: italic;">package         </span> <span style="color: #555555; font-style: italic;">*</span> <span style="color: #555555; font-style: italic;">version </span> <span style="color: #555555; font-style: italic;">date (UTC)</span> <span style="color: #555555; font-style: italic;">lib</span> <span style="color: #555555; font-style: italic;">source</span></span></span>
-<span><span class="co">#&gt;  ade4               1.7-19   <span style="color: #555555;">2022-04-19</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
-<span><span class="co">#&gt;  ape                5.6-2    <span style="color: #555555;">2022-03-02</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
-<span><span class="co">#&gt;  BiocGenerics       0.43.4   <span style="color: #555555;">2022-09-11</span> <span style="color: #555555;">[1]</span> <span style="color: #555555;">Bioconductor</span></span></span>
-<span><span class="co">#&gt;  BiocManager        1.30.18  <span style="color: #555555;">2022-05-18</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.2.1)</span></span></span>
-<span><span class="co">#&gt;  BiocStyle        * 2.25.0   <span style="color: #555555;">2022-04-26</span> <span style="color: #555555;">[1]</span> <span style="color: #555555;">Bioconductor</span></span></span>
-<span><span class="co">#&gt;  Biostrings         2.65.6   <span style="color: #555555;">2022-09-09</span> <span style="color: #555555;">[1]</span> <span style="color: #555555;">Bioconductor</span></span></span>
-<span><span class="co">#&gt;  bitops             1.0-7    <span style="color: #555555;">2021-04-24</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
-<span><span class="co">#&gt;  bookdown           0.29     <span style="color: #555555;">2022-09-12</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
-<span><span class="co">#&gt;  bslib              0.4.0    <span style="color: #555555;">2022-07-16</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
-<span><span class="co">#&gt;  cachem             1.0.6    <span style="color: #555555;">2021-08-19</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
-<span><span class="co">#&gt;  cli                3.4.1    <span style="color: #555555;">2022-09-23</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
-<span><span class="co">#&gt;  cluster            2.1.4    <span style="color: #555555;">2022-08-22</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
-<span><span class="co">#&gt;  coda               0.19-4   <span style="color: #555555;">2020-09-30</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
-<span><span class="co">#&gt;  codetools          0.2-18   <span style="color: #555555;">2020-11-04</span> <span style="color: #555555;">[3]</span> <span style="color: #555555;">CRAN (R 4.2.1)</span></span></span>
-<span><span class="co">#&gt;  colorspace         2.0-3    <span style="color: #555555;">2022-02-21</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
-<span><span class="co">#&gt;  crayon             1.5.2    <span style="color: #555555;">2022-09-29</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
-<span><span class="co">#&gt;  desc               1.4.2    <span style="color: #555555;">2022-09-08</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
-<span><span class="co">#&gt;  digest             0.6.29   <span style="color: #555555;">2021-12-01</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
-<span><span class="co">#&gt;  doParallel         1.0.17   <span style="color: #555555;">2022-02-07</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
-<span><span class="co">#&gt;  doubletrouble    * 0.99.0   <span style="color: #555555;">2022-10-04</span> <span style="color: #555555;">[1]</span> <span style="color: #555555;">Bioconductor</span></span></span>
-<span><span class="co">#&gt;  dplyr              1.0.10   <span style="color: #555555;">2022-09-01</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
-<span><span class="co">#&gt;  evaluate           0.16     <span style="color: #555555;">2022-08-09</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
-<span><span class="co">#&gt;  fansi              1.0.3    <span style="color: #555555;">2022-03-24</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
-<span><span class="co">#&gt;  farver             2.1.1    <span style="color: #555555;">2022-07-06</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
-<span><span class="co">#&gt;  fastmap            1.1.0    <span style="color: #555555;">2021-01-25</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
-<span><span class="co">#&gt;  feature            1.2.15   <span style="color: #555555;">2021-02-10</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
-<span><span class="co">#&gt;  foreach            1.5.2    <span style="color: #555555;">2022-02-02</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
-<span><span class="co">#&gt;  fs                 1.5.2    <span style="color: #555555;">2021-12-08</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
-<span><span class="co">#&gt;  generics           0.1.3    <span style="color: #555555;">2022-07-05</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
-<span><span class="co">#&gt;  GenomeInfoDb       1.33.7   <span style="color: #555555;">2022-09-07</span> <span style="color: #555555;">[1]</span> <span style="color: #555555;">Bioconductor</span></span></span>
-<span><span class="co">#&gt;  GenomeInfoDbData   1.2.9    <span style="color: #555555;">2022-10-04</span> <span style="color: #555555;">[1]</span> <span style="color: #555555;">Bioconductor</span></span></span>
-<span><span class="co">#&gt;  GenomicRanges      1.49.1   <span style="color: #555555;">2022-08-18</span> <span style="color: #555555;">[1]</span> <span style="color: #555555;">Bioconductor</span></span></span>
-<span><span class="co">#&gt;  ggnetwork          0.5.10   <span style="color: #555555;">2021-07-06</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
-<span><span class="co">#&gt;  ggplot2          * 3.3.6    <span style="color: #555555;">2022-05-03</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
-<span><span class="co">#&gt;  glue               1.6.2    <span style="color: #555555;">2022-02-24</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
-<span><span class="co">#&gt;  gtable             0.3.1    <span style="color: #555555;">2022-09-01</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
-<span><span class="co">#&gt;  highr              0.9      <span style="color: #555555;">2021-04-16</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
-<span><span class="co">#&gt;  htmltools          0.5.3    <span style="color: #555555;">2022-07-18</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
-<span><span class="co">#&gt;  htmlwidgets        1.5.4    <span style="color: #555555;">2021-09-08</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
-<span><span class="co">#&gt;  igraph             1.3.5    <span style="color: #555555;">2022-09-22</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
-<span><span class="co">#&gt;  intergraph         2.0-2    <span style="color: #555555;">2016-12-05</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
-<span><span class="co">#&gt;  IRanges            2.31.2   <span style="color: #555555;">2022-08-18</span> <span style="color: #555555;">[1]</span> <span style="color: #555555;">Bioconductor</span></span></span>
-<span><span class="co">#&gt;  iterators          1.0.14   <span style="color: #555555;">2022-02-05</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
-<span><span class="co">#&gt;  jquerylib          0.1.4    <span style="color: #555555;">2021-04-26</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
-<span><span class="co">#&gt;  jsonlite           1.8.0    <span style="color: #555555;">2022-02-22</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
-<span><span class="co">#&gt;  KernSmooth         2.23-20  <span style="color: #555555;">2021-05-03</span> <span style="color: #555555;">[3]</span> <span style="color: #555555;">CRAN (R 4.2.1)</span></span></span>
-<span><span class="co">#&gt;  knitr              1.40     <span style="color: #555555;">2022-08-24</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
-<span><span class="co">#&gt;  ks                 1.13.5   <span style="color: #555555;">2022-04-14</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
-<span><span class="co">#&gt;  labdsv             2.0-1    <span style="color: #555555;">2019-08-04</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
-<span><span class="co">#&gt;  labeling           0.4.2    <span style="color: #555555;">2020-10-20</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
-<span><span class="co">#&gt;  lattice            0.20-45  <span style="color: #555555;">2021-09-22</span> <span style="color: #555555;">[3]</span> <span style="color: #555555;">CRAN (R 4.2.1)</span></span></span>
-<span><span class="co">#&gt;  lifecycle          1.0.2    <span style="color: #555555;">2022-09-09</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
-<span><span class="co">#&gt;  magrittr           2.0.3    <span style="color: #555555;">2022-03-30</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
-<span><span class="co">#&gt;  MASS               7.3-58.1 <span style="color: #555555;">2022-08-03</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
-<span><span class="co">#&gt;  Matrix             1.5-1    <span style="color: #555555;">2022-09-13</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
-<span><span class="co">#&gt;  mclust             5.4.10   <span style="color: #555555;">2022-05-20</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
-<span><span class="co">#&gt;  memoise            2.0.1    <span style="color: #555555;">2021-11-26</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
-<span><span class="co">#&gt;  mgcv               1.8-40   <span style="color: #555555;">2022-03-29</span> <span style="color: #555555;">[3]</span> <span style="color: #555555;">CRAN (R 4.2.1)</span></span></span>
-<span><span class="co">#&gt;  MSA2dist           1.1.6    <span style="color: #555555;">2022-09-22</span> <span style="color: #555555;">[1]</span> <span style="color: #555555;">Bioconductor</span></span></span>
-<span><span class="co">#&gt;  munsell            0.5.0    <span style="color: #555555;">2018-06-12</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
-<span><span class="co">#&gt;  mvtnorm            1.1-3    <span style="color: #555555;">2021-10-08</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
-<span><span class="co">#&gt;  network            1.17.2   <span style="color: #555555;">2022-05-21</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
-<span><span class="co">#&gt;  networkD3          0.4      <span style="color: #555555;">2017-03-18</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
-<span><span class="co">#&gt;  nlme               3.1-159  <span style="color: #555555;">2022-08-09</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
-<span><span class="co">#&gt;  pheatmap           1.0.12   <span style="color: #555555;">2019-01-04</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
-<span><span class="co">#&gt;  pillar             1.8.1    <span style="color: #555555;">2022-08-19</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
-<span><span class="co">#&gt;  pkgconfig          2.0.3    <span style="color: #555555;">2019-09-22</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
-<span><span class="co">#&gt;  pkgdown            2.0.6    <span style="color: #555555;">2022-07-16</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
-<span><span class="co">#&gt;  pracma             2.4.2    <span style="color: #555555;">2022-09-22</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
-<span><span class="co">#&gt;  purrr              0.3.4    <span style="color: #555555;">2020-04-17</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
-<span><span class="co">#&gt;  R6                 2.5.1    <span style="color: #555555;">2021-08-19</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
-<span><span class="co">#&gt;  ragg               1.2.3    <span style="color: #555555;">2022-09-29</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
-<span><span class="co">#&gt;  RColorBrewer       1.1-3    <span style="color: #555555;">2022-04-03</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
-<span><span class="co">#&gt;  Rcpp               1.0.9    <span style="color: #555555;">2022-07-08</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
-<span><span class="co">#&gt;  RCurl              1.98-1.8 <span style="color: #555555;">2022-07-30</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
-<span><span class="co">#&gt;  rlang              1.0.6    <span style="color: #555555;">2022-09-24</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
-<span><span class="co">#&gt;  rmarkdown          2.16     <span style="color: #555555;">2022-08-24</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
-<span><span class="co">#&gt;  rprojroot          2.0.3    <span style="color: #555555;">2022-04-02</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
-<span><span class="co">#&gt;  Rtsne              0.16     <span style="color: #555555;">2022-04-17</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
-<span><span class="co">#&gt;  S4Vectors          0.35.4   <span style="color: #555555;">2022-09-18</span> <span style="color: #555555;">[1]</span> <span style="color: #555555;">Bioconductor</span></span></span>
-<span><span class="co">#&gt;  sass               0.4.2    <span style="color: #555555;">2022-07-16</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
-<span><span class="co">#&gt;  scales             1.2.1    <span style="color: #555555;">2022-08-20</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
-<span><span class="co">#&gt;  seqinr             4.2-16   <span style="color: #555555;">2022-05-19</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
-<span><span class="co">#&gt;  sessioninfo        1.2.2    <span style="color: #555555;">2021-12-06</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
-<span><span class="co">#&gt;  statnet.common     4.7.0    <span style="color: #555555;">2022-09-08</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
-<span><span class="co">#&gt;  stringi            1.7.8    <span style="color: #555555;">2022-07-11</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
-<span><span class="co">#&gt;  stringr            1.4.1    <span style="color: #555555;">2022-08-20</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
-<span><span class="co">#&gt;  syntenet         * 0.99.5   <span style="color: #555555;">2022-09-29</span> <span style="color: #555555;">[1]</span> <span style="color: #555555;">Bioconductor</span></span></span>
-<span><span class="co">#&gt;  systemfonts        1.0.4    <span style="color: #555555;">2022-02-11</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
-<span><span class="co">#&gt;  textshaping        0.3.6    <span style="color: #555555;">2021-10-13</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
-<span><span class="co">#&gt;  tibble             3.1.8    <span style="color: #555555;">2022-07-22</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
-<span><span class="co">#&gt;  tidyr              1.2.1    <span style="color: #555555;">2022-09-08</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
-<span><span class="co">#&gt;  tidyselect         1.1.2    <span style="color: #555555;">2022-02-21</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
-<span><span class="co">#&gt;  utf8               1.2.2    <span style="color: #555555;">2021-07-24</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
-<span><span class="co">#&gt;  vctrs              0.4.2    <span style="color: #555555;">2022-09-29</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
-<span><span class="co">#&gt;  withr              2.5.0    <span style="color: #555555;">2022-03-03</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
-<span><span class="co">#&gt;  xfun               0.33     <span style="color: #555555;">2022-09-12</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
-<span><span class="co">#&gt;  XVector            0.37.1   <span style="color: #555555;">2022-08-25</span> <span style="color: #555555;">[1]</span> <span style="color: #555555;">Bioconductor</span></span></span>
-<span><span class="co">#&gt;  yaml               2.3.5    <span style="color: #555555;">2022-02-21</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.2.0)</span></span></span>
-<span><span class="co">#&gt;  zlibbioc           1.43.0   <span style="color: #555555;">2022-04-26</span> <span style="color: #555555;">[1]</span> <span style="color: #555555;">Bioconductor</span></span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; <span style="color: #555555;"> [1] /__w/_temp/Library</span></span></span>
-<span><span class="co">#&gt; <span style="color: #555555;"> [2] /usr/local/lib/R/site-library</span></span></span>
-<span><span class="co">#&gt; <span style="color: #555555;"> [3] /usr/local/lib/R/library</span></span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB; font-weight: bold;">──────────────────────────────────────────────────────────────────────────────</span></span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">sessioninfo</span><span class="fu">::</span><span class="fu"><a href="https://r-lib.github.io/sessioninfo/reference/session_info.html" class="external-link">session_info</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
