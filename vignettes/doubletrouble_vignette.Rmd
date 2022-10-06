@@ -24,8 +24,7 @@ vignette: >
 knitr::opts_chunk$set(
     collapse = TRUE,
     comment = "#>",
-    crop = NULL,
-    eval = FALSE
+    crop = NULL
 )
 ```
 
@@ -89,6 +88,15 @@ named *Scerevisiae* and *Cglabrata*.
 data(yeast_annot)
 head(yeast_annot)
 ```
+
+
+**IMPORTANT:** If you have protein sequences as FASTA files in a directory,
+you can read them into a list of `AAStringSet` objects with the function
+`fasta2AAStringSetlist()` from the Bioconductor package
+`r BiocStyle::Biocpkg("syntenet")`. Likewise, you can get a `GRangesList`
+object from GFF/GTF files with the function `gff2GRangesList()`, also
+from `r BiocStyle::Biocpkg("syntenet")`.
+
 
 Our goal here is to identify and classify duplicated genes in 
 the *S. cerevisiae* genome. The *C. glabrata* genome will be used as an outgroup
