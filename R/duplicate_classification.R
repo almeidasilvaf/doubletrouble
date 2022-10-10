@@ -85,7 +85,7 @@ classify_gene_pairs <- function(blast_list = NULL, annotation = NULL,
     dups <- lapply(seq_along(anchorp), function(x) {
         # Find WGD-derived gene pairs
         sp <- names(anchorp)[x]
-        p <- pairs[[grep(sp, names(pairs))]]
+        p <- pairs[[grep(paste0(sp, "$"), names(pairs))]]
         dups <- get_wgd_pairs(anchorp[[x]], p)
 
         if(!binary) {

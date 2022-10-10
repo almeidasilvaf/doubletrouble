@@ -112,6 +112,7 @@ get_wgd_pairs <- function(anchor_pairs = NULL, duplicate_pairs = NULL) {
     names(p) <- c("dup1", "dup2")
     if(is.null(anchorp)) {
         duplicates <- p
+        duplicates$type <- "SSD"
     } else {
         names(anchorp) <- c("anchor1", "anchor2")
         
