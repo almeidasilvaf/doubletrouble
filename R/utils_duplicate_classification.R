@@ -350,25 +350,35 @@ classify_ssd_pairs <- function(ssd_pairs = NULL, annotation_granges = NULL,
                      by.x = "dup2", by.y = "gene")[, c(2, 1, 3:6)]
     names(ssd_pos)[5:6] <- c("chr_dup2", "order_dup2")
     
+    td <- NULL
+    pd <- NULL
+    others <- NULL
     #----1) Find TD-derived gene pairs--------------------------------------
     same_chr <- ssd_pos[ssd_pos$chr_dup1 == ssd_pos$chr_dup2, ]
-    same_chr$dist <- abs(same_chr$order_dup1 - same_chr$order_dup2)
-    
-    td <- same_chr[same_chr$dist == 1, 1:2]
-    td$type <- "TD"
-    
-    #----2) Find PD-derived gene pairs--------------------------------------
-    pd <- same_chr[same_chr$dist > 1 & same_chr$dist <= proximal_max, 1:2]
-    pd$type <- "PD"
-    
+    if(nrow(same_chr) != 0) {
+        same_chr$dist <- abs(same_chr$order_dup1 - same_chr$order_dup2)
+        td <- same_chr[same_chr$dist == 1, 1:2]
+        if(nrow(td) != 0) {
+            td$type <- "TD"
+        }
+        
+        #----2) Find PD-derived gene pairs--------------------------------------
+        pd <- same_chr[same_chr$dist > 1 & same_chr$dist <= proximal_max, 1:2]
+        if(nrow(pd) != 0) {
+            pd$type <- "PD"
+        }
+    }
+
     #----3) Find TRD-derived and DD-derived gene pairs--------------------------
     others <- rbind(
         ssd_pos[ssd_pos$chr_dup1 != ssd_pos$chr_dup2, 1:2], # different chroms
         same_chr[same_chr$dist > proximal_max, 1:2] # same chr, too distant
     )
-    others$type <- "DD"
-    if(!is.null(blast_inter)) {
-        others <- get_transposed(others[, 1:2], blast_inter, annotation)
+    if(nrow(others) != 0) {
+        others$type <- "DD"
+        if(!is.null(blast_inter)) {
+            others <- get_transposed(others[, 1:2], blast_inter, annotation)
+        }
     }
 
     ssd_dups <- rbind(td, pd, others)
