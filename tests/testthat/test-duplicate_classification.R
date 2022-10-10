@@ -34,8 +34,9 @@ test_that("get_anchors_list() returns a list of anchor pairs", {
 
 test_that("get_wgd_pairs() returns a data frame with WGD and SSD pairs", {
     dups <- get_wgd_pairs(anchor_pairs, duplicates)
+    dups2 <- get_wgd_pairs(NULL, duplicates)
     
-    expect_equal(class(dups), "data.frame")
+    expect_equal(class(dups2), "data.frame")
     expect_equal(ncol(dups), 3)
     expect_equal(names(dups), c("dup1", "dup2", "type"))
     expect_equal(length(unique(dups$type)), 2)

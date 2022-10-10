@@ -110,22 +110,26 @@ get_wgd_pairs <- function(anchor_pairs = NULL, duplicate_pairs = NULL) {
     p <- duplicate_pairs
     anchorp <- anchor_pairs
     names(p) <- c("dup1", "dup2")
-    names(anchorp) <- c("anchor1", "anchor2")
-    
-    # Look for anchor pairs in duplicate pairs - vector-based approach
-    p_vector <- paste0(p$dup1, p$dup2)
-    anchor_vector <- c(paste0(anchorp$anchor1, anchorp$anchor2),
-                       paste0(anchorp$anchor2, anchorp$anchor1))
-    check <- which(p_vector %in% anchor_vector)
-    
-    # Create 2 data frames: WGD- and SSD-derived duplicates
-    wgd <- p[check, ]
-    wgd$type <- "WGD"
-    ssd <- p[-check, ]
-    ssd$type <- "SSD"
-    
-    # Combine the two data frames into one
-    duplicates <- rbind(wgd, ssd)
+    if(is.null(anchorp)) {
+        duplicates <- p
+    } else {
+        names(anchorp) <- c("anchor1", "anchor2")
+        
+        # Look for anchor pairs in duplicate pairs - vector-based approach
+        p_vector <- paste0(p$dup1, p$dup2)
+        anchor_vector <- c(paste0(anchorp$anchor1, anchorp$anchor2),
+                           paste0(anchorp$anchor2, anchorp$anchor1))
+        check <- which(p_vector %in% anchor_vector)
+        
+        # Create 2 data frames: WGD- and SSD-derived duplicates
+        wgd <- p[check, ]
+        wgd$type <- "WGD"
+        ssd <- p[-check, ]
+        ssd$type <- "SSD"
+        
+        # Combine the two data frames into one
+        duplicates <- rbind(wgd, ssd)
+    }
     return(duplicates)
 }
 
