@@ -690,13 +690,13 @@ number of peaks has more support: 2 or 3.</p>
 <span><span class="va">peaks</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/find_ks_peaks.html">find_ks_peaks</a></span><span class="op">(</span><span class="va">gmax_ks</span><span class="op">$</span><span class="va">Ks</span>, npeaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">3</span><span class="op">)</span>, verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Optimal number of peaks: 3</span></span>
 <span><span class="co">#&gt; Bayesian Information Criterion (BIC): </span></span>
-<span><span class="co">#&gt;           E         V</span></span>
-<span><span class="co">#&gt; 2 -86950.17 -67759.79</span></span>
-<span><span class="co">#&gt; 3 -86978.35 -54203.01</span></span>
+<span><span class="co">#&gt;           E        V</span></span>
+<span><span class="co">#&gt; 2 -86950.22 -67759.7</span></span>
+<span><span class="co">#&gt; 3 -86977.63 -54203.0</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Top 3 models based on the BIC criterion: </span></span>
 <span><span class="co">#&gt;       V,3       V,2       E,2 </span></span>
-<span><span class="co">#&gt; -54203.01 -67759.79 -86950.17</span></span>
+<span><span class="co">#&gt; -54203.00 -67759.70 -86950.22</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">peaks</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "mean"   "sd"     "lambda" "ks"</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">peaks</span><span class="op">)</span></span>
