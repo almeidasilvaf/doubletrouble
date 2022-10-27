@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">doubletrouble</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.99.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.99.1</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -121,7 +121,7 @@ arguments passed to min_ks and max_ks.</p></dd>
 <span class="r-in"><span><span class="va">peaks</span> <span class="op">&lt;-</span> <span class="fu">find_ks_peaks</span><span class="op">(</span><span class="va">ks</span>, npeaks <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># From 2 to 4 peaks, verbose = TRUE to show BIC values</span></span></span>
-<span class="r-in"><span><span class="va">peaks</span> <span class="op">&lt;-</span> <span class="fu">find_ks_peaks</span><span class="op">(</span><span class="va">ks</span>, npeaks <span class="op">=</span> <span class="fl">2</span><span class="op">:</span><span class="fl">4</span>, verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">peaks</span> <span class="op">&lt;-</span> <span class="fu">find_ks_peaks</span><span class="op">(</span><span class="va">ks</span>, npeaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">3</span>, <span class="fl">4</span><span class="op">)</span>, verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Optimal number of peaks: 4</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Bayesian Information Criterion (BIC): </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           E         V</span>

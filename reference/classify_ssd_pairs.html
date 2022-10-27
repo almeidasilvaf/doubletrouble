@@ -12,7 +12,7 @@ duplicates (TD, PD, and DD, respectively)."><meta property="og:image" content="/
     
     <a class="navbar-brand me-2" href="../index.html">doubletrouble</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.99.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.99.1</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -138,10 +138,10 @@ this function will not identify TRD genes.</p></dd>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Get list of intraspecies anchor pairs</span></span></span>
 <span class="r-in"><span><span class="va">anchor_pairs</span> <span class="op">&lt;-</span> <span class="fu"><a href="get_anchors_list.html">get_anchors_list</a></span><span class="op">(</span><span class="va">blast_list</span>, <span class="va">annotation</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">anchor_pairs</span> <span class="op">&lt;-</span> <span class="va">anchor_pairs</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">[</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">]</span></span></span>
+<span class="r-in"><span><span class="va">anchor_pairs</span> <span class="op">&lt;-</span> <span class="va">anchor_pairs</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span><span class="op">]</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Get duplicate pairs from DIAMOND output and classify them</span></span></span>
-<span class="r-in"><span><span class="va">duplicates</span> <span class="op">&lt;-</span> <span class="va">diamond_intra</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">[</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">]</span></span></span>
+<span class="r-in"><span><span class="va">duplicates</span> <span class="op">&lt;-</span> <span class="va">diamond_intra</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span><span class="op">]</span></span></span>
 <span class="r-in"><span><span class="va">dups</span> <span class="op">&lt;-</span> <span class="fu"><a href="get_wgd_pairs.html">get_wgd_pairs</a></span><span class="op">(</span><span class="va">anchor_pairs</span>, <span class="va">duplicates</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">ssd_pairs</span> <span class="op">&lt;-</span> <span class="va">dups</span><span class="op">[</span><span class="va">dups</span><span class="op">$</span><span class="va">type</span> <span class="op">==</span> <span class="st">"SSD"</span>, <span class="op">]</span></span></span>
 <span class="r-in"><span></span></span>
