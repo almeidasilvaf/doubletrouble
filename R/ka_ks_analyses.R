@@ -33,7 +33,9 @@
 #' 
 #' # Binary classification scheme
 #' gene_pairs_list <- classify_gene_pairs(blast_list, annot, binary = TRUE)
-#' gene_pairs_list <- list(Scerevisiae = gene_pairs_list[[1]][1:5, ])
+#' gene_pairs_list <- list(
+#'     Scerevisiae = gene_pairs_list[[1]][seq(1, 5, by = 1), ]
+#' )
 #' 
 #' cds <- list(Scerevisiae = cds_scerevisiae)
 #' 
@@ -43,14 +45,14 @@ pairs2kaks <- function(gene_pairs_list, cds, model = "MYN", threads = 1) {
     kaks_list <- lapply(seq_along(gene_pairs_list), function(x) {
         species <- names(gene_pairs_list)[x]
         pairs <- gene_pairs_list[[x]]
-        names(pairs)[1:2] <- c("dup1", "dup2")
+        names(pairs)[c(1, 2)] <- c("dup1", "dup2")
         
         # Remove species ID from gene IDs in gene pairs
         pairs$dup1 <- gsub("[a-zA-Z]{2,5}_", "", pairs$dup1)
         pairs$dup2 <- gsub("[a-zA-Z]{2,5}_", "", pairs$dup2)
         
         kaks <- Reduce(rbind, lapply(seq_len(nrow(pairs)), function(y) {
-            genes <- as.character(pairs[y, 1:2])
+            genes <- as.character(pairs[y, c(1, 2)])
             cds_genes <- cds[[species]][genes]
             
             multiple_3 <- Biostrings::width(cds_genes) %% 3
@@ -120,7 +122,7 @@ pairs2kaks <- function(gene_pairs_list, cds, model = "MYN", threads = 1) {
 #' peaks <- find_ks_peaks(ks, npeaks = 2)
 #' 
 #' # From 2 to 4 peaks, verbose = TRUE to show BIC values
-#' peaks <- find_ks_peaks(ks, npeaks = 2:4, verbose = TRUE)
+#' peaks <- find_ks_peaks(ks, npeaks = c(2, 3, 4), verbose = TRUE)
 find_ks_peaks <- function(ks, npeaks = 2, min_ks = 0.01, max_ks = 4,
                           verbose = FALSE) {
     

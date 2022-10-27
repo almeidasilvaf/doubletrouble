@@ -75,7 +75,7 @@ classify_gene_pairs <- function(blast_list = NULL, annotation = NULL,
     
     # Get duplicate pairs and filter duplicate entries
     pairs <- lapply(blast_list, function(x) {
-        fpair <- x[x$evalue <= evalue, 1:2]
+        fpair <- x[x$evalue <= evalue, c(1, 2)]
         fpair <- fpair[fpair[, 1] != fpair[, 2], ]
         fpair <- fpair[!duplicated(t(apply(fpair, 1, sort))),]
         names(fpair) <- c("dup1", "dup2")
@@ -100,7 +100,8 @@ classify_gene_pairs <- function(blast_list = NULL, annotation = NULL,
                     ssd, annot, proximal_max = proximal_max
                 )
             } else { # full scheme
-                binter <- blast_inter[startsWith(names(blast_inter), sp)]
+                pattern <- paste0(sp, "_")
+                binter <- blast_inter[startsWith(names(blast_inter), pattern)]
                 ssd_classes <- classify_ssd_pairs(
                     ssd, annot, annotation, proximal_max = proximal_max,
                     blast_inter = binter

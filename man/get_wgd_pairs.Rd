@@ -38,9 +38,9 @@ annotation <- syntenet::process_input(yeast_seq, yeast_annot)$annotation[1]
 
 # Get list of intraspecies anchor pairs
 anchor_pairs <- get_anchors_list(blast_list, annotation)
-anchor_pairs <- anchor_pairs[[1]][, 1:2]
+anchor_pairs <- anchor_pairs[[1]][, c(1, 2)]
 
 # Get duplicate pairs from DIAMOND output
-duplicates <- diamond_intra[[1]][, 1:2]
+duplicates <- diamond_intra[[1]][, c(1, 2)]
 dups <- get_wgd_pairs(anchor_pairs, duplicates)
 }

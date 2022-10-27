@@ -48,5 +48,5 @@ ks <- scerevisiae_kaks$Ks
 peaks <- find_ks_peaks(ks, npeaks = 2)
 
 # From 2 to 4 peaks, verbose = TRUE to show BIC values
-peaks <- find_ks_peaks(ks, npeaks = 2:4, verbose = TRUE)
+peaks <- find_ks_peaks(ks, npeaks = c(2, 3, 4), verbose = TRUE)
 }

@@ -337,7 +337,7 @@ head(cds_scerevisiae)
 cds_list <- list(Scerevisiae = cds_scerevisiae)
 
 # Keep only top give gene pairs for demonstration purposes
-gene_pairs <- list(Scerevisiae = c_binary$Scerevisiae[1:5, ])
+gene_pairs <- list(Scerevisiae = c_binary$Scerevisiae[seq(1, 5, by = 1), ])
 
 # Calculate Ka, Ks, and Ka/Ks
 kaks <- pairs2kaks(gene_pairs, cds_list)
@@ -398,7 +398,7 @@ by all eudicots. Let's test which number of peaks has more support: 2 or 3.
 
 ```{r find_ks_peaks}
 # Find 2 and 3 peaks and test which one has more support
-peaks <- find_ks_peaks(gmax_ks$Ks, npeaks = 2:3, verbose = TRUE)
+peaks <- find_ks_peaks(gmax_ks$Ks, npeaks = c(2, 3), verbose = TRUE)
 names(peaks)
 str(peaks)
 

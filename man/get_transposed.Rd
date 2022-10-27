@@ -46,7 +46,7 @@ annotation <- pdata$annotation
 # Get duplicated pairs
 annot <- pdata$annotation["Scerevisiae"] 
 pairs_all <- classify_gene_pairs(diamond_intra, annot)
-pairs <- pairs_all$Scerevisiae[pairs_all$Scerevisiae$type == "DD", 1:2]
+pairs <- pairs_all$Scerevisiae[pairs_all$Scerevisiae$type == "DD", c(1, 2)]
 
 trd <- get_transposed(pairs, blast_inter, annotation)
 }

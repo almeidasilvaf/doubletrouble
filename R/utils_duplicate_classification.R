@@ -100,10 +100,10 @@ get_anchors_list <- function(blast_list = NULL, annotation = NULL,
 #' 
 #' # Get list of intraspecies anchor pairs
 #' anchor_pairs <- get_anchors_list(blast_list, annotation)
-#' anchor_pairs <- anchor_pairs[[1]][, 1:2]
+#' anchor_pairs <- anchor_pairs[[1]][, c(1, 2)]
 #' 
 #' # Get duplicate pairs from DIAMOND output
-#' duplicates <- diamond_intra[[1]][, 1:2]
+#' duplicates <- diamond_intra[[1]][, c(1, 2)]
 #' dups <- get_wgd_pairs(anchor_pairs, duplicates)
 get_wgd_pairs <- function(anchor_pairs = NULL, duplicate_pairs = NULL) {
     
@@ -161,8 +161,8 @@ collinearity2blocks <- function(collinearity_paths = NULL) {
             df <- read.table(
                 collinearity_paths[x], sep = "\t", comment.char = "#"
             )
-            df <- df[, c(1:3)]
-            names(df)[2:3] <- c("anchor1", "anchor2")
+            df <- df[, c(1, 2, 3)]
+            names(df)[c(2, 3)] <- c("anchor1", "anchor2")
             
             # Get syntenic block IDs
             df$V1 <- gsub(":", "", df$V1)
@@ -216,7 +216,7 @@ collinearity2blocks <- function(collinearity_paths = NULL) {
 #' # Get duplicated pairs
 #' annot <- pdata$annotation["Scerevisiae"] 
 #' pairs_all <- classify_gene_pairs(diamond_intra, annot)
-#' pairs <- pairs_all$Scerevisiae[pairs_all$Scerevisiae$type == "DD", 1:2]
+#' pairs <- pairs_all$Scerevisiae[pairs_all$Scerevisiae$type == "DD", c(1, 2)]
 #'
 #' trd <- get_transposed(pairs, blast_inter, annotation)
 get_transposed <- function(pairs, blast_inter, annotation) {
@@ -224,7 +224,7 @@ get_transposed <- function(pairs, blast_inter, annotation) {
     if(length(blast_inter) > 1) {
         stop("The list in `blast_inter` must have only 1 element.")
     }
-    names(pairs)[1:2] <- c("dup1", "dup2")
+    names(pairs)[c(1, 2)] <- c("dup1", "dup2")
     
     # Detect synteny between target species and outgroup
     target <- unlist(strsplit(names(blast_inter), "_"))[1]
@@ -238,12 +238,12 @@ get_transposed <- function(pairs, blast_inter, annotation) {
     # Read and parse interspecies synteny results
     parsed_syn <- collinearity2blocks(syn)[, c("anchor2", "block")]
     parsed_syn <- parsed_syn[!duplicated(parsed_syn$anchor2), ]
-    final <- NULL
+    final <- pairs
     
     if(!is.null(parsed_syn)) {
         # Find TRD-derived pairs (syntenic in outgroup, but not in target)
         pairs_ancestral <- merge(
-            pairs[, 1:2], parsed_syn, by.x = "dup1", by.y = "anchor2",
+            pairs[, c(1, 2)], parsed_syn, by.x = "dup1", by.y = "anchor2",
             all.x = TRUE
         )
         names(pairs_ancestral)[3] <- "block1"
@@ -312,10 +312,10 @@ get_transposed <- function(pairs, blast_inter, annotation) {
 #' 
 #' # Get list of intraspecies anchor pairs
 #' anchor_pairs <- get_anchors_list(blast_list, annotation)
-#' anchor_pairs <- anchor_pairs[[1]][, 1:2]
+#' anchor_pairs <- anchor_pairs[[1]][, c(1, 2)]
 #' 
 #' # Get duplicate pairs from DIAMOND output and classify them
-#' duplicates <- diamond_intra[[1]][, 1:2]
+#' duplicates <- diamond_intra[[1]][, c(1, 2)]
 #' dups <- get_wgd_pairs(anchor_pairs, duplicates)
 #' ssd_pairs <- dups[dups$type == "SSD", ]
 #' 
@@ -335,7 +335,7 @@ classify_ssd_pairs <- function(ssd_pairs = NULL, annotation_granges = NULL,
     
     annot <- as.data.frame(annotation_granges)
     annot <- annot[, c("seqnames", "gene", "start", "end")]
-    ssd_pairs <- ssd_pairs[, 1:2] # Just in case df has >2 columns
+    ssd_pairs <- ssd_pairs[, c(1, 2)] # Just in case df has >2 columns
     
     # Add chromosome number and order in the chromosome for each gene pair
     annot <- annot[order(annot$seqnames, annot$start), ]
@@ -346,10 +346,10 @@ classify_ssd_pairs <- function(ssd_pairs = NULL, annotation_granges = NULL,
     }))
     
     ssd_pos <- merge(ssd_pairs, annot_order, by.x = "dup1", by.y = "gene")
-    names(ssd_pos)[3:4] <- c("chr_dup1", "order_dup1")
+    names(ssd_pos)[c(3, 4)] <- c("chr_dup1", "order_dup1")
     ssd_pos <- merge(ssd_pos, annot_order, sort = FALSE,
-                     by.x = "dup2", by.y = "gene")[, c(2, 1, 3:6)]
-    names(ssd_pos)[5:6] <- c("chr_dup2", "order_dup2")
+                     by.x = "dup2", by.y = "gene")[, c(2, 1, 3, 4, 5, 6)]
+    names(ssd_pos)[c(5, 6)] <- c("chr_dup2", "order_dup2")
     
     td <- NULL
     pd <- NULL
@@ -358,13 +358,13 @@ classify_ssd_pairs <- function(ssd_pairs = NULL, annotation_granges = NULL,
     same_chr <- ssd_pos[ssd_pos$chr_dup1 == ssd_pos$chr_dup2, ]
     if(nrow(same_chr) != 0) {
         same_chr$dist <- abs(same_chr$order_dup1 - same_chr$order_dup2)
-        td <- same_chr[same_chr$dist == 1, 1:2]
+        td <- same_chr[same_chr$dist == 1, c(1, 2)]
         if(nrow(td) != 0) {
             td$type <- "TD"
         }
         
         #----2) Find PD-derived gene pairs--------------------------------------
-        pd <- same_chr[same_chr$dist > 1 & same_chr$dist <= proximal_max, 1:2]
+        pd <- same_chr[same_chr$dist > 1 & same_chr$dist <= proximal_max, c(1, 2)]
         if(nrow(pd) != 0) {
             pd$type <- "PD"
         }
@@ -372,13 +372,13 @@ classify_ssd_pairs <- function(ssd_pairs = NULL, annotation_granges = NULL,
 
     #----3) Find TRD-derived and DD-derived gene pairs--------------------------
     others <- rbind(
-        ssd_pos[ssd_pos$chr_dup1 != ssd_pos$chr_dup2, 1:2], # different chroms
-        same_chr[same_chr$dist > proximal_max, 1:2] # same chr, too distant
+        ssd_pos[ssd_pos$chr_dup1 != ssd_pos$chr_dup2, c(1, 2)], # different chroms
+        same_chr[same_chr$dist > proximal_max, c(1, 2)] # same chr, too distant
     )
     if(nrow(others) != 0) {
         others$type <- "DD"
         if(!is.null(blast_inter)) {
-            others <- get_transposed(others[, 1:2], blast_inter, annotation)
+            others <- get_transposed(others[, c(1, 2)], blast_inter, annotation)
         }
     }
 
