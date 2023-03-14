@@ -20,7 +20,7 @@ knitr::opts_chunk$set(
 [![Lifecycle: stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
 [![R-CMD-check-bioc](https://github.com/almeidasilvaf/doubletrouble/workflows/R-CMD-check-bioc/badge.svg)](https://github.com/almeidasilvaf/doubletrouble/actions)
 [![Codecov test
-coverage](https://codecov.io/gh/almeidasilvaf/doubletrouble/branch/master/graph/badge.svg)](https://codecov.io/gh/almeidasilvaf/doubletrouble?branch=master)
+coverage](https://codecov.io/gh/almeidasilvaf/doubletrouble/branch/devel/graph/badge.svg)](https://codecov.io/gh/almeidasilvaf/doubletrouble?branch=devel)
 <!-- badges: end -->
 
 The major goal of `doubletrouble` is to identify duplicated genes from
