@@ -36,39 +36,27 @@
 get_anchors_list <- function(blast_list = NULL, annotation = NULL,
                              evalue = 1e-10, anchors = 5, max_gaps = 25) {
     
-    # Keep only elements in annotation with correspondence in BLAST list
-    names(blast_list) <- gsub("_.*", "", names(blast_list))
-    annotation <- annotation[names(blast_list)]
-    
-    # Filter by e-value and convert GRanges to data frame
-    fblast <- lapply(blast_list, function(x) return(x[x$evalue <= evalue, ]))
-    fannotation <- lapply(annotation, function(x) {
-        return(as.data.frame(x)[, c("seqnames", "gene", "start", "end")])
-    })
-    
     # Create output directory
     daytime <- format(Sys.time(), "%d_%b_%Y_%Hh%M")
     intradir <- file.path(tempdir(), paste0("intra_", daytime))
     
-    anchorp <- lapply(seq_along(fannotation), function(x) {
-        # Create BLAST and annotation list (length=1) only for species x
-        sp <- names(fannotation)[x]
-        blast <- fblast[grep(sp, names(fblast))] # Subset based on name match
-        annot <- fannotation[x]
-        
-        # Change element name in `annot` to abbreviation
-        new_name <- unique(gsub("_.*", "", annot[[1]]$gene))
-        names(annot) <- new_name
-        
-        # Detect synteny and get anchor pairs
-        anch <- syntenet::intraspecies_synteny(
-            blast, intradir, annot, anchors = anchors, max_gaps = max_gaps
-        )
-        anch <- syntenet::parse_collinearity(anch)
-        return(anch)
-    })
-    names(anchorp) <- names(fannotation)
-    return(anchorp)
+    # Filter DIAMOND list by e-value
+    fblast <- lapply(blast_list, function(x) return(x[x$evalue <= evalue, ]))
+    
+    # Get .collinearity files for intragenome comparisons
+    col_files <- syntenet::intraspecies_synteny(
+        blast_intra = fblast, 
+        annotation = annotation,
+        intra_dir = intradir, 
+        anchors = anchors, 
+        max_gaps = max_gaps
+    )
+    
+    # Parse files
+    anchors <- lapply(col_files, syntenet::parse_collinearity)
+    names(anchors) <- gsub("\\.collinearity", "", basename(col_files))
+    
+    return(anchors)
 }
 
 #' Get gene pairs derived from whole-genome and small-scale duplications
@@ -232,7 +220,7 @@ get_transposed <- function(pairs, blast_inter, annotation) {
     
     syn <- syntenet::interspecies_synteny(
         blast_inter,
-        annot_list = annotation[c(target, outgroup)]
+        annotation = annotation[c(target, outgroup)]
     )
     
     # Read and parse interspecies synteny results
