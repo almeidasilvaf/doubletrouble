@@ -2,51 +2,82 @@
 % Please edit documentation in R/utils_duplicate_classification.R
 \name{get_transposed}
 \alias{get_transposed}
-\title{Get transposed duplicate pairs}
+\title{Classify gene pairs originating from transposon-derived duplications}
 \usage{
-get_transposed(pairs, blast_inter, annotation)
+get_transposed(
+  pairs,
+  blast_inter,
+  annotation,
+  evalue = 1e-10,
+  anchors = 5,
+  max_gaps = 25,
+  collinearity_dir = NULL
+)
 }
 \arguments{
-\item{pairs}{A 2-column data frame with duplicated gene 1 and 2 in
-columns 1 and 2, respectively.}
+\item{pairs}{A 3-column data frame with columns \strong{dup1}, \strong{dup2},
+and \strong{type} indicating duplicated gene 1, duplicated gene 2, and
+the mode of duplication associated with the pair. This data frame
+is returned by \code{get_tandem_proximal()}.}
 
 \item{blast_inter}{A list of data frames of length 1
-containing BLAST tabular output for the comparison between target
-species and outgroup. Names of list elements must match the names of
+containing BLAST tabular output for the comparison between the target
+species and an outgroup. Names of list elements must match the names of
 list elements in \code{annotation}. BLASTp, DIAMOND or simular programs must
-be run on processed sequence data as returned by \code{process_input()}.}
+be run on processed sequence data as returned
+by \code{syntenet::process_input()}.}
 
 \item{annotation}{A processed GRangesList or CompressedGRangesList object as
 returned by \code{syntenet::process_input()}.}
+
+\item{evalue}{Numeric scalar indicating the E-value threshold.
+Default: 1e-10.}
+
+\item{anchors}{Numeric indicating the minimum required number of genes
+to call a syntenic block, as in \code{syntenet::infer_syntenet}.
+Default: 5.}
+
+\item{max_gaps}{Numeric indicating the number of upstream and downstream
+genes to search for anchors, as in \code{syntenet::infer_syntenet}.
+Default: 25.}
+
+\item{collinearity_dir}{Character indicating the path to the directory
+where .collinearity files will be stored. If NULL, files will
+be stored in a subdirectory of \code{tempdir()}. Default: NULL.}
 }
 \value{
 A 3-column data frame with the following variables:
 \describe{
-\item{dup1}{Duplicated gene 1}
-\item{dup2}{Duplicated gene 2}
-\item{type}{Duplication type, which can be either
-"TRD" (transposed duplication) or
+\item{dup1}{Character, duplicated gene 1.}
+\item{dup2}{Character, duplicated gene 2.}
+\item{type}{Factor of duplication types, with levels
+"SD" (segmental duplication),
+"TD" (tandem duplication),
+"PD" (proximal duplication),
+"TRD" (transposon-derived duplication), and
 "DD" (dispersed duplication).}
 }
 }
 \description{
-Get transposed duplicate pairs
+Classify gene pairs originating from transposon-derived duplications
 }
 \examples{
 data(diamond_inter)
 data(diamond_intra)
 data(yeast_seq)
 data(yeast_annot)
-blast_inter <- diamond_inter
+data(scerevisiae_kaks)
 
 # Get processed annotation
 pdata <- syntenet::process_input(yeast_seq, yeast_annot)
 annotation <- pdata$annotation
 
 # Get duplicated pairs
-annot <- pdata$annotation["Scerevisiae"] 
-pairs_all <- classify_gene_pairs(diamond_intra, annot)
-pairs <- pairs_all$Scerevisiae[pairs_all$Scerevisiae$type == "DD", c(1, 2)]
+pairs <- scerevisiae_kaks[, c("dup1", "dup2", "type")]
+pairs$dup1 <- paste0("Sce_", pairs$dup1)
+pairs$dup2 <- paste0("Sce_", pairs$dup2)
 
-trd <- get_transposed(pairs, blast_inter, annotation)
+# Classify pairs
+trd <- get_transposed(pairs, diamond_inter, annotation)
+
 }

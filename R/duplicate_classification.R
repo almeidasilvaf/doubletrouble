@@ -8,8 +8,21 @@
 #' for intraspecies comparisons.
 #' Each list element corresponds to the BLAST output for a given species,
 #' and names of list elements must match the names of list elements in
-#' `annotation`. BLASTp, DIAMOND or simular programs must be run on processed
-#' sequence data as returned by \code{process_input()}.
+#' \strong{annotation}. BLASTp, DIAMOND or simular programs must be run 
+#' on processed sequence data as returned by \code{process_input()}.
+#' @param scheme Character indicating which classification scheme to use.
+#' One of "binary", "standard", "extended", or "full". See details below
+#' for information on what each scheme means. Default: "standard".
+#' @param blast_inter (Only valid if \code{scheme == "extended" or "full"}).
+#' A list of data frames containing BLAST tabular output 
+#' for the comparison between target species and outgroups. 
+#' Names of list elements must match the names of 
+#' list elements in `annotation`. BLASTp, DIAMOND or simular programs must 
+#' be run on processed sequence data as returned by \code{process_input()}.
+#' @param intron_counts (Only valid if \code{scheme == "full"}). 
+#' A list of 2-column data frames with the number of
+#' introns per gene as returned by \code{get_intron_counts()}. Names
+#' of list elements must match names of \strong{annotation}.
 #' @param evalue Numeric scalar indicating the E-value threshold. 
 #' Default: 1e-10.
 #' @param anchors Numeric indicating the minimum required number of genes
@@ -18,102 +31,124 @@
 #' @param max_gaps Numeric indicating the number of upstream and downstream
 #' genes to search for anchors, as in \code{syntenet::infer_syntenet}. 
 #' Default: 25.
-#' @param binary Logical indicating whether to perform a binary classification
-#' (i.e., whole-genome and small-scale duplication) or not. If FALSE,
-#' small-scale duplications are subdivided into tandem, proximal, and dispersed
-#' duplications. Default: FALSE.
 #' @param proximal_max Numeric scalar with the maximum distance (in number
 #' of genes) between two genes to consider them as proximal duplicates.
 #' Default: 10.
-#' @param blast_inter A list of data frames containing BLAST tabular output 
-#' for the comparison between target species and outgroups. 
-#' Names of list elements must match the names of 
-#' list elements in `annotation`. BLASTp, DIAMOND or simular programs must 
-#' be run on processed sequence data as returned by \code{process_input()}.
+#' @param collinearity_dir Character indicating the path to the directory
+#' where .collinearity files will be stored. If NULL, files will
+#' be stored in a subdirectory of \code{tempdir()}. Default: NULL.
 #'  
 #' @return A list of 3-column data frames of duplicated gene pairs 
 #' (columns 1 and 2), and their modes of duplication (column 3).
+#' 
+#' @details
+#' The classification schemes increase in complexity (number of classes)
+#' in the order 'binary', 'standard', 'extended', and 'full'.
+#' 
+#' For classification scheme "binary", duplicates are classified into
+#' one of 'SD' (segmental duplications) or 'SSD' (small-scale duplications).
+#' 
+#' For classification scheme "standard" (default), duplicates are
+#' classified into 'SD' (segmental duplication), 'TD' (tandem duplication),
+#' 'PD' (proximal duplication), and 'DD' (dispersed duplication).
+#' 
+#' For classification scheme "extended", duplicates are classified into
+#' 'SD' (segmental duplication), 'TD' (tandem duplication), 
+#' 'PD' (proximal duplication), 'TRD' (transposon-derived duplication), 
+#' and 'DD' (dispersed duplication).
+#' 
+#' Finally, for classification scheme "full", duplicates are classified into
+#' 'SD' (segmental duplication), 'TD' (tandem duplication), 
+#' 'PD' (proximal duplication), 'rTRD' (retrotransposon-derived duplication), 
+#' 'dTRD' (DNA transposon-derived duplication), and 
+#' 'DD' (dispersed duplication).
+#' 
 #' @export
-#' @importFrom GenomicRanges GRangesList
 #' @rdname classify_gene_pairs
 #' @examples 
+#' # Load example data
 #' data(diamond_intra)
 #' data(diamond_inter)
 #' data(yeast_annot)
 #' data(yeast_seq)
-#' blast_list <- diamond_intra
-#' blast_inter <- diamond_inter
 #' 
-#' pdata <- syntenet::process_input(yeast_seq, yeast_annot)
-#' annot <- pdata$annotation["Scerevisiae"]
+#' # Get processed annotation data
+#' annotation <- syntenet::process_input(yeast_seq, yeast_annot)$annotation
 #' 
-#' # Binary classification scheme
-#' dup_binary <- classify_gene_pairs(blast_list, annot, binary = TRUE)
-#' table(dup_binary$Scerevisiae$type)
+#' # Get list of intron counts
+#' txdb_list <- lapply(yeast_annot, GenomicFeatures::makeTxDbFromGRanges)
+#' intron_counts <- lapply(txdb_list, get_intron_counts)
 #' 
-#' # Expanded classification scheme
-#' dup_exp <- classify_gene_pairs(blast_list, annot)
-#' table(dup_exp$Scerevisiae$type)
-#' 
-#' # Full classification scheme
-#' annotation <- pdata$annotation
-#' dup_full <- classify_gene_pairs(
-#'     blast_list, annotation, blast_inter = blast_inter
+#' # Classify duplicates - full scheme
+#' dup_class <- classify_gene_pairs(
+#'     annotation = annotation, 
+#'     blast_list = diamond_intra, 
+#'     scheme = "full",
+#'     blast_inter = diamond_inter, 
+#'     intron_counts = intron_counts
 #' )
-#' table(dup_full$Scerevisiae$type)
-classify_gene_pairs <- function(blast_list = NULL, annotation = NULL,
-                                evalue = 1e-10, anchors = 5, max_gaps = 25,
-                                binary = FALSE, proximal_max = 10,
-                                blast_inter = NULL) {
+#' 
+#' # Check number of gene pairs per class
+#' table(dup_class$Scerevisiae$type)
+#' 
+classify_gene_pairs <- function(
+        annotation = NULL, blast_list = NULL, scheme = "standard",
+        blast_inter = NULL, intron_counts,
+        evalue = 1e-10, anchors = 5, max_gaps = 25, proximal_max = 10,
+        collinearity_dir = NULL
+) {
     
     anchorp <- get_anchors_list(
-        blast_list, annotation, evalue, anchors, max_gaps
+        blast_list, annotation, evalue, anchors, max_gaps, collinearity_dir
     )
-    if(binary & !is.null(blast_inter)) {
-        message("Parameter 'binary' was set to TRUE. Ignoring 'blast_inter'...")
-    }
     
     # Get duplicate pairs and filter duplicate entries
     pairs <- lapply(blast_list, function(x) {
         fpair <- x[x$evalue <= evalue, c(1, 2)]
         fpair <- fpair[fpair[, 1] != fpair[, 2], ]
-        fpair <- fpair[!duplicated(t(apply(fpair, 1, sort))),]
+        fpair <- fpair[!duplicated(t(apply(fpair, 1, sort))), ]
         names(fpair) <- c("dup1", "dup2")
         return(fpair)
     })
-
-    dups <- lapply(seq_along(anchorp), function(x) {
-        # Find WGD-derived gene pairs
+    
+    
+    dup_list <- lapply(seq_along(anchorp), function(x) {
+        # 1) Get segmental duplicates
         sp <- names(anchorp)[x]
         p <- pairs[[grep(paste0(sp, "$"), names(pairs))]]
-        dups <- get_wgd_pairs(anchorp[[x]], p)
-
-        if(!binary) {
-            ssd <- dups[dups$type == "SSD", ]
-            wgd <- dups[dups$type == "WGD", ]
+        
+        dups <- get_segmental(anchorp[[x]], p)
+        if(scheme == "binary") {
+            dups$type <- gsub("DD", "SSD", dups$type)
+            dups$type <- factor(dups$type, levels = c("SD", "SSD"))
+        } else {
+            # 2) Get tandem and proximal duplicates
+            dups <- get_tandem_proximal(
+                dups, annotation_granges = annotation[[sp]], 
+                proximal_max = proximal_max
+            )
             
-            # Classify SSD-derived gene pairs
-            annot <- annotation[[sp]]
-            
-            if(is.null(blast_inter)) { # expanded scheme
-                ssd_classes <- classify_ssd_pairs(
-                    ssd, annot, proximal_max = proximal_max
+            if(scheme %in% c("extended", "full")) {
+                # 3) Get transposed duplicates
+                binter <- blast_inter[startsWith(names(blast_inter), paste0(sp, "_"))]
+                dups <- get_transposed(
+                    dups, binter, annotation, evalue = evalue,
+                    anchors = anchors, max_gaps = max_gaps,
+                    collinearity_dir = collinearity_dir
                 )
-            } else { # full scheme
-                pattern <- paste0(sp, "_")
-                binter <- blast_inter[startsWith(names(blast_inter), pattern)]
-                ssd_classes <- classify_ssd_pairs(
-                    ssd, annot, annotation, proximal_max = proximal_max,
-                    blast_inter = binter
-                )
+                
+                if(scheme == "full") {
+                    # 4) Get TRD classes (rTRD and dTRD)
+                    dups <- get_transposed_classes(dups, intron_counts[[sp]])
+                }
             }
-            dups <- rbind(wgd, ssd_classes)
         }
-        rownames(dups) <- NULL
+        
         return(dups)
     })
-    names(dups) <- names(anchorp)
-    return(dups)
+    names(dup_list) <- names(anchorp)
+    
+    return(dup_list)
 }
 
 
@@ -124,21 +159,30 @@ classify_gene_pairs <- function(blast_list = NULL, annotation = NULL,
 #' 
 #' @return A list of 2-column data frames with variables \strong{gene} 
 #' and \strong{type} representing gene ID and duplication type, respectively.
+#' 
+#' @details
+#' If a gene is present in pairs with different duplication modes, the gene
+#' is classified into a unique mode of duplication following the order
+#' of priority indicated in the levels of the factor \strong{type}.
+#' 
+#' For scheme "binary", the order is SD > SSD.
+#' For scheme "standard", the order is SD > TD > PD > DD.
+#' For scheme "extended", the order is SD > TD > PD > TRD > DD.
+#' For scheme "full", the order is SD > TD > PD > rTRD > dTRD > DD.
 #'
 #' @rdname classify_genes
 #' @export
+#' @importFrom GenomicRanges GRangesList
 #' @examples
-#' data(diamond_intra)
-#' data(yeast_annot)
-#' data(yeast_seq)
+#' data(scerevisiae_kaks)
 #' 
-#' pdata <- syntenet::process_input(yeast_seq, yeast_annot)
-#' annot <- pdata$annotation["Scerevisiae"]
-#' duplicates <- classify_gene_pairs(diamond_intra, annot)
-#' class_genes <- classify_genes(duplicates)
+#' cols <- c("dup1", "dup2", "type")
+#' gene_pairs_list <- list(Scerevisiae = scerevisiae_kaks[, cols])
+#' 
+#' class_genes <- classify_genes(gene_pairs_list)
 classify_genes <- function(gene_pairs_list = NULL) {
     
-    # Classify genes following the order of priority: WGD > TD > PD > TRD > DD
+    # Classify genes into unique modes used factor levels as priority order
     class_genes <- lapply(gene_pairs_list, function(x) {
 
         pairs_by_type <- split(x, x$type)
@@ -148,17 +192,13 @@ classify_genes <- function(gene_pairs_list = NULL) {
             genes_df <- genes_df[!duplicated(genes_df$gene), ]
             return(genes_df)
         }))
-        
-        # Reorder 'type' variable based on
-        ref <- c("WGD", "TD", "PD", "DD")
-        if(length(unique(gene_type$type)) == 2) {
-            ref <- c("WGD", "SSD")
-        } else if(length(unique(gene_type$type)) == 5) {
-            ref <- c("WGD", "TD", "PD", "TRD", "DD")
-        }
+
+        # For genes assigned to multiple classes, keep the first (level order)        
+        ref <- levels(x$type)
         gene_type <- gene_type[order(match(gene_type$type, ref)), ]
         gene_type <- gene_type[!duplicated(gene_type$gene), ]
     })
+    
     return(class_genes)
 }
 

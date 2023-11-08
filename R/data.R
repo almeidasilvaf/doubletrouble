@@ -15,8 +15,8 @@
 
 #' Genome annotation of the yeast species S. cerevisiae and C. glabrata
 #'
-#' Data obtained from Ensembl Fungi. Only annotation data for primary
-#' transcripts were included.
+#' Data obtained from Ensembl Fungi. Only annotation data protein-coding
+#' genes (with associated mRNA, exons, CDS, etc) are included.
 #' 
 #' @name yeast_annot
 #' @format A CompressedGRangesList containing 
@@ -104,4 +104,5 @@
 #' data(gmax_ks)
 #' @usage data(gmax_ks)
 "gmax_ks"
+
 

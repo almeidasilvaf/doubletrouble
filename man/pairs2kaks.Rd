@@ -41,7 +41,7 @@ pdata <- syntenet::process_input(yeast_seq, yeast_annot)
 annot <- pdata$annotation["Scerevisiae"]
 
 # Binary classification scheme
-gene_pairs_list <- classify_gene_pairs(blast_list, annot, binary = TRUE)
+gene_pairs_list <- classify_gene_pairs(annot, blast_list)
 gene_pairs_list <- list(
     Scerevisiae = gene_pairs_list[[1]][seq(1, 5, by = 1), ]
 )

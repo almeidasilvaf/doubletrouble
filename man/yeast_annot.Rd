@@ -12,8 +12,8 @@ the elements \strong{Scerevisiae} and \strong{Cglabrata}.
 data(yeast_annot)
 }
 \description{
-Data obtained from Ensembl Fungi. Only annotation data for primary
-transcripts were included.
+Data obtained from Ensembl Fungi. Only annotation data protein-coding
+genes (with associated mRNA, exons, CDS, etc) are included.
 }
 \examples{
 data(yeast_annot)

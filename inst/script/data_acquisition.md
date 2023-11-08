@@ -5,8 +5,8 @@ Data acquisition
 
 Here, we will use genome data for two yeast species:
 
--   *Saccharomyces cerevisiae*
--   *Candida glabrata*
+- *Saccharomyces cerevisiae*
+- *Candida glabrata*
 
 Data will be obtained from Ensembl Fungi.
 
@@ -34,8 +34,8 @@ cglabrata_coding <- cglabrata_coding[cglabrata_coding$biotype == "protein_coding
 ## yeast_annot.rda
 
 The object `yeast_annot` is a `GRangesList` object with elements
-*Scerevisiae* and *Cglabrata*. Only ranges for primary transcripts
-(protein-coding only) are included.
+*Scerevisiae* and *Cglabrata*. Only ranges for protein-coding genes are
+included.
 
 ``` r
 library(rtracklayer)
@@ -49,21 +49,37 @@ cglabrata_annot <- import(
 )
 
 # Filter GRanges (include only protein-coding genes and relevant metadata)
-## S. cerevisiae
-scerevisiae_annot <- scerevisiae_annot[scerevisiae_annot$type == "gene" & 
-                             scerevisiae_annot$biotype == "protein_coding"]
-scerevisiae_annot <- scerevisiae_annot[, c("type", "gene_id")]
-
-## C. glabrata
-cglabrata_annot <- cglabrata_annot[cglabrata_annot$type == "gene" & 
-                             cglabrata_annot$biotype == "protein_coding"]
-cglabrata_annot <- cglabrata_annot[, c("type", "gene_id")]
-
-# Combine GRanges objects in a GRangesList
-yeast_annot <- GenomicRanges::GRangesList(
+## Combine GRanges objects in a list
+yeast_annot <- list(
     Scerevisiae = scerevisiae_annot,
     Cglabrata = cglabrata_annot
 )
+
+## Filter data
+yeast_annot <- lapply(yeast_annot, function(x) {
+    
+    # Get ranges for coding genes, and use them to extract exons, mRNA, etc.
+    gene_ranges <- x[x$biotype == "protein_coding" & x$type == "gene"]
+    cranges <- subsetByOverlaps(x, gene_ranges)
+    
+    # Remove exons for TEs (to avoid warnings when building TxDb)
+    te_tx <- cranges[cranges$type == "transposable_element", ]$transcript_id
+    if(length(te_tx) > 0) {
+        te_exonid <- paste0(rep(te_tx, each = 9), paste0("-E", 1:9))
+        cranges <- cranges[-which(cranges$Name %in% te_exonid)]
+    }
+
+    # Remove unnecessary columns (for package size issues)
+    cols <- c(
+        "type", "phase", "ID", "Parent", "Name", 
+        "gene_id", "transcript_id", "exon_id", "protein_id"
+    )
+    cranges <- cranges[, cols]
+    
+    return(cranges)
+})
+
+yeast_annot <- GenomicRanges::GRangesList(yeast_annot)
 
 # Save data
 usethis::use_data(yeast_annot, compress = "xz", overwrite = TRUE)
@@ -165,25 +181,15 @@ in the S. cerevisiae genome.
 library(Biostrings)
 
 # Get duplicated genes
-data(yeast_seq)
-data(yeast_annot)
-data(diamond_intra)
-data(diamond_inter)
-pdata <- syntenet::process_input(yeast_seq, yeast_annot)
-
-c_full <- classify_gene_pairs(
-    blast_list = diamond_intra,
-    annotation = pdata$annotation,
-    binary = FALSE,
-    blast_inter = diamond_inter
-)$Scerevisiae
+data(scerevisiae_kaks)
+c_full <- scerevisiae_kaks[, c("dup1", "dup2", "type")]
 
 dup_genes <- unique(c(c_full$dup1, c_full$dup2))
 dup_genes <- gsub(".*_", "", dup_genes)
 
-dup_wgd <- c_full[c_full$type == "WGD", ]
-dup_wgd <- unique(c(dup_wgd$dup1, dup_wgd$dup2))
-dup_wgd <- gsub(".*_", "", dup_wgd)
+dup_sd <- c_full[c_full$type == "SD", ]
+dup_sd <- unique(c(dup_sd$dup1, dup_sd$dup2))
+dup_sd <- gsub(".*_", "", dup_sd)
 
 # Get CDS and keep only longest isoform
 cds_scerevisiae_full <- readDNAStringSet(
@@ -191,15 +197,7 @@ cds_scerevisiae_full <- readDNAStringSet(
 ) |> ensembl_longest_isoform()
 
 # Keep only duplicated genes
-cds_scerevisiae_all <- cds_scerevisiae_full[names(cds_scerevisiae_full) %in% dup_genes]
 cds_scerevisiae <- cds_scerevisiae_full[names(cds_scerevisiae_full) %in% dup_wgd]
-
-writeXStringSet(
-    cds_scerevisiae,
-    filepath = paste0(tempdir(), "seq.fa")
-)
-
-cds_scerevisiae <- readDNAStringSet(paste0(tempdir(), "seq.fa"))
 
 usethis::use_data(cds_scerevisiae, compress = "xz", overwrite = TRUE)
 ```
@@ -218,10 +216,11 @@ data(diamond_intra)
 data(diamond_inter)
 pdata <- syntenet::process_input(yeast_seq, yeast_annot)
 
-c_full <- classify_gene_pairs(
+# Classify genes into the extended scheme
+c_extended <- classify_gene_pairs(
     blast_list = diamond_intra,
     annotation = pdata$annotation,
-    binary = FALSE,
+    scheme = "extended",
     blast_inter = diamond_inter
 )
 
@@ -229,7 +228,7 @@ c_full <- classify_gene_pairs(
 cds <- list(Scerevisiae = cds_scerevisiae_all)
 
 # Calculate Ks values
-scerevisiae_kaks_list <- pairs2kaks(c_full, cds)
+scerevisiae_kaks_list <- pairs2kaks(c_extended, cds)
 scerevisiae_kaks <- scerevisiae_kaks_list$Scerevisiae
 
 usethis::use_data(scerevisiae_kaks, compress = "xz", overwrite = TRUE)

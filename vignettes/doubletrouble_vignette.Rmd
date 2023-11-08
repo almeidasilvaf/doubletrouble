@@ -160,39 +160,66 @@ you can classify the duplicated genes.
 # Classifying duplicated gene pairs and genes
 
 To classify duplicated gene pairs based on their modes of duplication,
-you will use the function `classify_gene_pairs()`. As input, you need to pass:
-
-- The processed annotation list as returned by
-`syntenet::process_input()`;
-- A list of data frames with DIAMOND (or BLASTp, etc.) tabular output
-as returned by `syntenet::run_diamond()`.
+you will use the function `classify_gene_pairs()`. This function offers
+four different classification schemes, depending on how much detail you
+want. The classification schemes, along with the duplication modes
+they identify and their required input, are summarized in the table below:
 
 
-The function `classify_gene_pairs` incorporates 3 classification schemes:
+| Scheme   | Duplication modes           | Required input                                     |
+|:---------|:----------------------------|:---------------------------------------------------|
+| binary   | SD, SSD                     | `blast_list`, `annotation`                         |
+| standard | SD, TD, PD, DD              | `blast_list`, `annotation`                         |
+| extended | SD, TD, PD, TRD, DD         | `blast_list`, `annotation`, `blast_inter`          |
+| full     | SD, TD, PD, rTRD, dTRD, DD  | `blast_list`, `annotation`, `blast_inter`, `intron_counts` |
 
-1. **Binary:** Duplicated gene pairs are classified as either derived
-from whole-genome duplications (WGD) or small-scale duplications (SSD).
-2. **Expanded:** SSD-derived genes are divided into 3 subcategories:
-tandem duplication (TD), proximal duplication (PD), and 
-dispersed duplication (DD).
-3. **Full:** Similar to the **expanded** scheme, but an additional subcategory
-is used for SSD-derived gene pairs: transposed duplication (TRD). [^2] 
+Table: SD, segmental duplication. SSD, small-scale duplication.
+TD, tandem duplication. PD, proximal duplication. 
+TRD, transposon-derived duplication. rTRD, retrotransposon-derived duplication.
+dTRD, DNA transposon-derived duplication. DD, dispersed duplication.
 
-[^2]: **Note:** To identify duplicated genes derived from transpositions, 
-you will need to input the DIAMOND output of a similarity search between your 
-species of interest and an outgroup. See Section \@ref(full) for details.
 
-## Binary classification
+As shown in the table, the minimal input objects are:
 
-To classify duplicated gene pairs into WGD- or SSD-derived, use `binary = TRUE`
-in `classify_gene_pairs()`.
+- **blast_list**: A list of data frames with DIAMOND (or BLASTp, etc.) tabular 
+output for intraspecies comparisons as returned 
+by `syntenet::run_diamond(..., compare = 'intraspecies')`.
+- **annotation**: The processed annotation list (a `GRangesList` object) 
+as returned by `syntenet::process_input()`.
+
+
+However, if you also want to identify transposon-derived duplicates (TRD)
+and further classify them as retrotransposon-derived duplicates (rTRD) or 
+DNA transposon-derived duplicates (dTRD), you will need the following objects:
+
+- **blast_list**: A list of data frames with DIAMOND (or BLASTp, etc.) tabular 
+output for interspecies comparisons (target species vs an outgroup) as returned 
+by `syntenet::run_diamond(..., compare = <comparison_data_frame>)`.
+- **intron_counts**: A list of data frames with the number of introns per gene
+for each species, as returned by `get_intron_counts()`.
+
+
+Below, we demonstrate each classification scheme with examples.
+
+## The *binary* scheme (SD vs SSD)
+
+The binary scheme classifies duplicates as derived from either 
+segmental duplications (SD) or small-scale duplications (SSD).
+To identify segmental duplicates, the function `classify_gene_pairs()` 
+performs intragenome synteny detection scans 
+with `r BiocStyle::Biocpkg("syntenet")` and classifies any detected anchor
+pairs as segmental duplicates. The remaining pairs are classified as
+originating from small-scale duplications.
+
+This scheme can be used by specifying `scheme = "binary"` in the
+function `classify_gene_pairs()`. 
 
 ```{r binary_classification}
-# Binary classification
+# Binary scheme
 c_binary <- classify_gene_pairs(
-    blast_list = diamond_intra,
     annotation = pdata$annotation,
-    binary = TRUE
+    blast_list = diamond_intra,
+    scheme = "binary"
 )
 
 # Inspecting the output
@@ -204,33 +231,50 @@ table(c_binary$Scerevisiae$type)
 ```
 
 The function returns a list of data frames, each containing the duplicated
-gene pairs and their modes of duplication for each species.
+gene pairs and their modes of duplication for each species (here, because
+we have only one species, this is a list of length 1).
 
-## Expanded classification (SSD &rarr; TD, PD, DD)
+## The *standard* scheme (SSD &rarr; TD, PD, DD)
 
-To subdivide SSD-derived gene pairs into TD-, PD-, and DD-derived, 
-use `binary = FALSE` in `classify_gene_pairs()`.
+Gene pairs derived from small-scale duplications can be further classified
+as originating from tandem duplications (TD, genes are adjacent to each other),
+proximal duplications (PD, genes are separated by only a few genes), or
+dispersed duplications (DD, duplicates that do not fit in any of the previous
+categories).
+
+This is the default classification scheme in `classify_gene_pairs()`,
+and it can be specified by setting `scheme = "standard"`.
 
 ```{r expanded_classification}
-# Expanded classification
-c_expanded <- classify_gene_pairs(
-    blast_list = diamond_intra,
+# Standard scheme
+c_standard <- classify_gene_pairs(
     annotation = pdata$annotation,
-    binary = FALSE
+    blast_list = diamond_intra,
+    scheme = "standard"
 )
 
 # Inspecting the output
-names(c_expanded)
-head(c_expanded$Scerevisiae)
+names(c_standard)
+head(c_standard$Scerevisiae)
 
 # How many pairs are there for each duplication mode?
-table(c_expanded$Scerevisiae$type)
+table(c_standard$Scerevisiae$type)
 ```
 
-## Full classification (SSD &rarr; TD, PD, TRD, DD) {#full}
+## The *extended* scheme (SSD &rarr; TD, PD, TRD, DD)
 
-To find transposon-derived duplicates, first you will need to perform a 
-similarity search of your target species against an outgroup species.
+To find transposon-derived duplicates (TRD), the 
+function `classify_gene_pairs()` detects syntenic regions between a target
+species and an outgroup species. Genes in the target species that are in 
+syntenic regions with the outgroup are treated as *ancestral loci*. Then,
+if only one gene of the duplicate pair is an ancestral locus, this 
+duplicate pair is classified as originating from transposon-derived
+duplications. 
+
+
+Since finding transposon-derived duplicates requires comparing a target
+species with an outgroup species, you will first need to perform a 
+similarity search of your target species against an outgroup.
 You can do this with `syntenet::run_diamond()`. For the parameter `compare`,
 you will pass a 2-column data frame specifying the comparisons to be made. [^3]
 
@@ -269,12 +313,81 @@ Now, we will pass this interspecies DIAMOND output as an argument to
 the parameter `blast_inter` of `classify_gene_pairs()`.
 
 ```{r full_classification}
-# Full classification
-c_full <- classify_gene_pairs(
-    blast_list = diamond_intra,
+# Extended scheme
+c_extended <- classify_gene_pairs(
     annotation = pdata$annotation,
-    binary = FALSE,
+    blast_list = diamond_intra,
+    scheme = "extended",
     blast_inter = diamond_inter
+)
+
+# Inspecting the output
+names(c_extended)
+head(c_extended$Scerevisiae)
+
+# How many pairs are there for each duplication mode?
+table(c_extended$Scerevisiae$type)
+```
+
+## The *full* scheme (SSD &rarr; TD, PD, rTRD, dTRD, DD)
+
+Finally, the full scheme consists in classifying transposon-derived
+duplicates (TRD) further as originating from retrotransposons (rTRD) or
+DNA transposons (dTRD). To do that, the function `classify_gene_pairs()`
+uses the number of introns per gene to find TRD pairs for which
+one gene has at least 1 intron, and the other gene has no introns; if that
+is the case, the pair is classified as originating from the activity
+of retrotransposons (rTRD, i.e., the transposed gene without introns is
+a processed transcript that was retrotransposed back to the genome). All the 
+other TRD pairs are classified as DNA transposon-derived duplicates (dTRD).
+
+
+To classify duplicates using this scheme, you will first need to create a list
+of data frames with the number of introns per gene for each species. This
+can be done with the function `get_intron_counts()`, which takes a `TxDb` 
+object as input. `TxDb` objects store transcript annotations, and they 
+can be created with a family of functions
+named `makeTxDbFrom*` from the `r BiocStyle::Biocpkg("GenomicFeatures")`
+package (see `?get_intron_counts()` for a summary of all functions).
+
+
+Here, we will create a list of `TxDb` objects from a list of `GRanges` objects
+using the function `MakeTxDbFromGRanges` 
+from `r BiocStyle::Biocpkg("GenomicFeatures")`. Importantly, to create
+a `TxDb` from a `GRanges`, the `GRanges` object must contain genomic coordinates
+for all features, including transcripts, exons, etc. Because of that, we
+will use annotation from the example data set `yeast_annot`,
+which was not processed with `syntenet::process_input()`.
+
+```{r}
+# Create a list of `TxDb` objects from a list of `GRanges` objects
+txdb_list <- lapply(yeast_annot, GenomicFeatures::makeTxDbFromGRanges)
+txdb_list
+```
+
+Once we have the `TxDb` objects, we can get intron counts per gene with
+`get_intron_counts()`.
+
+```{r}
+# Get a list of data frames with intron counts per gene for each species
+intron_counts <- lapply(txdb_list, get_intron_counts)
+
+# Inspecting the list
+names(intron_counts)
+head(intron_counts$Scerevisiae)
+```
+
+Finally, we can use this list to classify duplicates using the full scheme
+as folows:
+
+```{r}
+# Full scheme
+c_full <- classify_gene_pairs(
+    annotation = pdata$annotation,
+    blast_list = diamond_intra,
+    scheme = "full",
+    blast_inter = diamond_inter,
+    intron_counts = intron_counts
 )
 
 # Inspecting the output
@@ -285,20 +398,28 @@ head(c_full$Scerevisiae)
 table(c_full$Scerevisiae$type)
 ```
 
+
+
 # Classifying genes into unique modes of duplication
 
 If you look carefully at the output of `classify_gene_pairs()`, you will notice
 that some genes appear in more than one duplicate pair, and these pairs can
 have different duplication modes assigned. There's nothing wrong with it.
-Consider, for example, a gene that was originated by a whole-genome duplication
-event some 60 million years ago, and then it underwent a tandem duplication
+Consider, for example, a gene that was originated by a segmental duplication
+some 60 million years ago, and then it underwent a tandem duplication
 5 million years ago. In the output of `classify_gene_pairs()`, you'd see
-this gene in two pairs, one with **WGD** in the *type* column, and one
+this gene in two pairs, one with **SD** in the `type` column, and one
 with **TD**.
 
 If you want to assign each gene to a unique mode of duplication, you can
 use the function `classify_genes()`. This function assigns duplication modes
-hierarchically in this level of priority: WGD > TD > PD > TRD > DD.
+hierarchically using factor levels in column `type` as the priority order.
+The priority orders for each classification scheme are:
+
+1. **Binary:** SD > SSD.
+2. **Standard:** SD > TD > PD > DD.
+3. **Extended:** SD > TD > PD > TRD > DD. 
+4. **Full:** SD > TD > PD > rTRD > dTRD > DD.
 
 The input for `classify_genes()` is the list of gene pairs returned by
 `classify_gene_pairs()`.
@@ -337,7 +458,7 @@ head(cds_scerevisiae)
 cds_list <- list(Scerevisiae = cds_scerevisiae)
 
 # Keep only top give gene pairs for demonstration purposes
-gene_pairs <- list(Scerevisiae = c_binary$Scerevisiae[seq(1, 5, by = 1), ])
+gene_pairs <- list(Scerevisiae = c_full$Scerevisiae[seq(1, 5, by = 1), ])
 
 # Calculate Ka, Ks, and Ka/Ks
 kaks <- pairs2kaks(gene_pairs, cds_list)

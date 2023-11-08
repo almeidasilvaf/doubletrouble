@@ -32,7 +32,7 @@
 #' annot <- pdata$annotation["Scerevisiae"]
 #' 
 #' # Binary classification scheme
-#' gene_pairs_list <- classify_gene_pairs(blast_list, annot, binary = TRUE)
+#' gene_pairs_list <- classify_gene_pairs(annot, blast_list)
 #' gene_pairs_list <- list(
 #'     Scerevisiae = gene_pairs_list[[1]][seq(1, 5, by = 1), ]
 #' )
@@ -152,117 +152,7 @@ find_ks_peaks <- function(ks, npeaks = 2, min_ks = 0.01, max_ks = 4,
 }
 
 
-#' Plot histogram of Ks distribution with peaks
-#'
-#' @param peaks A list with elements \strong{mean}, \strong{sd}, 
-#' \strong{lambda}, and \strong{ks}, as returned by the 
-#' function \code{fins_ks_peaks()}.
-#' @param binwidth Numeric scalar with binwidth for the histogram.
-#' Default: 0.05.
-#'
-#' @return A ggplot object with a histogram and lines for each Ks peak.
-#'
-#' @importFrom ggplot2 ggplot aes_ geom_histogram ggplot stat_function
-#' labs theme_bw
-#' @importFrom stats dnorm
-#' @rdname plot_ks_peaks
-#' @export
-#' @examples 
-#' data(scerevisiae_kaks)
-#' ks <- scerevisiae_kaks$Ks
-#' 
-#' # Find 2 peaks in Ks distribution
-#' peaks <- find_ks_peaks(ks, npeaks = 2)
-#'
-#' # Plot
-#' plot_ks_peaks(peaks, binwidth = 0.05)
-plot_ks_peaks <- function(peaks = NULL, binwidth = 0.05) {
-    
-    ks_df <- data.frame(ks = peaks$ks)
-    
-    # Define color palette
-    pal <- c(
-        "#6A6599FF", "#79AF97FF", "#B24745FF", "#00A1D5FF", 
-        "#DF8F44FF", "#374E55FF", "#F39B7FFF", "#3C5488FF"
-    )
-    
-    pal <- as.list(rev(pal[seq_along(peaks$mean)]))
-    
-    # Plot 
-    p <- ggplot(ks_df, aes_(x = ~ks)) +
-        geom_histogram(binwidth = binwidth, color = "black", fill = "grey80") +
-        mapply(function(mean, sd, lambda, n, binwidth, color) {
-            stat_function(geom = "line", fun = function(x) {
-                (dnorm(x, mean = mean, sd = sd)) * n * binwidth * lambda
-            }, 
-            color = color, size = 1.5)
-        }, mean = peaks$mean, sd = peaks$sd, lambda = peaks$lambda,
-        n = length(ks_df$ks), binwidth = binwidth,
-        color = pal) +
-        theme_bw() +
-        labs(title = "Ks distribution with peaks", y = "Frequency",
-             x = "Ks values")
-    
-    return(p)
-}
 
-
-#' Find line intersect between pairs of Gaussian mixtures
-#'
-#' This function finds x-axis coordinate of n-1 intersections between lines 
-#' of n Gaussian mixtures. Thus, it will find 1 intersection for Ks distros
-#' with 2 peaks, 2 intersections for distros with 2 peaks, and so on.
-#' 
-#' @param peaks A list with elements \strong{mean}, \strong{sd}, 
-#' \strong{lambda}, and \strong{ks}, as returned by the 
-#' function \code{fins_ks_peaks()}.
-#'
-#' @return A numeric scalar or vector with the x-axis coordinates of the 
-#' intersections.
-#' @importFrom ggplot2 ggplot_build
-#' @noRd
-#' @rdname find_intersect_mixtures
-#' @examples
-#' data(scerevisiae_kaks)
-#' ks <- scerevisiae_kaks$Ks
-#' 
-#' # Find 2 peaks in Ks distribution
-#' peaks <- find_ks_peaks(ks, npeaks = 2)
-#'
-#' # Get intersects
-#' inter <- find_intersect_mixtures(peaks)
-find_intersect_mixtures <- function(peaks) {
-    
-    p <- plot_ks_peaks(peaks)
-    npeaks <- length(peaks$mean)
-    if(npeaks == 1) {
-        stop("Cannot find intersect of peaks with only 1 peak.")
-    }
-    
-    # Create list of density line indices to iterate through
-    iteration_list <- list(
-        c(2,3), c(3,4), c(4,5), c(5,6), c(6,7), c(7,8), c(8,9)
-    )
-    iteration_list <- iteration_list[seq_len(npeaks-1)]
-    
-    # Get intersection between density line i and density line i+1    
-    ints <- unlist(lapply(iteration_list, function(x) {
-        l1 <- x[1]
-        l2 <- x[2]
-        line_df <- data.frame(
-            x = ggplot_build(p)$data[[l1]]$x,
-            line1 = ggplot_build(p)$data[[l1]]$y,
-            line2 = ggplot_build(p)$data[[l2]]$y
-        )
-        # Get minimal distance between lines along y axis
-        line_df$delta <- line_df$line1 - line_df$line2
-        
-        # Get x value for minimal delta y
-        int <- line_df$x[which(diff(sign(diff((abs(line_df$delta))))) == 2)+1]
-        return(int)
-    }))
-    return(ints)
-}
 
 
 #' Split gene pairs based on their Ks peaks
