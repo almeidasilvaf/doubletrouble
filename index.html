@@ -7,14 +7,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="description" content="doubletrouble aims to identify duplicated genes from
     whole-genome protein sequences and classify them based on their modes
-    of duplication. The duplication modes are: 
-    i. whole-genome duplication (WGD);
+    of duplication. The duplication modes are i. segmental duplication (SD);
     ii. tandem duplication (TD);
     iii. proximal duplication (PD);
     iv. transposed duplication (TRD) and;
     v. dispersed duplication (DD).
+    Transposon-derived duplicates (TRD) can be further subdivided into
+    rTRD (retrotransposon-derived duplication) and 
+    dTRD (DNA transposon-derived duplication).
     If users want a simpler classification scheme, duplicates can also be
-    classified into WGD- and SSD-derived (small-scale duplication) gene pairs.
+    classified into SD- and SSD-derived (small-scale duplication) gene pairs.
     Besides classifying gene pairs, users can also classify genes, so that
     each gene is assigned a unique mode of duplication. 
     Users can also calculate substitution rates per substitution site (i.e., Ka
@@ -30,21 +32,23 @@
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="apple-touch-icon-60x60.png">
 <script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="deps/bootstrap-5.2.2/bootstrap.min.css" rel="stylesheet">
-<script src="deps/bootstrap-5.2.2/bootstrap.bundle.min.js"></script><link href="deps/Atkinson_Hyperlegible-0.4.5/font.css" rel="stylesheet">
-<link href="deps/Source_Code_Pro-0.4.5/font.css" rel="stylesheet">
+<script src="deps/bootstrap-5.2.2/bootstrap.bundle.min.js"></script><link href="deps/Atkinson_Hyperlegible-0.4.7/font.css" rel="stylesheet">
+<link href="deps/Source_Code_Pro-0.4.7/font.css" rel="stylesheet">
 <!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Identification and classification of duplicated genes">
 <meta property="og:description" content="doubletrouble aims to identify duplicated genes from
     whole-genome protein sequences and classify them based on their modes
-    of duplication. The duplication modes are: 
-    i. whole-genome duplication (WGD);
+    of duplication. The duplication modes are i. segmental duplication (SD);
     ii. tandem duplication (TD);
     iii. proximal duplication (PD);
     iv. transposed duplication (TRD) and;
     v. dispersed duplication (DD).
+    Transposon-derived duplicates (TRD) can be further subdivided into
+    rTRD (retrotransposon-derived duplication) and 
+    dTRD (DNA transposon-derived duplication).
     If users want a simpler classification scheme, duplicates can also be
-    classified into WGD- and SSD-derived (small-scale duplication) gene pairs.
+    classified into SD- and SSD-derived (small-scale duplication) gene pairs.
     Besides classifying gene pairs, users can also classify genes, so that
     each gene is assigned a unique mode of duplication. 
     Users can also calculate substitution rates per substitution site (i.e., Ka
@@ -65,7 +69,7 @@
     
     <a class="navbar-brand me-2" href="index.html">doubletrouble</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.99.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.1</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -112,34 +116,47 @@
 </div>
 <!-- badges: start -->
 
-<p>The major goal of <code>doubletrouble</code> is to identify duplicated genes from whole-genome protein sequences and classify them based on their modes of duplication. The simplest classification scheme has two duplication modes:</p>
-<ol style="list-style-type: decimal">
-<li>Whole-genome duplication (WGD);</li>
-<li>Small-scale duplication (SSD)</li>
-</ol>
-<p>For a more detailed view of the duplication modes, users can also choose to split SSD into subcategories, so the available duplication modes will be:</p>
-<ol style="list-style-type: decimal">
-<li>Whole-genome duplication (WGD);</li>
-<li>Tandem duplication (TD);</li>
-<li>Proximal duplication (PD);</li>
-<li>Transposed duplication (TRD);</li>
-<li>Dispersed duplication (DD).</li>
-</ol>
-<p>Besides classifying gene pairs, users can also classify genes, so that each gene is assigned a unique mode of duplication.</p>
-<p>Users can also calculate substitution rates per substitution site (i.e., Ka and Ks) from duplicate pairs, find peaks in Ks distributions with Gaussian Mixture Models (GMMs), and classify gene pairs into age groups based on Ks peaks.</p>
+<p>The major goal of <strong>doubletrouble</strong> is to identify duplicated genes from whole-genome protein sequences and classify them based on their modes of duplication. Duplicates can be classified using four different classification schemes, which increase the complexity and level of details in a stepwise manner. The classification schemes and the duplication modes they can classify are:</p>
+<table class="table">
+<thead><tr class="header">
+<th align="left">Scheme</th>
+<th align="left">Duplication modes</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">binary</td>
+<td align="left">SD, SSD</td>
+</tr>
+<tr class="even">
+<td align="left">standard</td>
+<td align="left">SD, TD, PD, DD</td>
+</tr>
+<tr class="odd">
+<td align="left">extended</td>
+<td align="left">SD, TD, PD, TRD, DD</td>
+</tr>
+<tr class="even">
+<td align="left">full</td>
+<td align="left">SD, TD, PD, rTRD, dTRD, DD</td>
+</tr>
+</tbody>
+</table>
+<p><em>Legend:</em> <strong>SD</strong>, segmental duplication. <strong>SSD</strong>, small-scale duplication. <strong>TD</strong>, tandem duplication. <strong>PD</strong>, proximal duplication. <strong>TRD</strong>, transposon-derived duplication. <strong>rTRD</strong>, retrotransposon-derived duplication. <strong>dTRD</strong>, DNA transposon-derived duplication. <strong>DD</strong>, dispersed duplication.</p>
+<p>Besides classifying gene pairs, users can also classify genes, so that each gene is assigned to a unique mode of duplication.</p>
+<p>Users can also calculate substitution rates per substitution site (i.e., <span class="math inline"><em>K</em><sub><em>a</em></sub></span>, <span class="math inline"><em>K</em><sub><em>s</em></sub></span> and their ratios <span class="math inline">$\frac{K_a}{K_s}$</span>) from duplicate pairs, find peaks in Ks distributions with Gaussian Mixture Models (GMMs), and classify gene pairs into age groups based on Ks peaks.</p>
 <div class="section level2">
 <h2 id="installation-instructions">Installation instructions<a class="anchor" aria-label="anchor" href="#installation-instructions"></a>
 </h2>
-<p>Get the latest stable <code>R</code> release from <a href="http://cran.r-project.org/" class="external-link">CRAN</a>. Then install <code>doubletrouble</code> from <a href="http://bioconductor.org/" class="external-link">Bioconductor</a> using the following code:</p>
+<p>Get the latest stable <code>R</code> release from <a href="http://cran.r-project.org/" class="external-link">CRAN</a>. Then install <strong>doubletrouble</strong> from <a href="http://bioconductor.org/" class="external-link">Bioconductor</a> using the following code:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"BiocManager"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"BiocManager"</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
 <span></span>
-<span><span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/BiocManager/man/install.html" class="external-link">install</a></span><span class="op">(</span><span class="st">"doubletrouble"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://bioconductor.github.io/BiocManager/reference/install.html" class="external-link">install</a></span><span class="op">(</span><span class="st">"doubletrouble"</span><span class="op">)</span></span></code></pre></div>
 <p>And the development version from <a href="https://github.com/almeidasilvaf/doubletrouble" class="external-link">GitHub</a> with:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/BiocManager/man/install.html" class="external-link">install</a></span><span class="op">(</span><span class="st">"almeidasilvaf/doubletrouble"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://bioconductor.github.io/BiocManager/reference/install.html" class="external-link">install</a></span><span class="op">(</span><span class="st">"almeidasilvaf/doubletrouble"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="citation">Citation<a class="anchor" aria-label="anchor" href="#citation"></a>
@@ -147,11 +164,10 @@
 <p>Below is the citation output from using <code>citation('doubletrouble')</code> in R. Please run this yourself to check for any updates on how to cite <strong>doubletrouble</strong>.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/citation.html" class="external-link">citation</a></span><span class="op">(</span><span class="st">'doubletrouble'</span><span class="op">)</span>, bibtex <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; To cite package 'doubletrouble' in publications use:</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;   Almeida-Silva F, Van de Peer Y (2022). _doubletrouble: Identification</span></span>
-<span><span class="co">#&gt;   and classification of duplicated genes_. R package version 0.99.1,</span></span>
+<span><span class="co">#&gt;   and classification of duplicated genes_. R package version 1.3.0,</span></span>
 <span><span class="co">#&gt;   &lt;https://github.com/almeidasilvaf/doubletrouble&gt;.</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; A BibTeX entry for LaTeX users is</span></span>
@@ -160,28 +176,28 @@
 <span><span class="co">#&gt;     title = {doubletrouble: Identification and classification of duplicated genes},</span></span>
 <span><span class="co">#&gt;     author = {Fabrício Almeida-Silva and Yves {Van de Peer}},</span></span>
 <span><span class="co">#&gt;     year = {2022},</span></span>
-<span><span class="co">#&gt;     note = {R package version 0.99.1},</span></span>
+<span><span class="co">#&gt;     note = {R package version 1.3.0},</span></span>
 <span><span class="co">#&gt;     url = {https://github.com/almeidasilvaf/doubletrouble},</span></span>
 <span><span class="co">#&gt;   }</span></span></code></pre></div>
-<p>Please note that the <code>doubletrouble</code> was only made possible thanks to many other R and bioinformatics software authors, which are cited either in the vignettes and/or the paper(s) describing this package.</p>
+<p>Please note that the <strong>doubletrouble</strong> was only made possible thanks to many other R and bioinformatics software authors, which are cited either in the vignettes and/or the paper(s) describing this package.</p>
 </div>
 <div class="section level2">
 <h2 id="code-of-conduct">Code of Conduct<a class="anchor" aria-label="anchor" href="#code-of-conduct"></a>
 </h2>
-<p>Please note that the <code>doubletrouble</code> project is released with a <a href="http://bioconductor.org/about/code-of-conduct/" class="external-link">Contributor Code of Conduct</a>. By contributing to this project, you agree to abide by its terms.</p>
+<p>Please note that the <strong>doubletrouble</strong> project is released with a <a href="http://bioconductor.org/about/code-of-conduct/" class="external-link">Contributor Code of Conduct</a>. By contributing to this project, you agree to abide by its terms.</p>
 </div>
 <div class="section level2">
 <h2 id="development-tools">Development tools<a class="anchor" aria-label="anchor" href="#development-tools"></a>
 </h2>
 <ul>
-<li>Continuous code testing is possible thanks to <a href="https://www.tidyverse.org/blog/2020/04/usethis-1-6-0/" class="external-link">GitHub actions</a> through <em><a href="https://CRAN.R-project.org/package=usethis" class="external-link">usethis</a></em>, <em><a href="https://CRAN.R-project.org/package=remotes" class="external-link">remotes</a></em>, and <em><a href="https://CRAN.R-project.org/package=rcmdcheck" class="external-link">rcmdcheck</a></em> customized to use <a href="https://www.bioconductor.org/help/docker/" class="external-link">Bioconductor’s docker containers</a> and <em><a href="https://bioconductor.org/packages/3.15/BiocCheck" class="external-link">BiocCheck</a></em>.</li>
+<li>Continuous code testing is possible thanks to <a href="https://www.tidyverse.org/blog/2020/04/usethis-1-6-0/" class="external-link">GitHub actions</a> through <em><a href="https://CRAN.R-project.org/package=usethis" class="external-link">usethis</a></em>, <em><a href="https://CRAN.R-project.org/package=remotes" class="external-link">remotes</a></em>, and <em><a href="https://CRAN.R-project.org/package=rcmdcheck" class="external-link">rcmdcheck</a></em> customized to use <a href="https://www.bioconductor.org/help/docker/" class="external-link">Bioconductor’s docker containers</a> and <em><a href="https://bioconductor.org/packages/3.17/BiocCheck" class="external-link">BiocCheck</a></em>.</li>
 <li>Code coverage assessment is possible thanks to <a href="https://codecov.io/gh" class="external-link">codecov</a> and <em><a href="https://CRAN.R-project.org/package=covr" class="external-link">covr</a></em>.</li>
 <li>The <a href="http://almeidasilvaf.github.io/doubletrouble" class="external-link">documentation website</a> is automatically updated thanks to <em><a href="https://CRAN.R-project.org/package=pkgdown" class="external-link">pkgdown</a></em>.</li>
 <li>The code is styled automatically thanks to <em><a href="https://CRAN.R-project.org/package=styler" class="external-link">styler</a></em>.</li>
 <li>The documentation is formatted thanks to <em><a href="https://CRAN.R-project.org/package=devtools" class="external-link">devtools</a></em> and <em><a href="https://CRAN.R-project.org/package=roxygen2" class="external-link">roxygen2</a></em>.</li>
 </ul>
 <p>For more details, check the <code>dev</code> directory.</p>
-<p>This package was developed using <em><a href="https://bioconductor.org/packages/3.15/biocthis" class="external-link">biocthis</a></em>.</p>
+<p>This package was developed using <em><a href="https://bioconductor.org/packages/3.17/biocthis" class="external-link">biocthis</a></em>.</p>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="links">

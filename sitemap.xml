@@ -37,9 +37,6 @@
     <loc>/reference/classify_genes.html</loc>
   </url>
   <url>
-    <loc>/reference/classify_ssd_pairs.html</loc>
-  </url>
-  <url>
     <loc>/reference/diamond_inter.html</loc>
   </url>
   <url>
@@ -52,10 +49,19 @@
     <loc>/reference/get_anchors_list.html</loc>
   </url>
   <url>
+    <loc>/reference/get_intron_counts.html</loc>
+  </url>
+  <url>
+    <loc>/reference/get_segmental.html</loc>
+  </url>
+  <url>
+    <loc>/reference/get_tandem_proximal.html</loc>
+  </url>
+  <url>
     <loc>/reference/get_transposed.html</loc>
   </url>
   <url>
-    <loc>/reference/get_wgd_pairs.html</loc>
+    <loc>/reference/get_transposed_classes.html</loc>
   </url>
   <url>
     <loc>/reference/gmax_ks.html</loc>
