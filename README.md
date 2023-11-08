@@ -14,36 +14,38 @@ stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://
 coverage](https://codecov.io/gh/almeidasilvaf/doubletrouble/branch/devel/graph/badge.svg)](https://codecov.io/gh/almeidasilvaf/doubletrouble?branch=devel)
 <!-- badges: end -->
 
-The major goal of `doubletrouble` is to identify duplicated genes from
+The major goal of **doubletrouble** is to identify duplicated genes from
 whole-genome protein sequences and classify them based on their modes of
-duplication. The simplest classification scheme has two duplication
-modes:
+duplication. Duplicates can be classified using four different
+classification schemes, which increase the complexity and level of
+details in a stepwise manner. The classification schemes and the
+duplication modes they can classify are:
 
-1.  Whole-genome duplication (WGD);
-2.  Small-scale duplication (SSD)
+| Scheme   | Duplication modes          |
+|:---------|:---------------------------|
+| binary   | SD, SSD                    |
+| standard | SD, TD, PD, DD             |
+| extended | SD, TD, PD, TRD, DD        |
+| full     | SD, TD, PD, rTRD, dTRD, DD |
 
-For a more detailed view of the duplication modes, users can also choose
-to split SSD into subcategories, so the available duplication modes will
-be:
-
-1.  Whole-genome duplication (WGD);
-2.  Tandem duplication (TD);
-3.  Proximal duplication (PD);
-4.  Transposed duplication (TRD);
-5.  Dispersed duplication (DD).
+*Legend:* **SD**, segmental duplication. **SSD**, small-scale
+duplication. **TD**, tandem duplication. **PD**, proximal duplication.
+**TRD**, transposon-derived duplication. **rTRD**,
+retrotransposon-derived duplication. **dTRD**, DNA transposon-derived
+duplication. **DD**, dispersed duplication.
 
 Besides classifying gene pairs, users can also classify genes, so that
-each gene is assigned a unique mode of duplication.
+each gene is assigned to a unique mode of duplication.
 
 Users can also calculate substitution rates per substitution site (i.e.,
-Ka and Ks) from duplicate pairs, find peaks in Ks distributions with
-Gaussian Mixture Models (GMMs), and classify gene pairs into age groups
-based on Ks peaks.
+$K_a$, $K_s$ and their ratios $\frac{K_a}{K_s}$) from duplicate pairs,
+find peaks in Ks distributions with Gaussian Mixture Models (GMMs), and
+classify gene pairs into age groups based on Ks peaks.
 
 ## Installation instructions
 
 Get the latest stable `R` release from
-[CRAN](http://cran.r-project.org/). Then install `doubletrouble` from
+[CRAN](http://cran.r-project.org/). Then install **doubletrouble** from
 [Bioconductor](http://bioconductor.org/) using the following code:
 
 ``` r
@@ -69,11 +71,10 @@ R. Please run this yourself to check for any updates on how to cite
 
 ``` r
 print(citation('doubletrouble'), bibtex = TRUE)
-#> 
 #> To cite package 'doubletrouble' in publications use:
 #> 
 #>   Almeida-Silva F, Van de Peer Y (2022). _doubletrouble: Identification
-#>   and classification of duplicated genes_. R package version 0.99.1,
+#>   and classification of duplicated genes_. R package version 1.3.0,
 #>   <https://github.com/almeidasilvaf/doubletrouble>.
 #> 
 #> A BibTeX entry for LaTeX users is
@@ -82,18 +83,18 @@ print(citation('doubletrouble'), bibtex = TRUE)
 #>     title = {doubletrouble: Identification and classification of duplicated genes},
 #>     author = {Fabrício Almeida-Silva and Yves {Van de Peer}},
 #>     year = {2022},
-#>     note = {R package version 0.99.1},
+#>     note = {R package version 1.3.0},
 #>     url = {https://github.com/almeidasilvaf/doubletrouble},
 #>   }
 ```
 
-Please note that the `doubletrouble` was only made possible thanks to
+Please note that the **doubletrouble** was only made possible thanks to
 many other R and bioinformatics software authors, which are cited either
 in the vignettes and/or the paper(s) describing this package.
 
 ## Code of Conduct
 
-Please note that the `doubletrouble` project is released with a
+Please note that the **doubletrouble** project is released with a
 [Contributor Code of
 Conduct](http://bioconductor.org/about/code-of-conduct/). By
 contributing to this project, you agree to abide by its terms.
@@ -107,7 +108,7 @@ contributing to this project, you agree to abide by its terms.
   *[rcmdcheck](https://CRAN.R-project.org/package=rcmdcheck)* customized
   to use [Bioconductor’s docker
   containers](https://www.bioconductor.org/help/docker/) and
-  *[BiocCheck](https://bioconductor.org/packages/3.15/BiocCheck)*.
+  *[BiocCheck](https://bioconductor.org/packages/3.17/BiocCheck)*.
 - Code coverage assessment is possible thanks to
   [codecov](https://codecov.io/gh) and
   *[covr](https://CRAN.R-project.org/package=covr)*.
@@ -124,4 +125,4 @@ contributing to this project, you agree to abide by its terms.
 For more details, check the `dev` directory.
 
 This package was developed using
-*[biocthis](https://bioconductor.org/packages/3.15/biocthis)*.
+*[biocthis](https://bioconductor.org/packages/3.17/biocthis)*.

@@ -17,13 +17,21 @@ and \strong{type} representing gene ID and duplication type, respectively.
 \description{
 Classify genes into unique modes of duplication
 }
-\examples{
-data(diamond_intra)
-data(yeast_annot)
-data(yeast_seq)
+\details{
+If a gene is present in pairs with different duplication modes, the gene
+is classified into a unique mode of duplication following the order
+of priority indicated in the levels of the factor \strong{type}.
 
-pdata <- syntenet::process_input(yeast_seq, yeast_annot)
-annot <- pdata$annotation["Scerevisiae"]
-duplicates <- classify_gene_pairs(diamond_intra, annot)
-class_genes <- classify_genes(duplicates)
+For scheme "binary", the order is SD > SSD.
+For scheme "standard", the order is SD > TD > PD > DD.
+For scheme "extended", the order is SD > TD > PD > TRD > DD.
+For scheme "full", the order is SD > TD > PD > rTRD > dTRD > DD.
+}
+\examples{
+data(scerevisiae_kaks)
+
+cols <- c("dup1", "dup2", "type")
+gene_pairs_list <- list(Scerevisiae = scerevisiae_kaks[, cols])
+
+class_genes <- classify_genes(gene_pairs_list)
 }

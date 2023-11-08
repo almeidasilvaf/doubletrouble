@@ -5,26 +5,44 @@
 \title{Classify duplicate gene pairs based on their modes of duplication}
 \usage{
 classify_gene_pairs(
-  blast_list = NULL,
   annotation = NULL,
+  blast_list = NULL,
+  scheme = "standard",
+  blast_inter = NULL,
+  intron_counts,
   evalue = 1e-10,
   anchors = 5,
   max_gaps = 25,
-  binary = FALSE,
   proximal_max = 10,
-  blast_inter = NULL
+  collinearity_dir = NULL
 )
 }
 \arguments{
+\item{annotation}{A processed GRangesList or CompressedGRangesList object as
+returned by \code{syntenet::process_input()}.}
+
 \item{blast_list}{A list of data frames containing BLAST tabular output
 for intraspecies comparisons.
 Each list element corresponds to the BLAST output for a given species,
 and names of list elements must match the names of list elements in
-\code{annotation}. BLASTp, DIAMOND or simular programs must be run on processed
-sequence data as returned by \code{process_input()}.}
+\strong{annotation}. BLASTp, DIAMOND or simular programs must be run
+on processed sequence data as returned by \code{process_input()}.}
 
-\item{annotation}{A processed GRangesList or CompressedGRangesList object as
-returned by \code{syntenet::process_input()}.}
+\item{scheme}{Character indicating which classification scheme to use.
+One of "binary", "standard", "extended", or "full". See details below
+for information on what each scheme means. Default: "standard".}
+
+\item{blast_inter}{(Only valid if \code{scheme == "extended" or "full"}).
+A list of data frames containing BLAST tabular output
+for the comparison between target species and outgroups.
+Names of list elements must match the names of
+list elements in \code{annotation}. BLASTp, DIAMOND or simular programs must
+be run on processed sequence data as returned by \code{process_input()}.}
+
+\item{intron_counts}{(Only valid if \code{scheme == "full"}).
+A list of 2-column data frames with the number of
+introns per gene as returned by \code{get_intron_counts()}. Names
+of list elements must match names of \strong{annotation}.}
 
 \item{evalue}{Numeric scalar indicating the E-value threshold.
 Default: 1e-10.}
@@ -37,20 +55,13 @@ Default: 5.}
 genes to search for anchors, as in \code{syntenet::infer_syntenet}.
 Default: 25.}
 
-\item{binary}{Logical indicating whether to perform a binary classification
-(i.e., whole-genome and small-scale duplication) or not. If FALSE,
-small-scale duplications are subdivided into tandem, proximal, and dispersed
-duplications. Default: FALSE.}
-
 \item{proximal_max}{Numeric scalar with the maximum distance (in number
 of genes) between two genes to consider them as proximal duplicates.
 Default: 10.}
 
-\item{blast_inter}{A list of data frames containing BLAST tabular output
-for the comparison between target species and outgroups.
-Names of list elements must match the names of
-list elements in \code{annotation}. BLASTp, DIAMOND or simular programs must
-be run on processed sequence data as returned by \code{process_input()}.}
+\item{collinearity_dir}{Character indicating the path to the directory
+where .collinearity files will be stored. If NULL, files will
+be stored in a subdirectory of \code{tempdir()}. Default: NULL.}
 }
 \value{
 A list of 3-column data frames of duplicated gene pairs
@@ -59,29 +70,52 @@ A list of 3-column data frames of duplicated gene pairs
 \description{
 Classify duplicate gene pairs based on their modes of duplication
 }
+\details{
+The classification schemes increase in complexity (number of classes)
+in the order 'binary', 'standard', 'extended', and 'full'.
+
+For classification scheme "binary", duplicates are classified into
+one of 'SD' (segmental duplications) or 'SSD' (small-scale duplications).
+
+For classification scheme "standard" (default), duplicates are
+classified into 'SD' (segmental duplication), 'TD' (tandem duplication),
+'PD' (proximal duplication), and 'DD' (dispersed duplication).
+
+For classification scheme "extended", duplicates are classified into
+'SD' (segmental duplication), 'TD' (tandem duplication),
+'PD' (proximal duplication), 'TRD' (transposon-derived duplication),
+and 'DD' (dispersed duplication).
+
+Finally, for classification scheme "full", duplicates are classified into
+'SD' (segmental duplication), 'TD' (tandem duplication),
+'PD' (proximal duplication), 'rTRD' (retrotransposon-derived duplication),
+'dTRD' (DNA transposon-derived duplication), and
+'DD' (dispersed duplication).
+}
 \examples{
+# Load example data
 data(diamond_intra)
 data(diamond_inter)
 data(yeast_annot)
 data(yeast_seq)
-blast_list <- diamond_intra
-blast_inter <- diamond_inter
 
-pdata <- syntenet::process_input(yeast_seq, yeast_annot)
-annot <- pdata$annotation["Scerevisiae"]
+# Get processed annotation data
+annotation <- syntenet::process_input(yeast_seq, yeast_annot)$annotation
 
-# Binary classification scheme
-dup_binary <- classify_gene_pairs(blast_list, annot, binary = TRUE)
-table(dup_binary$Scerevisiae$type)
+# Get list of intron counts
+txdb_list <- lapply(yeast_annot, GenomicFeatures::makeTxDbFromGRanges)
+intron_counts <- lapply(txdb_list, get_intron_counts)
 
-# Expanded classification scheme
-dup_exp <- classify_gene_pairs(blast_list, annot)
-table(dup_exp$Scerevisiae$type)
-
-# Full classification scheme
-annotation <- pdata$annotation
-dup_full <- classify_gene_pairs(
-    blast_list, annotation, blast_inter = blast_inter
+# Classify duplicates - full scheme
+dup_class <- classify_gene_pairs(
+    annotation = annotation, 
+    blast_list = diamond_intra, 
+    scheme = "full",
+    blast_inter = diamond_inter, 
+    intron_counts = intron_counts
 )
-table(dup_full$Scerevisiae$type)
+
+# Check number of gene pairs per class
+table(dup_class$Scerevisiae$type)
+
 }
