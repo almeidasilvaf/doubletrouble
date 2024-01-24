@@ -10,7 +10,7 @@
 #' Possible values are "Li", "NG86", "NG", "LWL", "LPB", "MLWL", "MLPB", "GY", 
 #' "YN", "MYN", "MS", "MA", "GNG", "GLWL", "GLPB", "GMLWL", "GMLPB", "GYN", 
 #' and "GMYN". Default: "MYN".
-#' @param BiocParallel back-end to be used. 
+#' @param bp_param BiocParallel back-end to be used. 
 #' Default: `BiocParallel::SerialParam()`.
 #' 
 #' @return A list of data frames containing gene pairs and their Ka, Ks,

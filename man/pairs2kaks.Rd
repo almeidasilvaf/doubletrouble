@@ -23,7 +23,7 @@ Possible values are "Li", "NG86", "NG", "LWL", "LPB", "MLWL", "MLPB", "GY",
 "YN", "MYN", "MS", "MA", "GNG", "GLWL", "GLPB", "GMLWL", "GMLPB", "GYN",
 and "GMYN". Default: "MYN".}
 
-\item{BiocParallel}{back-end to be used.
+\item{bp_param}{BiocParallel back-end to be used.
 Default: \code{BiocParallel::SerialParam()}.}
 }
 \value{
