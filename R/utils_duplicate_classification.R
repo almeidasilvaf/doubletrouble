@@ -340,8 +340,8 @@ get_transposed_classes <- function(pairs, intron_counts) {
     if(nrow(tpairs) > 0) {
         
         id <- unique(gsub("_.*", "", tpairs$dup1))
-        tpairs$dup1 <- gsub("[a-zA-Z]{2,5}_", "", tpairs$dup1)
-        tpairs$dup2 <- gsub("[a-zA-Z]{2,5}_", "", tpairs$dup2)
+        tpairs$dup1 <- gsub("^[a-zA-Z]{2,5}_", "", tpairs$dup1)
+        tpairs$dup2 <- gsub("^[a-zA-Z]{2,5}_", "", tpairs$dup2)
         
         # Combine `tpairs` and `intron_counts`
         pairs_ic <- merge(
@@ -372,5 +372,4 @@ get_transposed_classes <- function(pairs, intron_counts) {
     
     return(final_pairs)
 }
-
 
