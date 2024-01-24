@@ -182,27 +182,26 @@ classify_gene_pairs <- function(
 #' class_genes <- classify_genes(gene_pairs_list)
 classify_genes <- function(gene_pairs_list = NULL) {
     
-    # Classify genes into unique modes used factor levels as priority order
     class_genes <- lapply(gene_pairs_list, function(x) {
-
+        
         pairs_by_type <- split(x, x$type)
-        gene_type <- Reduce(rbind, lapply(pairs_by_type, function(x) {
-            genes <- unique(c(x$dup1, x$dup2))
-            genes_df <- data.frame(gene = genes, type = x$type[1])
-            genes_df <- genes_df[!duplicated(genes_df$gene), ]
+        gene_type <- Reduce(rbind, lapply(pairs_by_type, function(y) {
+            
+            genes_df <- NULL
+            if(nrow(y) > 0) {
+                genes <- unique(c(y$dup1, y$dup2))
+                genes_df <- data.frame(gene = genes, type = y$type[1])
+                genes_df <- genes_df[!duplicated(genes_df$gene), ]
+            }
+            
             return(genes_df)
         }))
-
-        # For genes assigned to multiple classes, keep the first (level order)        
         ref <- levels(x$type)
         gene_type <- gene_type[order(match(gene_type$type, ref)), ]
         gene_type <- gene_type[!duplicated(gene_type$gene), ]
     })
-    
     return(class_genes)
 }
-
-
 
 
 

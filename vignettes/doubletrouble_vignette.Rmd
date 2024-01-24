@@ -173,7 +173,7 @@ they identify and their required input, are summarized in the table below:
 | extended | SD, TD, PD, TRD, DD         | `blast_list`, `annotation`, `blast_inter`          |
 | full     | SD, TD, PD, rTRD, dTRD, DD  | `blast_list`, `annotation`, `blast_inter`, `intron_counts` |
 
-Table: SD, segmental duplication. SSD, small-scale duplication.
+**Legend:** SD, segmental duplication. SSD, small-scale duplication.
 TD, tandem duplication. PD, proximal duplication. 
 TRD, transposon-derived duplication. rTRD, retrotransposon-derived duplication.
 dTRD, DNA transposon-derived duplication. DD, dispersed duplication.

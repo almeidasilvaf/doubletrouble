@@ -10,13 +10,14 @@
 #' Possible values are "Li", "NG86", "NG", "LWL", "LPB", "MLWL", "MLPB", "GY", 
 #' "YN", "MYN", "MS", "MA", "GNG", "GLWL", "GLPB", "GMLWL", "GMLPB", "GYN", 
 #' and "GMYN". Default: "MYN".
-#' @param threads Numeric scalar indicating the number of threads to use.
-#' Default: 1.
+#' @param BiocParallel back-end to be used. 
+#' Default: `BiocParallel::SerialParam()`.
 #' 
 #' @return A list of data frames containing gene pairs and their Ka, Ks,
 #' and Ka/Ks values.
 #' @importFrom MSA2dist dnastring2kaks
 #' @importFrom Biostrings width
+#' @importFrom BiocParallel SerialParam bplapply
 #' @export
 #' @rdname pairs2kaks
 #' @examples 
@@ -40,49 +41,66 @@
 #' cds <- list(Scerevisiae = cds_scerevisiae)
 #' 
 #' kaks <- pairs2kaks(gene_pairs_list, cds)
-pairs2kaks <- function(gene_pairs_list, cds, model = "MYN", threads = 1) {
+pairs2kaks <- function(
+        gene_pairs_list, cds, model = "MYN", 
+        bp_param = BiocParallel::SerialParam()
+) {
     
     kaks_list <- lapply(seq_along(gene_pairs_list), function(x) {
+        
+        # Get pairs for species x
         species <- names(gene_pairs_list)[x]
         pairs <- gene_pairs_list[[x]]
         names(pairs)[c(1, 2)] <- c("dup1", "dup2")
+        pairs$dup1 <- gsub("^[a-zA-Z]{2,5}_", "", pairs$dup1)
+        pairs$dup2 <- gsub("^[a-zA-Z]{2,5}_", "", pairs$dup2)
         
-        # Remove species ID from gene IDs in gene pairs
-        pairs$dup1 <- gsub("[a-zA-Z]{2,5}_", "", pairs$dup1)
-        pairs$dup2 <- gsub("[a-zA-Z]{2,5}_", "", pairs$dup2)
+        # Remove CDS that are not multiple of 3
+        fcds <- cds[[species]]
+        m3 <- Biostrings::width(fcds) %% 3
+        remove <- which(m3 != 0)
+        if(length(remove) != 0) {
+            message(
+                "For species ", species, ", the lengths of ", length(remove), 
+                " CDS are not multiples of 3. Removing them..."
+            )
+            pairs <- pairs[!pairs$dup1 %in% names(fcds)[remove], ]
+            pairs <- pairs[!pairs$dup2 %in% names(fcds)[remove], ]
+            fcds <- fcds[-remove]
+        }
         
-        kaks <- Reduce(rbind, lapply(seq_len(nrow(pairs)), function(y) {
-            genes <- as.character(pairs[y, c(1, 2)])
-            cds_genes <- cds[[species]][genes]
+        # Calculate Ka, Ks, and Ka/Ks for each gene pair
+        seq_list <- lapply(seq_len(nrow(pairs)), function(y) {
+            return(fcds[as.character(pairs[y, c(1, 2)])])
+        })
+        kaks <- BiocParallel::bplapply(seq_list, function(z, model) {
             
-            multiple_3 <- Biostrings::width(cds_genes) %% 3
-            if(sum(multiple_3) > 0) {
-                vals <- NULL
-                pgenes <- paste0(genes, collapse = ", ")
-                message("CDS length is not a multiple of 3 for pair ", pgenes)
-            } else {
-                vals <- MSA2dist::dnastring2kaks(
-                    cds_genes, model = "MYN", isMSA = FALSE, threads = threads
-                )
-                vals <- as.data.frame(vals)
-                vals <- vals[, c("seq1", "seq2", "Ka", "Ks", "Ka/Ks")]
-                names(vals) <- c("dup1", "dup2", "Ka", "Ks", "Ka_Ks")
-                rownames(vals) <- NULL
-                if("type" %in% names(pairs)) { vals$type <- pairs[y, "type"] }
-            }
-            return(vals)
-        }))
-        kaks$Ka <- gsub("NA", NA, kaks$Ka)
-        kaks$Ka <- as.numeric(kaks$Ka)
-        kaks$Ks <- gsub("NA", NA, kaks$Ks)
-        kaks$Ks <- as.numeric(kaks$Ks)
-        kaks$Ka_Ks <- gsub("NA", NA, kaks$Ka_Ks)
-        kaks$Ka_Ks <- as.numeric(kaks$Ka_Ks)
+            rates <- MSA2dist::dnastring2kaks(
+                z, model = model, isMSA = FALSE, verbose = FALSE
+            )
+            rates <- data.frame(
+                dup1 = rates$seq1,
+                dup2 = rates$seq2,
+                Ka = as.numeric(ifelse(rates$Ka == "NA", NA, rates$Ka)),
+                Ks = as.numeric(ifelse(rates$Ks == "NA", NA, rates$Ks)),
+                Ka_Ks = as.numeric(ifelse(rates[["Ka/Ks"]] == "NA", NA, rates[["Ka/Ks"]]))
+            )
+            
+            return(rates)
+        }, BPPARAM = bp_param, model = model)
+        kaks <- Reduce(rbind, kaks)
+        
+        if("type" %in% names(pairs)) {
+            kaks$type <- pairs$type
+        }
+        
         return(kaks)
     })
     names(kaks_list) <- names(gene_pairs_list)
+    
     return(kaks_list)
 }
+
 
 
 #' Find peaks in a Ks distribution with Gaussian Mixture Models
