@@ -41,7 +41,8 @@ arguments passed to min_ks and max_ks.}
 Find peaks in a Ks distribution with Gaussian Mixture Models
 }
 \examples{
-data(scerevisiae_kaks)
+data(fungi_kaks)
+scerevisiae_kaks <- fungi_kaks$saccharomyces_cerevisiae
 ks <- scerevisiae_kaks$Ks
 
 # Find 2 peaks in Ks distribution

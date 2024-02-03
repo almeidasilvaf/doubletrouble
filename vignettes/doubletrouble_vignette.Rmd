@@ -37,7 +37,7 @@ help you explore the different contributions of WGD and SSD to evolution, we
 developed `r BiocStyle::Githubpkg("doubletrouble")`, a package that can be
 used to identify and classify duplicated genes from whole-genome 
 protein sequences, calculate substitution rates per substitution site (i.e.,
-Ka and Ks) for gene pairs, find peaks in Ks distributions, and classify
+$K_a$ and $K_s$) for gene pairs, find peaks in $K_s$ distributions, and classify
 gene pairs by age groups.
 
 # Installation
@@ -436,18 +436,18 @@ head(c_genes$Scerevisiae)
 table(c_genes$Scerevisiae$type)
 ```
 
-# Calculating Ka, Ks, and Ka/Ks for duplicated gene pairs
+# Calculating substitution rates for duplicated gene pairs
 
 You can use the function `pairs2kaks()` to calculate rates of nonsynonymous 
-substitutions per nonsynonymous site (Ka), synonymouys substitutions per
-synonymous site (Ks), and their ratios (Ka/Ks). These rates are calculated
+substitutions per nonsynonymous site ($K_a$), synonymouys substitutions per
+synonymous site ($K_s$), and their ratios ($K_a/K_s$). These rates are calculated
 using the Bioconductor package `r BiocStyle::Biocpkg("MSA2dist")`, which
 implements all codon models in KaKs_Calculator 2.0 [@wang2010kaks_calculator].
 
 
-For the purpose of demonstration, we will only calculate Ka, Ks, and Ka/Ks
-for 5 WGD-derived gene pairs. The CDS for WGD-derived genes were obtained
-from Ensembl Fungi [@yates2022ensembl], and 
+For the purpose of demonstration, we will only calculate $K_a$, $K_s$, 
+and $K_a/K_s$ for 5 SD-derived gene pairs. The CDS for SD-derived 
+genes were obtained from Ensembl Fungi [@yates2022ensembl], and 
 they are stored in `cds_scerevisiae`.
 
 ```{r kaks_calculation}
@@ -468,35 +468,37 @@ head(kaks)
 ```
 
 
-# Identifying and visualizing Ks peaks
+# Identifying and visualizing $K_s$ peaks
 
-Peaks in Ks distributions typically indicate whole-genome duplication (WGD) 
+Peaks in $K_s$ distributions typically indicate whole-genome duplication (WGD) 
 events, and they can be identified by fitting Gaussian mixture models (GMMs) to 
-Ks distributions. In `r BiocStyle::Githubpkg("doubletrouble")`, this can be 
+$K_s$ distributions. In `r BiocStyle::Githubpkg("doubletrouble")`, this can be 
 performed with the function `find_ks_peaks()`.
 
 
-However, because of saturation at higher Ks values, only **recent WGD**
-events can be reliably identified from Ks 
+However, because of saturation at higher $K_s$ values, only **recent WGD**
+events can be reliably identified from $K_s$ 
 distributions [@vanneste2013inference]. Recent WGD events are commonly found 
 in plant species, such as maize, soybean, apple, etc.
 Although the genomes of yeast species have signatures of WGD,
 these events are ancient, so it is very hard to find evidence for them
-using Ks distributions. [^4] 
+using $K_s$ distributions. [^4] 
 
 [^4]: **Tip:** You might be asking yourself: "How does one identify ancient
 WGD, then?". A common approach is to look for syntenic blocks (i.e.,
 regions with conserved gene content and order) within genomes. This is what
-`classify_gene_pairs()` does under the hood to find WGD-derived gene pairs.
+`classify_gene_pairs()` does under the hood to find SD-derived gene pairs.
 
-To demonstrate how you can find peaks in Ks distributions
-with `find_ks_peaks()`, we will use a data frame containing Ks values for
+To demonstrate how you can find peaks in $K_s$ distributions
+with `find_ks_peaks()`, we will use a data frame containing $K_s$ values for
 duplicate pairs in the soybean (*Glycine max*) genome, which has undergone 
 2 WGDs events ~13 and ~58 million years ago [@schmutz2010genome]. 
-Then, we will visualize Ks distributions with peaks using the function
+Then, we will visualize $K_s$ distributions with peaks using the function
 `plot_ks_peaks()`.
 
-First of all, let's look at the data and have a quick look at the distribution.
+First of all, let's look at the data and have a quick look at the distribution
+with the function `plot_ks_distro()` (more details on this function in the
+data visualization section).
 
 ```{r ks_eda}
 # Load data and inspect it
@@ -504,16 +506,13 @@ data(gmax_ks)
 head(gmax_ks)
 
 # Plot distribution
-library(ggplot2)
-ggplot(gmax_ks, aes(x = Ks)) +
-    geom_histogram(color = "black", fill = "grey90", bins = 50) +
-    theme_bw()
+plot_ks_distro(gmax_ks)
 ```
 
 By visual inspection, we can see 2 or 3 peaks. Based on our prior knowledge,
 we know that 2 WGD events have occurred in the ancestral of the *Glycine* genus
 and in the ancestral of all Fabaceae, which seem to correspond to the
-peaks we see at Ks values around 0.1 and 0.5, respectively. There could be
+peaks we see at $K_s$ values around 0.1 and 0.5, respectively. There could be
 a third, flattened peak at around 1.6, which would represent the WGD shared
 by all eudicots. Let's test which number of peaks has more support: 2 or 3.
 
@@ -529,7 +528,7 @@ plot_ks_peaks(peaks)
 
 As we can see, the presence of 3 peaks is more supported (lowest BIC). The
 function returns a list with the mean, variance and amplitude 
-of mixture components (i.e., peaks), as well as the Ks distribution itself.
+of mixture components (i.e., peaks), as well as the $K_s$ distribution itself.
 
 Now, suppose you just want to get the first 2 peaks. You can do that by
 explictly saying to `find_ks_peaks()` how many peaks there are. 
@@ -540,9 +539,9 @@ peaks <- find_ks_peaks(gmax_ks$Ks, npeaks = 2, max_ks = 1)
 plot_ks_peaks(peaks)
 ```
 
-**Important consideration on GMMs and Ks distributions:**
+**Important consideration on GMMs and $K_s$ distributions:**
 Peaks identified with GMMs should not be blindly regarded as "the truth".
-Using GMMs to find peaks in Ks distributions can lead to problems such as
+Using GMMs to find peaks in $K_s$ distributions can lead to problems such as
 overfitting and overclustering [@tiley2018assessing]. Some general 
 recommendations are:
 
@@ -574,12 +573,12 @@ of the curve, which support the 2 peaks we found.
 # Classifying genes by age groups
 
 Finally, you can use the peaks you obtained before to classify gene pairs
-by age group. Age groups are defined based on the Ks peak to which pairs belong.
+by age group. Age groups are defined based on the $K_s$ peak to which pairs belong.
 This is useful if you want to analyze duplicate pairs 
 from a specific WGD event, for instance. You can do this with
 the function `split_pairs_by_peak()`. This function returns a list containing
 the classified pairs in a data frame, and a ggplot object with the 
-age boundaries highlighted in the histogram of Ks values.
+age boundaries highlighted in the histogram of $K_s$ values.
 
 ```{r split_by_peak}
 # Gene pairs without age-based classification
@@ -598,6 +597,108 @@ head(pairs_age_group$pairs)
 pairs_age_group$plot
 ```
 
+# Data visualization
+
+Last but not least, `r BiocStyle::Biocpkg("doubletrouble")` provides users
+with graphical functions to produce publication-ready plots from the output
+of `classify_gene_pairs()`, `classify_genes()`, and `pairs2kaks()`.
+Let's take a look at them one by one.
+
+## Visualizing the frequency of duplicates per mode
+
+To visualize the frequency of duplicated gene pairs or genes by duplication
+type (as returned by `classify_gene_pairs()` and `classify_genes()`, 
+respectively), you will first need to create a data frame of counts with
+`duplicates2counts()`. To demonstrate how this works, we will use an
+example data set with duplicate pairs for 3 fungi species (and substitution
+rates, which will be ignored by `duplicates2counts()`).
+
+```{r}
+# Load data set with pre-computed duplicates for 3 fungi species
+data(fungi_kaks)
+names(fungi_kaks)
+head(fungi_kaks$saccharomyces_cerevisiae)
+
+# Get a data frame of counts per mode in all species
+counts_table <- duplicates2counts(fungi_kaks |> classify_genes())
+
+counts_table
+```
+
+Now, let's visualize the frequency of duplicate gene pairs by duplication
+type with the function `plot_duplicate_freqs()`. You can visualize frequencies
+in three different ways, as demonstrated below.
+
+```{r}
+# 1) Facets
+plot_duplicate_freqs(counts_table)
+
+# 2) Stacked barplot, absolute frequencies
+plot_duplicate_freqs(counts_table, plot_type = "stack")
+
+# 3) Stacked barplot, relative frequencies
+plot_duplicate_freqs(counts_table, plot_type = "stack_percent")
+```
+
+If you want to visually the frequency of duplicated **genes** (not gene pairs),
+you'd first need to classify genes into unique modes of duplication
+with `classify_genes()`, and then repeat the code above. For example:
+
+```{r}
+# Frequency of duplicated genes by mode
+classify_genes(fungi_kaks) |>   # classify genes into unique duplication types
+    duplicates2counts() |>      # get a data frame of counts (long format)
+    plot_duplicate_freqs()      # plot frequencies
+```
+
+## Visualizing $K_s$ distributions
+
+As briefly demonstrated before, to plot a $K_s$ distribution for the
+whole paranome, you will use the function `plot_ks_distro()`.
+
+```{r}
+ks_df <- fungi_kaks$saccharomyces_cerevisiae
+
+# 1) Histogram, whole paranome
+plot_ks_distro(ks_df, plot_type = "histogram")
+
+# 2) Density, whole paranome
+plot_ks_distro(ks_df, plot_type = "density")
+
+# 3) Histogram with density lines, whole paranome
+plot_ks_distro(ks_df, plot_type = "density_histogram")
+```
+
+However, visualizing the distribution for the whole paranome can mask patterns
+that only happen for duplicates originating from particular duplication types.
+For instance, when looking for evidence of WGD events,
+visualizing the $K_s$ distribution for SD-derived pairs only can reveal
+whether syntenic genes cluster together, suggesting the presence of WGD history.
+To visualize the distribution by duplication type, use `bytype = TRUE` in
+`plot_ks_distro()`.
+
+```{r}
+# 1) Duplicates by type, histogram
+plot_ks_distro(ks_df, bytype = TRUE, plot_type = "histogram")
+
+# 2) Duplicates by type, violin
+plot_ks_distro(ks_df, bytype = TRUE, plot_type = "violin")
+```
+
+## Visualizing substitution rates by species
+
+The function `plot_rates_by_species()` can be used to show distributions of
+substitution rates ($K_s$, $K_a$, or their ratio $K_a/K_s$) by species.
+You can choose which rate you want to visualize, and whether or not to
+group gene pairs by duplication mode, as demonstrated below.
+
+```{r}
+# Ks for each species
+plot_rates_by_species(fungi_kaks)
+
+# Ka/Ks by duplication type for each species
+plot_rates_by_species(fungi_kaks, rate_column = "Ka_Ks", bytype = TRUE)
+```
 
 # Session information {.unnumbered}
 

@@ -90,7 +90,8 @@ get_segmental <- function(anchor_pairs = NULL, pairs = NULL) {
 #' @examples
 #' data(yeast_annot)
 #' data(yeast_seq)
-#' data(scerevisiae_kaks)
+#' data(fungi_kaks)
+#' scerevisiae_kaks <- fungi_kaks$saccharomyces_cerevisiae
 #' 
 #' # Get processed annotation for S. cerevisiae
 #' pdata <- annotation <- syntenet::process_input(yeast_seq, yeast_annot)
@@ -191,7 +192,8 @@ get_tandem_proximal <- function(
 #' data(diamond_intra)
 #' data(yeast_seq)
 #' data(yeast_annot)
-#' data(scerevisiae_kaks)
+#' data(fungi_kaks)
+#' scerevisiae_kaks <- fungi_kaks$saccharomyces_cerevisiae
 #' 
 #' # Get processed annotation
 #' pdata <- syntenet::process_input(yeast_seq, yeast_annot)
@@ -307,7 +309,8 @@ get_transposed <- function(
 #' data(diamond_intra)
 #' data(yeast_seq)
 #' data(yeast_annot)
-#' data(scerevisiae_kaks)
+#' data(fungi_kaks)
+#' scerevisiae_kaks <- fungi_kaks$saccharomyces_cerevisiae
 #' 
 #' # Get processed annotation
 #' pdata <- syntenet::process_input(yeast_seq, yeast_annot)

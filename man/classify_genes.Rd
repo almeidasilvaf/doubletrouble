@@ -28,7 +28,8 @@ For scheme "extended", the order is SD > TD > PD > TRD > DD.
 For scheme "full", the order is SD > TD > PD > rTRD > dTRD > DD.
 }
 \examples{
-data(scerevisiae_kaks)
+data(fungi_kaks)
+scerevisiae_kaks <- fungi_kaks$saccharomyces_cerevisiae
 
 cols <- c("dup1", "dup2", "type")
 gene_pairs_list <- list(Scerevisiae = scerevisiae_kaks[, cols])

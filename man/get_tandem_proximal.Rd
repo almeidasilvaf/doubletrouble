@@ -37,7 +37,8 @@ Classify gene pairs derived from tandem and proximal duplications
 \examples{
 data(yeast_annot)
 data(yeast_seq)
-data(scerevisiae_kaks)
+data(fungi_kaks)
+scerevisiae_kaks <- fungi_kaks$saccharomyces_cerevisiae
 
 # Get processed annotation for S. cerevisiae
 pdata <- annotation <- syntenet::process_input(yeast_seq, yeast_annot)

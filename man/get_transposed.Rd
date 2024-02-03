@@ -66,7 +66,8 @@ data(diamond_inter)
 data(diamond_intra)
 data(yeast_seq)
 data(yeast_annot)
-data(scerevisiae_kaks)
+data(fungi_kaks)
+scerevisiae_kaks <- fungi_kaks$saccharomyces_cerevisiae
 
 # Get processed annotation
 pdata <- syntenet::process_input(yeast_seq, yeast_annot)
