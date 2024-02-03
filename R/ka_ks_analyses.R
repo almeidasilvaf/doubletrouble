@@ -133,7 +133,8 @@ pairs2kaks <- function(
 #' @export
 #' @rdname find_ks_peaks
 #' @examples 
-#' data(scerevisiae_kaks)
+#' data(fungi_kaks)
+#' scerevisiae_kaks <- fungi_kaks$saccharomyces_cerevisiae
 #' ks <- scerevisiae_kaks$Ks
 #' 
 #' # Find 2 peaks in Ks distribution
@@ -205,7 +206,8 @@ find_ks_peaks <- function(ks, npeaks = 2, min_ks = 0.01, max_ks = 4,
 #' @export
 #' @rdname split_pairs_by_peak
 #' @examples
-#' data(scerevisiae_kaks)
+#' data(fungi_kaks)
+#' scerevisiae_kaks <- fungi_kaks$saccharomyces_cerevisiae
 #'
 #' # Create a data frame of duplicate pairs and Ks values
 #' ks_df <- scerevisiae_kaks[, c("dup1", "dup2", "Ks")]

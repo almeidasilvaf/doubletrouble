@@ -67,13 +67,16 @@
 "cds_scerevisiae"
 
 
-#' Duplicate pairs and Ka, Ks, and Ka/Ks values for S. cerevisiae
+#' Duplicate pairs and Ka, Ks, and Ka/Ks values for fungi species
 #'
 #' This data set was obtained with \code{classify_gene_pairs()} followed
 #' by \code{pairs2kaks()}.
 #' 
-#' @name scerevisiae_kaks
-#' @format A data frame with the following variables:
+#' @name fungi_kaks
+#' @format A list of data frame with elements 
+#' named \strong{saccharomyces_cerevisiae}, \strong{candida_glabrata},
+#' and \strong{schizosaccharomyces_pombe}. Each data frame contains 
+#' the following variables:
 #' \describe{
 #'   \item{dup1}{Character, duplicated gene 1.}
 #'   \item{dup2}{Character, duplicated gene 2.}
@@ -83,9 +86,9 @@
 #'   \item{type}{Character, mode of duplication}
 #' }
 #' @examples 
-#' data(scerevisiae_kaks)
-#' @usage data(scerevisiae_kaks)
-"scerevisiae_kaks"
+#' data(fungi_kaks)
+#' @usage data(fungi_kaks)
+"fungi_kaks"
 
 
 #' Duplicate pairs and Ks values for Glycine max

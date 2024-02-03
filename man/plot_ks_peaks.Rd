@@ -21,7 +21,8 @@ A ggplot object with a histogram and lines for each Ks peak.
 Plot histogram of Ks distribution with peaks
 }
 \examples{
-data(scerevisiae_kaks)
+data(fungi_kaks)
+scerevisiae_kaks <- fungi_kaks$saccharomyces_cerevisiae
 ks <- scerevisiae_kaks$Ks
 
 # Find 2 peaks in Ks distribution

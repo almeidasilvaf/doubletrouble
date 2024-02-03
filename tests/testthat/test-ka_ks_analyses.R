@@ -1,6 +1,6 @@
 
 #----Load data------------------------------------------------------------------
-data(scerevisiae_kaks)
+data(fungi_kaks)
 data(diamond_intra)
 data(diamond_inter)
 data(yeast_annot)
@@ -8,7 +8,9 @@ data(yeast_seq)
 data(cds_scerevisiae)
 blast_list <- diamond_intra
 blast_inter <- diamond_inter
- 
+
+scerevisiae_kaks <- fungi_kaks$saccharomyces_cerevisiae
+
 pdata <- syntenet::process_input(yeast_seq, yeast_annot)
 annot <- pdata$annotation["Scerevisiae"]
 

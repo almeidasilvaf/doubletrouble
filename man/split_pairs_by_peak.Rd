@@ -39,7 +39,8 @@ certain number of standard deviations from the highest peak,
 and older genes are found close within smaller peaks.
 }
 \examples{
-data(scerevisiae_kaks)
+data(fungi_kaks)
+scerevisiae_kaks <- fungi_kaks$saccharomyces_cerevisiae
 
 # Create a data frame of duplicate pairs and Ks values
 ks_df <- scerevisiae_kaks[, c("dup1", "dup2", "Ks")]

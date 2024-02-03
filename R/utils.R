@@ -197,7 +197,8 @@ get_intron_counts <- function(txdb) {
 #' @noRd
 #' @rdname find_intersect_mixtures
 #' @examples
-#' data(scerevisiae_kaks)
+#' data(fungi_kaks)
+#' scerevisiae_kaks <- fungi_kaks$saccharomyces_cerevisiae
 #' ks <- scerevisiae_kaks$Ks
 #' 
 #' # Find 2 peaks in Ks distribution
@@ -239,4 +240,64 @@ find_intersect_mixtures <- function(peaks) {
 }
 
 
+#' Get a duplicate count matrix for each genome
+#'
+#' @param duplicate_list A list of data frames with the duplicated genes or
+#' gene pairs and their modes of duplication as returned 
+#' by \code{classify_gene_pairs()} or \code{classify_genes()}.
+#' @param shape Character specifying the shape of the output data frame.
+#' One of "long" (data frame in the long shape, in the tidyverse sense),
+#' or "wide" (data frame in the wide shape, in the tidyverse sense).
+#' Default: "long".
+#' 
+#' @return If \strong{shape = "wide"}, a count matrix containing the 
+#' frequency of duplicated genes (or gene pairs) by mode for each species, 
+#' with species in rows and duplication modes in columns.
+#' If \strong{shape = "long"}, a data frame in long format with the following
+#' variables:
+#' \describe{
+#'   \item{type}{Factor, type of duplication.}
+#'   \item{n}{Numeric, number of duplicates.}
+#'   \item{species}{Character, species name}
+#' }
+#' 
+#' @export
+#' @rdname duplicates2counts
+#' @examples
+#' data(fungi_kaks)
+#' 
+#' # Get unique duplicates
+#' duplicate_list <- classify_genes(fungi_kaks)
+#' 
+#' # Get count table
+#' counts <- duplicates2counts(duplicate_list)
+duplicates2counts <- function(duplicate_list, shape = "long") {
+    
+    # Get factor levels for variable `type`
+    tlevels <- lapply(duplicate_list, function(x) return(levels(x$type)))
+    tlevels <- tlevels[[names(sort(lengths(tlevels), decreasing = TRUE)[1])]]
+    
+    counts <- Reduce(rbind, lapply(seq_along(duplicate_list), function(x) {
+        
+        species <- names(duplicate_list)[x]
+        
+        dup_table <- duplicate_list[[x]]
+        dup_table$type <- factor(dup_table$type, levels = tlevels)
+        
+        if(shape == "long") {
+            final_dups <- as.data.frame(table(dup_table$type))
+            names(final_dups) <- c("type", "n")
+            final_dups$species <- species
+        } else if(shape == "wide") {
+            final_dups <- t(as.matrix(table(dup_table$type)))
+            final_dups <- cbind(species, as.data.frame(final_dups))
+        } else {
+            stop("Argument 'format' must be one of 'long' or 'wide'.")
+        }
+        
+        return(final_dups)
+    }))
+    
+    return(counts)
+}
 
