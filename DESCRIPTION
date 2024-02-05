@@ -67,6 +67,7 @@ Suggests:
     testthat (>= 3.0.0),
     knitr,
     feature,
+    patchwork,
     BiocStyle,
     rmarkdown,
     covr,

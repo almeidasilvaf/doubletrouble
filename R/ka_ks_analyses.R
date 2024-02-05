@@ -33,9 +33,10 @@
 #' annot <- pdata$annotation["Scerevisiae"]
 #' 
 #' # Binary classification scheme
-#' gene_pairs_list <- classify_gene_pairs(annot, blast_list)
+#' pairs <- classify_gene_pairs(annot, blast_list)
+#' td_pairs <- pairs[[1]][pairs[[1]]$type == "TD", ]
 #' gene_pairs_list <- list(
-#'     Scerevisiae = gene_pairs_list[[1]][seq(1, 5, by = 1), ]
+#'     Scerevisiae = td_pairs[seq(1, 3, by = 1), ]
 #' )
 #' 
 #' cds <- list(Scerevisiae = cds_scerevisiae)

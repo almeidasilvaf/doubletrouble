@@ -378,7 +378,7 @@ head(intron_counts$Scerevisiae)
 ```
 
 Finally, we can use this list to classify duplicates using the full scheme
-as folows:
+as follows:
 
 ```{r}
 # Full scheme
@@ -446,7 +446,7 @@ implements all codon models in KaKs_Calculator 2.0 [@wang2010kaks_calculator].
 
 
 For the purpose of demonstration, we will only calculate $K_a$, $K_s$, 
-and $K_a/K_s$ for 5 SD-derived gene pairs. The CDS for SD-derived 
+and $K_a/K_s$ for 5 TD-derived gene pairs. The CDS for TD-derived 
 genes were obtained from Ensembl Fungi [@yates2022ensembl], and 
 they are stored in `cds_scerevisiae`.
 
@@ -457,8 +457,9 @@ head(cds_scerevisiae)
 # Store DNAStringSet object in a list
 cds_list <- list(Scerevisiae = cds_scerevisiae)
 
-# Keep only top give gene pairs for demonstration purposes
-gene_pairs <- list(Scerevisiae = c_full$Scerevisiae[seq(1, 5, by = 1), ])
+# Keep only top five TD-derived gene pairs for demonstration purposes
+td_pairs <- c_full$Scerevisiae[c_full$Scerevisiae$type == "TD", ]
+gene_pairs <- list(Scerevisiae = td_pairs[seq(1, 5, by = 1), ])
 
 # Calculate Ka, Ks, and Ka/Ks
 kaks <- pairs2kaks(gene_pairs, cds_list)
@@ -630,21 +631,25 @@ type with the function `plot_duplicate_freqs()`. You can visualize frequencies
 in three different ways, as demonstrated below.
 
 ```{r}
-# 1) Facets
-plot_duplicate_freqs(counts_table)
+# A) Facets
+p1 <- plot_duplicate_freqs(counts_table)
 
-# 2) Stacked barplot, absolute frequencies
-plot_duplicate_freqs(counts_table, plot_type = "stack")
+# B) Stacked barplot, absolute frequencies
+p2 <- plot_duplicate_freqs(counts_table, plot_type = "stack")
 
-# 3) Stacked barplot, relative frequencies
-plot_duplicate_freqs(counts_table, plot_type = "stack_percent")
+# C) Stacked barplot, relative frequencies
+p3 <- plot_duplicate_freqs(counts_table, plot_type = "stack_percent")
+
+# Combine plots, one per row
+patchwork::wrap_plots(p1, p2, p3, nrow = 3) + 
+    patchwork::plot_annotation(tag_levels = "A")
 ```
 
 If you want to visually the frequency of duplicated **genes** (not gene pairs),
 you'd first need to classify genes into unique modes of duplication
 with `classify_genes()`, and then repeat the code above. For example:
 
-```{r}
+```{r fig.height = 3, fig.width = 8}
 # Frequency of duplicated genes by mode
 classify_genes(fungi_kaks) |>   # classify genes into unique duplication types
     duplicates2counts() |>      # get a data frame of counts (long format)
@@ -656,17 +661,21 @@ classify_genes(fungi_kaks) |>   # classify genes into unique duplication types
 As briefly demonstrated before, to plot a $K_s$ distribution for the
 whole paranome, you will use the function `plot_ks_distro()`.
 
-```{r}
+```{r fig.height=3, fig.width=9}
 ks_df <- fungi_kaks$saccharomyces_cerevisiae
 
-# 1) Histogram, whole paranome
-plot_ks_distro(ks_df, plot_type = "histogram")
+# A) Histogram, whole paranome
+p1 <- plot_ks_distro(ks_df, plot_type = "histogram")
 
-# 2) Density, whole paranome
-plot_ks_distro(ks_df, plot_type = "density")
+# B) Density, whole paranome
+p2 <- plot_ks_distro(ks_df, plot_type = "density") 
 
-# 3) Histogram with density lines, whole paranome
-plot_ks_distro(ks_df, plot_type = "density_histogram")
+# C) Histogram with density lines, whole paranome
+p3 <- plot_ks_distro(ks_df, plot_type = "density_histogram")
+
+# Combine plots side by side
+patchwork::wrap_plots(p1, p2, p3, nrow = 1) +
+    patchwork::plot_annotation(tag_levels = "A")
 ```
 
 However, visualizing the distribution for the whole paranome can mask patterns
@@ -677,12 +686,16 @@ whether syntenic genes cluster together, suggesting the presence of WGD history.
 To visualize the distribution by duplication type, use `bytype = TRUE` in
 `plot_ks_distro()`.
 
-```{r}
-# 1) Duplicates by type, histogram
-plot_ks_distro(ks_df, bytype = TRUE, plot_type = "histogram")
+```{r fig.width = 8, fig.height=4}
+# A) Duplicates by type, histogram
+p1 <- plot_ks_distro(ks_df, bytype = TRUE, plot_type = "histogram")
 
-# 2) Duplicates by type, violin
-plot_ks_distro(ks_df, bytype = TRUE, plot_type = "violin")
+# B) Duplicates by type, violin
+p2 <- plot_ks_distro(ks_df, bytype = TRUE, plot_type = "violin")
+
+# Combine plots side by side
+patchwork::wrap_plots(p1, p2) +
+    patchwork::plot_annotation(tag_levels = "A")
 ```
 
 ## Visualizing substitution rates by species
@@ -692,12 +705,16 @@ substitution rates ($K_s$, $K_a$, or their ratio $K_a/K_s$) by species.
 You can choose which rate you want to visualize, and whether or not to
 group gene pairs by duplication mode, as demonstrated below.
 
-```{r}
-# Ks for each species
-plot_rates_by_species(fungi_kaks)
+```{r fig.width = 6, fig.height = 4}
+# A) Ks for each species
+p1 <- plot_rates_by_species(fungi_kaks)
 
-# Ka/Ks by duplication type for each species
-plot_rates_by_species(fungi_kaks, rate_column = "Ka_Ks", bytype = TRUE)
+# B) Ka/Ks by duplication type for each species
+p2 <- plot_rates_by_species(fungi_kaks, rate_column = "Ka_Ks", bytype = TRUE)
+
+# Combine plots - one per row
+patchwork::wrap_plots(p1, p2, nrow = 2) +
+    patchwork::plot_annotation(tag_levels = "A")
 ```
 
 # Session information {.unnumbered}

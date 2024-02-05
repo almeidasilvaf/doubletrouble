@@ -14,8 +14,11 @@ scerevisiae_kaks <- fungi_kaks$saccharomyces_cerevisiae
 pdata <- syntenet::process_input(yeast_seq, yeast_annot)
 annot <- pdata$annotation["Scerevisiae"]
 
-gene_pairs_list <- classify_gene_pairs(annot, blast_list)
-gene_pairs_list <- list(Scerevisiae = gene_pairs_list[[1]][1:2, ])
+pairs <- classify_gene_pairs(annot, blast_list)
+td_pairs <- pairs[[1]][pairs[[1]]$type == "TD", ]
+gene_pairs_list <- list(
+    Scerevisiae = td_pairs[seq(1, 3, by = 1), ]
+)
 
 cds <- list(Scerevisiae = cds_scerevisiae)
 
@@ -23,8 +26,8 @@ ks <- scerevisiae_kaks$Ks
 
 ## Simulate gene with CDS that is not a multiple of 3
 cds2 <- cds
-cds2$Scerevisiae$YGR032W <- Biostrings::subseq(
-    cds2$Scerevisiae$YGR032W, 1, length(cds2$Scerevisiae$YGR032W)-1
+cds2$Scerevisiae$Q0055 <- Biostrings::subseq(
+    cds2$Scerevisiae$Q0055, 1, length(cds2$Scerevisiae$Q0055) - 1
 )
 
 #----Start tests----------------------------------------------------------------
@@ -35,7 +38,7 @@ test_that("pairs2kaks() returns a data frame with Ka, Ks, and Ka/Ks", {
     
     expect_equal(class(kaks), "list")
     expect_equal(class(kaks[[1]]), "data.frame")
-    expect_equal(nrow(kaks[[1]]), 2)
+    expect_equal(nrow(kaks[[1]]), nrow(gene_pairs_list[[1]]))
     expect_true("Ks" %in% names(kaks[[1]]))
     expect_true("Ka" %in% names(kaks[[1]]))
     expect_true("Ka_Ks" %in% names(kaks[[1]]))
