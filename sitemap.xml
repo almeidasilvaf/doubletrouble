@@ -43,7 +43,13 @@
     <loc>/reference/diamond_intra.html</loc>
   </url>
   <url>
+    <loc>/reference/duplicates2counts.html</loc>
+  </url>
+  <url>
     <loc>/reference/find_ks_peaks.html</loc>
+  </url>
+  <url>
+    <loc>/reference/fungi_kaks.html</loc>
   </url>
   <url>
     <loc>/reference/get_anchors_list.html</loc>
@@ -73,10 +79,16 @@
     <loc>/reference/pairs2kaks.html</loc>
   </url>
   <url>
+    <loc>/reference/plot_duplicate_freqs.html</loc>
+  </url>
+  <url>
+    <loc>/reference/plot_ks_distro.html</loc>
+  </url>
+  <url>
     <loc>/reference/plot_ks_peaks.html</loc>
   </url>
   <url>
-    <loc>/reference/scerevisiae_kaks.html</loc>
+    <loc>/reference/plot_rates_by_species.html</loc>
   </url>
   <url>
     <loc>/reference/split_pairs_by_peak.html</loc>

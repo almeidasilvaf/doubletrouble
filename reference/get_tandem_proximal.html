@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">doubletrouble</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.5</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -104,7 +104,8 @@ Default: 10.</p></dd>
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">yeast_annot</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">yeast_seq</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">scerevisiae_kaks</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">fungi_kaks</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">scerevisiae_kaks</span> <span class="op">&lt;-</span> <span class="va">fungi_kaks</span><span class="op">$</span><span class="va">saccharomyces_cerevisiae</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Get processed annotation for S. cerevisiae</span></span></span>
 <span class="r-in"><span><span class="va">pdata</span> <span class="op">&lt;-</span> <span class="va">annotation</span> <span class="op">&lt;-</span> <span class="fu">syntenet</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/syntenet/man/process_input.html" class="external-link">process_input</a></span><span class="op">(</span><span class="va">yeast_seq</span>, <span class="va">yeast_annot</span><span class="op">)</span></span></span>
