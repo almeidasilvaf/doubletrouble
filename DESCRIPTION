@@ -1,7 +1,7 @@
 Package: doubletrouble
 Title: Identification and classification of duplicated genes
-Version: 1.3.5
-Date: 2022-05-29
+Version: 1.3.6
+Date: 2024-03-19
 Authors@R: 
     c(
     person(given = "Fabrício",
@@ -47,7 +47,7 @@ biocViews:
 Encoding: UTF-8
 LazyData: false
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.0
+RoxygenNote: 7.3.1
 Imports:
     syntenet,
     GenomicRanges,
@@ -64,6 +64,7 @@ Imports:
 Depends: 
     R (>= 4.2.0)
 Suggests: 
+    txdbmaker,
     testthat (>= 3.0.0),
     knitr,
     feature,

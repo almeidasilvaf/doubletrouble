@@ -1,3 +1,4 @@
+library(txdbmaker)  # for makeTxDbFromGRanges()
 
 #----Load data------------------------------------------------------------------
 data(diamond_intra)
@@ -25,7 +26,7 @@ ssd <- all[all$type != "SD", 1:2]
 duplicates <- diamond_intra[[1]][, 1:2]
 
 
-txdb <- GenomicFeatures::makeTxDbFromGRanges(yeast_annot[[1]])
+txdb <- txdbmaker::makeTxDbFromGRanges(yeast_annot[[1]])
 intron_counts <- get_intron_counts(txdb)
 
 ic_list <- list(Scerevisiae = intron_counts)
