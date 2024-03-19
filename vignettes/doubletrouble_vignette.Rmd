@@ -347,21 +347,22 @@ of data frames with the number of introns per gene for each species. This
 can be done with the function `get_intron_counts()`, which takes a `TxDb` 
 object as input. `TxDb` objects store transcript annotations, and they 
 can be created with a family of functions
-named `makeTxDbFrom*` from the `r BiocStyle::Biocpkg("GenomicFeatures")`
+named `makeTxDbFrom*` from the `r BiocStyle::Biocpkg("txdbmaker")`
 package (see `?get_intron_counts()` for a summary of all functions).
 
 
 Here, we will create a list of `TxDb` objects from a list of `GRanges` objects
-using the function `MakeTxDbFromGRanges` 
-from `r BiocStyle::Biocpkg("GenomicFeatures")`. Importantly, to create
+using the function `makeTxDbFromGRanges` 
+from `r BiocStyle::Biocpkg("txdbmaker")`. Importantly, to create
 a `TxDb` from a `GRanges`, the `GRanges` object must contain genomic coordinates
 for all features, including transcripts, exons, etc. Because of that, we
 will use annotation from the example data set `yeast_annot`,
 which was not processed with `syntenet::process_input()`.
 
 ```{r}
+library(txdbmaker)
 # Create a list of `TxDb` objects from a list of `GRanges` objects
-txdb_list <- lapply(yeast_annot, GenomicFeatures::makeTxDbFromGRanges)
+txdb_list <- lapply(yeast_annot, txdbmaker::makeTxDbFromGRanges)
 txdb_list
 ```
 

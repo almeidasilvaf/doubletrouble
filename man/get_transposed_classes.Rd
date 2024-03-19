@@ -53,8 +53,9 @@ pairs$dup2 <- paste0("Sce_", pairs$dup2)
 # Classify pairs
 trd <- get_transposed(pairs, diamond_inter, annotation)
 
-# Create txdb object from GRanges
-txdb <- GenomicFeatures::makeTxDbFromGRanges(yeast_annot[[1]])
+# Create TxDb object from GRanges
+library(txdbmaker)
+txdb <- txdbmaker::makeTxDbFromGRanges(yeast_annot[[1]])
 
 # Get intron counts
 intron_counts <- get_intron_counts(txdb)

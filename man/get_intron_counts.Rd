@@ -7,8 +7,8 @@
 get_intron_counts(txdb)
 }
 \arguments{
-\item{txdb}{A \code{txdb} object with transcript annotations. See details below
-for examples on how to create \code{txdb} objects from different kinds of input.}
+\item{txdb}{A \code{TxDb} object with transcript annotations. See details below
+for examples on how to create \code{TxDb} objects from different kinds of input.}
 }
 \value{
 A data frame with intron counts per gene, with variables:
@@ -22,8 +22,8 @@ Get a data frame of intron counts per gene
 }
 \details{
 The family of functions \code{makeTxDbFrom*} from
-the \strong{GenomicFeatures} package can be used to create \code{txdb} objects
-from a variety of input data types. You can create \code{txdb} objects
+the \strong{txdbmaker} package can be used to create \code{TxDb} objects
+from a variety of input data types. You can create \code{TxDb} objects
 from e.g., \code{GRanges} objects (\code{makeTxDbFromGRanges()}),
 GFF files (\code{makeTxDbFromGFF()}),
 an Ensembl database (\code{makeTxDbFromEnsembl}), and
@@ -32,8 +32,9 @@ a Biomart database (\code{makeTxDbFromBiomart}).
 \examples{
 data(yeast_annot)
 
-# Create txdb object from GRanges
-txdb <- GenomicFeatures::makeTxDbFromGRanges(yeast_annot[[1]])
+# Create TxDb object from GRanges
+library(txdbmaker)
+txdb <- txdbmaker::makeTxDbFromGRanges(yeast_annot[[1]])
 
 # Get intron counts
 intron_counts <- get_intron_counts(txdb)

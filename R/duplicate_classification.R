@@ -76,7 +76,8 @@
 #' annotation <- syntenet::process_input(yeast_seq, yeast_annot)$annotation
 #' 
 #' # Get list of intron counts
-#' txdb_list <- lapply(yeast_annot, GenomicFeatures::makeTxDbFromGRanges)
+#' library(txdbmaker)
+#' txdb_list <- lapply(yeast_annot, txdbmaker::makeTxDbFromGRanges)
 #' intron_counts <- lapply(txdb_list, get_intron_counts)
 #' 
 #' # Classify duplicates - full scheme

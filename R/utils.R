@@ -117,8 +117,8 @@ collinearity2blocks <- function(collinearity_paths = NULL) {
 
 #' Get a data frame of intron counts per gene
 #' 
-#' @param txdb A `txdb` object with transcript annotations. See details below 
-#' for examples on how to create `txdb` objects from different kinds of input.
+#' @param txdb A `TxDb` object with transcript annotations. See details below 
+#' for examples on how to create `TxDb` objects from different kinds of input.
 #' 
 #' 
 #' @return A data frame with intron counts per gene, with variables:
@@ -129,8 +129,8 @@ collinearity2blocks <- function(collinearity_paths = NULL) {
 #' 
 #' @details
 #' The family of functions \code{makeTxDbFrom*} from 
-#' the \strong{GenomicFeatures} package can be used to create `txdb` objects
-#' from a variety of input data types. You can create `txdb` objects
+#' the \strong{txdbmaker} package can be used to create `TxDb` objects
+#' from a variety of input data types. You can create `TxDb` objects
 #' from e.g., `GRanges` objects (\code{makeTxDbFromGRanges()}),
 #' GFF files (\code{makeTxDbFromGFF()}), 
 #' an Ensembl database (\code{makeTxDbFromEnsembl}), and
@@ -144,8 +144,9 @@ collinearity2blocks <- function(collinearity_paths = NULL) {
 #' @examples
 #' data(yeast_annot)
 #' 
-#' # Create txdb object from GRanges
-#' txdb <- GenomicFeatures::makeTxDbFromGRanges(yeast_annot[[1]])
+#' # Create TxDb object from GRanges
+#' library(txdbmaker)
+#' txdb <- txdbmaker::makeTxDbFromGRanges(yeast_annot[[1]])
 #'
 #' # Get intron counts
 #' intron_counts <- get_intron_counts(txdb)
