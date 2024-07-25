@@ -1,102 +1,36 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>/404.html</loc>
-  </url>
-  <url>
-    <loc>/CODE_OF_CONDUCT.html</loc>
-  </url>
-  <url>
-    <loc>/CONTRIBUTING.html</loc>
-  </url>
-  <url>
-    <loc>/SUPPORT.html</loc>
-  </url>
-  <url>
-    <loc>/articles/doubletrouble_vignette.html</loc>
-  </url>
-  <url>
-    <loc>/articles/index.html</loc>
-  </url>
-  <url>
-    <loc>/authors.html</loc>
-  </url>
-  <url>
-    <loc>/index.html</loc>
-  </url>
-  <url>
-    <loc>/news/index.html</loc>
-  </url>
-  <url>
-    <loc>/reference/cds_scerevisiae.html</loc>
-  </url>
-  <url>
-    <loc>/reference/classify_gene_pairs.html</loc>
-  </url>
-  <url>
-    <loc>/reference/classify_genes.html</loc>
-  </url>
-  <url>
-    <loc>/reference/diamond_inter.html</loc>
-  </url>
-  <url>
-    <loc>/reference/diamond_intra.html</loc>
-  </url>
-  <url>
-    <loc>/reference/duplicates2counts.html</loc>
-  </url>
-  <url>
-    <loc>/reference/find_ks_peaks.html</loc>
-  </url>
-  <url>
-    <loc>/reference/fungi_kaks.html</loc>
-  </url>
-  <url>
-    <loc>/reference/get_anchors_list.html</loc>
-  </url>
-  <url>
-    <loc>/reference/get_intron_counts.html</loc>
-  </url>
-  <url>
-    <loc>/reference/get_segmental.html</loc>
-  </url>
-  <url>
-    <loc>/reference/get_tandem_proximal.html</loc>
-  </url>
-  <url>
-    <loc>/reference/get_transposed.html</loc>
-  </url>
-  <url>
-    <loc>/reference/get_transposed_classes.html</loc>
-  </url>
-  <url>
-    <loc>/reference/gmax_ks.html</loc>
-  </url>
-  <url>
-    <loc>/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>/reference/pairs2kaks.html</loc>
-  </url>
-  <url>
-    <loc>/reference/plot_duplicate_freqs.html</loc>
-  </url>
-  <url>
-    <loc>/reference/plot_ks_distro.html</loc>
-  </url>
-  <url>
-    <loc>/reference/plot_ks_peaks.html</loc>
-  </url>
-  <url>
-    <loc>/reference/plot_rates_by_species.html</loc>
-  </url>
-  <url>
-    <loc>/reference/split_pairs_by_peak.html</loc>
-  </url>
-  <url>
-    <loc>/reference/yeast_annot.html</loc>
-  </url>
-  <url>
-    <loc>/reference/yeast_seq.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>/404.html</loc></url>
+<url><loc>/CODE_OF_CONDUCT.html</loc></url>
+<url><loc>/CONTRIBUTING.html</loc></url>
+<url><loc>/SUPPORT.html</loc></url>
+<url><loc>/articles/doubletrouble_vignette.html</loc></url>
+<url><loc>/articles/index.html</loc></url>
+<url><loc>/authors.html</loc></url>
+<url><loc>/index.html</loc></url>
+<url><loc>/news/index.html</loc></url>
+<url><loc>/reference/cds_scerevisiae.html</loc></url>
+<url><loc>/reference/classify_gene_pairs.html</loc></url>
+<url><loc>/reference/classify_genes.html</loc></url>
+<url><loc>/reference/diamond_inter.html</loc></url>
+<url><loc>/reference/diamond_intra.html</loc></url>
+<url><loc>/reference/duplicates2counts.html</loc></url>
+<url><loc>/reference/find_ks_peaks.html</loc></url>
+<url><loc>/reference/fungi_kaks.html</loc></url>
+<url><loc>/reference/get_anchors_list.html</loc></url>
+<url><loc>/reference/get_intron_counts.html</loc></url>
+<url><loc>/reference/get_segmental.html</loc></url>
+<url><loc>/reference/get_tandem_proximal.html</loc></url>
+<url><loc>/reference/get_transposed.html</loc></url>
+<url><loc>/reference/get_transposed_classes.html</loc></url>
+<url><loc>/reference/gmax_ks.html</loc></url>
+<url><loc>/reference/index.html</loc></url>
+<url><loc>/reference/pairs2kaks.html</loc></url>
+<url><loc>/reference/plot_duplicate_freqs.html</loc></url>
+<url><loc>/reference/plot_ks_distro.html</loc></url>
+<url><loc>/reference/plot_ks_peaks.html</loc></url>
+<url><loc>/reference/plot_rates_by_species.html</loc></url>
+<url><loc>/reference/split_pairs_by_peak.html</loc></url>
+<url><loc>/reference/yeast_annot.html</loc></url>
+<url><loc>/reference/yeast_seq.html</loc></url>
 </urlset>
+
