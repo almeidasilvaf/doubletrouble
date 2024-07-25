@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">doubletrouble</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.5.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.5.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -42,12 +42,7 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">pairs2kaks</span><span class="op">(</span></span>
-<span>  <span class="va">gene_pairs_list</span>,</span>
-<span>  <span class="va">cds</span>,</span>
-<span>  model <span class="op">=</span> <span class="st">"MYN"</span>,</span>
-<span>  bp_param <span class="op">=</span> <span class="fu">BiocParallel</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/SerialParam-class.html" class="external-link">SerialParam</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">pairs2kaks</span><span class="op">(</span><span class="va">gene_pairs_list</span>, <span class="va">cds</span>, model <span class="op">=</span> <span class="st">"MYN"</span>, threads <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -71,9 +66,8 @@ Possible values are "Li", "NG86", "NG", "LWL", "LPB", "MLWL", "MLPB", "GY",
 and "GMYN". Default: "MYN".</p></dd>
 
 
-<dt id="arg-bp-param">bp_param<a class="anchor" aria-label="anchor" href="#arg-bp-param"></a></dt>
-<dd><p>BiocParallel back-end to be used.
-Default: <code><a href="https://rdrr.io/pkg/BiocParallel/man/SerialParam-class.html" class="external-link">BiocParallel::SerialParam()</a></code>.</p></dd>
+<dt id="arg-threads">threads<a class="anchor" aria-label="anchor" href="#arg-threads"></a></dt>
+<dd><p>Numeric indicating the number of threads to use. Default: 1.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -105,6 +99,7 @@ and Ka/Ks values.</p>
 <span class="r-in"><span><span class="va">cds</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>Scerevisiae <span class="op">=</span> <span class="va">cds_scerevisiae</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">kaks</span> <span class="op">&lt;-</span> <span class="fu">pairs2kaks</span><span class="op">(</span><span class="va">gene_pairs_list</span>, <span class="va">cds</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
