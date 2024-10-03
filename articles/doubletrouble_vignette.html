@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">doubletrouble</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.5.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.5.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -115,24 +115,186 @@ Bioconductor with the following code:</p>
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/almeidasilvaf/doubletrouble" class="external-link">doubletrouble</a></span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="data-description">Data description<a class="anchor" aria-label="anchor" href="#data-description"></a>
+<h2 id="input-data">Input data<a class="anchor" aria-label="anchor" href="#input-data"></a>
 </h2>
-<p>In this vignette, we will use protein sequences (primary transcripts
-only) and genome annotation for the yeast species <em>Saccharomyces
-cerevisiae</em> and <em>Candida glabrata</em>. Data were obtained from
-Ensembl Fungi release 54 <span class="citation">(Yates et al.
-2022)</span>.</p>
-<p>The example data sets are stored in the following objects:</p>
-<ul>
-<li>
-<strong>yeast_seq:</strong> A list of <code>AAStringSet</code>
-objects with elements named <em>Scerevisiae</em> and
-<em>Cglabrata</em>.</li>
-</ul>
+<p>To identify and classify duplicated gene pairs, users need two types
+of input data:</p>
+<ol style="list-style-type: decimal">
+<li><p>Whole-genome protein sequences (a.k.a. “proteome”), with only one
+protein sequence per gene (i.e., translated sequence of the primary
+transcript). These are typically stored in <em>.fasta</em>
+files.</p></li>
+<li><p>Gene annotation, with genomic coordinates of all features (i.e.,
+genes, exons, etc). These are typically stored in
+<em>.gff3/.gff/.gtf</em> files.</p></li>
+<li><p>(Optional) Coding sequences (CDS), with only one DNA sequence
+sequence per gene. These are only required for users who want to
+calculate substitution rates (i.e.,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>K</mi><mi>a</mi></msub><annotation encoding="application/x-tex">K_a</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>K</mi><mi>s</mi></msub><annotation encoding="application/x-tex">K_s</annotation></semantics></math>,
+and their ratio
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>K</mi><mi>a</mi></msub><mi>/</mi><msub><mi>K</mi><mi>s</mi></msub></mrow><annotation encoding="application/x-tex">K_a/K_s</annotation></semantics></math>),
+and they are typically stored in <em>.fasta</em> files.</p></li>
+</ol>
+<p>In the Bioconductor ecosystem, sequences and ranges are stored in
+standardized S4 classes named <code>XStringSet</code>
+(<code>AAStringSet</code> for proteins, <code>DNAStringSet</code> for
+DNA) and <code>GRanges</code>, respectively. This ensures seamless
+interoperability across packages, which is important for both users and
+package developers. Thus, <em><a href="https://bioconductor.org/packages/3.20/doubletrouble" class="external-link">doubletrouble</a></em>
+expects proteomes in lists of <code>AAStringSet</code> objects, and
+annotations in lists of <code>GRanges</code> objects. Below you can find
+a summary of input data types, their typical file formats, and
+Bioconductor class.</p>
+<table class="table">
+<thead><tr class="header">
+<th align="left">Input data</th>
+<th align="left">File format</th>
+<th align="left">Bioconductor class</th>
+<th align="left">Requirement</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">Proteome</td>
+<td align="left">FASTA</td>
+<td align="left"><code>AAStringSet</code></td>
+<td align="left">Mandatory</td>
+</tr>
+<tr class="even">
+<td align="left">Annotation</td>
+<td align="left">GFF3/GTF</td>
+<td align="left"><code>GRanges</code></td>
+<td align="left">Mandatory</td>
+</tr>
+<tr class="odd">
+<td align="left">CDS</td>
+<td align="left">FASTA</td>
+<td align="left"><code>DNAStringSet</code></td>
+<td align="left">Optional</td>
+</tr>
+</tbody>
+</table>
+<p>Names of list elements represent species identifiers (e.g., name,
+abbreviations, taxonomy IDs, or anything you like), and
+<strong>must</strong> be consistent across different lists, so
+correspondence can be made. For instance, suppose you have an object
+named <code>seqs</code> with a list of <code>AAStringSet</code> objects
+(proteomes for each species) named <em>Athaliana</em>, <em>Alyrata</em>,
+and <em>Bnapus</em>. You also have an object named
+<code>annotation</code> with a list of <code>GRanges</code> objects
+(gene annotation for each species). In this example, list names in
+<code>annotation</code> must also be <em>Athaliana</em>,
+<em>Alyrata</em>, and <em>Bnapus</em> (not necessarily in that order),
+so that <em><a href="https://bioconductor.org/packages/3.20/doubletrouble" class="external-link">doubletrouble</a></em>
+knows that element <em>Athaliana</em> in <code>seqs</code> corresponds
+to element <em>Athaliana</em> in <code>annotation</code>. You can check
+that with:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Load list of DIAMOND tabular output</span></span>
+<code class="sourceCode R"><span><span class="co"># Checking if names of lists match</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/sets.html" class="external-link">setequal</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">seqs</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">annotation</span><span class="op">)</span><span class="op">)</span> <span class="co"># should return TRUE</span></span></code></pre></div>
+<p><strong>IMPORTANT:</strong> If you have protein sequences as FASTA
+files in a directory, you can read them into a list of
+<code>AAStringSet</code> objects with the function
+<code><a href="https://rdrr.io/pkg/syntenet/man/fasta2AAStringSetlist.html" class="external-link">fasta2AAStringSetlist()</a></code> from the Bioconductor package
+<em><a href="https://bioconductor.org/packages/3.20/syntenet" class="external-link">syntenet</a></em>.
+Likewise, you can get a <code>GRangesList</code> object from GFF/GTF
+files with the function <code><a href="https://rdrr.io/pkg/syntenet/man/gff2GRangesList.html" class="external-link">gff2GRangesList()</a></code>, also from <em><a href="https://bioconductor.org/packages/3.20/syntenet" class="external-link">syntenet</a></em>.</p>
+</div>
+<div class="section level2">
+<h2 id="getting-to-know-the-example-data-sets">Getting to know the example data sets<a class="anchor" aria-label="anchor" href="#getting-to-know-the-example-data-sets"></a>
+</h2>
+<p>In this vignette, we will use data (proteome, gene annotations, and
+CDS) from the yeast species <em>Saccharomyces cerevisiae</em> and
+<em>Candida glabrata</em>, since their genomes are relatively small
+(and, hence, great for demonstration purposes). Our goal here is to
+identify and classify duplicated genes in the <em>S. cerevisiae</em>
+genome. The <em>C. glabrata</em> genome will be used as an outgroup to
+identify transposed duplicates later in this vignette.</p>
+<p>Data were obtained from Ensembl Fungi release 54 <span class="citation">(Yates et al. 2022)</span>. While you can download
+these data manually from the Ensembl Fungi webpage (or through another
+repository such as NCBI RefSeq), here we will demonstrate how you can
+get data from Ensembl using the <em><a href="https://bioconductor.org/packages/3.20/biomartr" class="external-link">biomartr</a></em>
+package.</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">species</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Saccharomyces cerevisiae"</span>, <span class="st">"Candida glabrata"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Download data from Ensembl with {biomartr}</span></span>
+<span><span class="co">## Whole-genome protein sequences (.fa)</span></span>
+<span><span class="va">fasta_dir</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"proteomes"</span><span class="op">)</span></span>
+<span><span class="va">fasta_files</span> <span class="op">&lt;-</span> <span class="fu">biomartr</span><span class="fu">::</span><span class="fu">getProteomeSet</span><span class="op">(</span></span>
+<span>    db <span class="op">=</span> <span class="st">"ensembl"</span>, organisms <span class="op">=</span> <span class="va">species</span>, path <span class="op">=</span> <span class="va">fasta_dir</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">## Gene annotation (.gff3)</span></span>
+<span><span class="va">gff_dir</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"annotation"</span><span class="op">)</span></span>
+<span><span class="va">gff_files</span> <span class="op">&lt;-</span> <span class="fu">biomartr</span><span class="fu">::</span><span class="fu">getGFFSet</span><span class="op">(</span></span>
+<span>    db <span class="op">=</span> <span class="st">"ensembl"</span>, organisms <span class="op">=</span> <span class="va">species</span>, path <span class="op">=</span> <span class="va">gff_dir</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">## CDS (.fa)</span></span>
+<span><span class="va">cds_dir</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"CDS"</span><span class="op">)</span></span>
+<span><span class="va">cds_files</span> <span class="op">&lt;-</span> <span class="fu">biomartr</span><span class="fu">::</span><span class="fu">getCDSSet</span><span class="op">(</span></span>
+<span>    db <span class="op">=</span> <span class="st">"ensembl"</span>, organisms <span class="op">=</span> <span class="va">species</span>, path <span class="op">=</span> <span class="va">cds_dir</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Import data to the R session</span></span>
+<span><span class="co">## Read .fa files with proteomes as a list of AAStringSet + clean names</span></span>
+<span><span class="va">seq</span> <span class="op">&lt;-</span> <span class="fu">syntenet</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/syntenet/man/fasta2AAStringSetlist.html" class="external-link">fasta2AAStringSetlist</a></span><span class="op">(</span><span class="va">fasta_dir</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">seq</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span><span class="st">"\\..*"</span>, <span class="st">""</span>, <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">seq</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">## Read .gff3 files as a list of GRanges</span></span>
+<span><span class="va">annot</span> <span class="op">&lt;-</span> <span class="fu">syntenet</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/syntenet/man/gff2GRangesList.html" class="external-link">gff2GRangesList</a></span><span class="op">(</span><span class="va">gff_dir</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">annot</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span><span class="st">"\\..*"</span>, <span class="st">""</span>, <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">annot</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">## Read .fa files with CDS as a list of DNAStringSet objects</span></span>
+<span><span class="va">cds</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">cds_files</span>, <span class="fu">Biostrings</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/Biostrings/man/XStringSet-io.html" class="external-link">readDNAStringSet</a></span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">cds</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span><span class="st">"\\..*"</span>, <span class="st">""</span>, <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/path.html" class="external-link">basename</a></span><span class="op">(</span><span class="va">cds_files</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Process data</span></span>
+<span><span class="co">## Keep ranges for protein-coding genes only</span></span>
+<span><span class="va">yeast_annot</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">annot</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="va">gene_ranges</span> <span class="op">&lt;-</span> <span class="va">x</span><span class="op">[</span><span class="va">x</span><span class="op">$</span><span class="va">biotype</span> <span class="op">==</span> <span class="st">"protein_coding"</span> <span class="op">&amp;</span> <span class="va">x</span><span class="op">$</span><span class="va">type</span> <span class="op">==</span> <span class="st">"gene"</span><span class="op">]</span></span>
+<span>    <span class="va">gene_ranges</span> <span class="op">&lt;-</span> <span class="fu">IRanges</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/IRanges/man/findOverlaps-methods.html" class="external-link">subsetByOverlaps</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">gene_ranges</span><span class="op">)</span></span>
+<span>    <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">gene_ranges</span><span class="op">)</span></span>
+<span><span class="op">}</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">## Keep only longest sequence for each protein-coding gene (no isoforms)</span></span>
+<span><span class="va">yeast_seq</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">seq</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="co"># Keep only protein-coding genes</span></span>
+<span>    <span class="va">x</span> <span class="op">&lt;-</span> <span class="va">x</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/grep.html" class="external-link">grep</a></span><span class="op">(</span><span class="st">"protein_coding"</span>, <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span><span class="op">]</span></span>
+<span>    </span>
+<span>    <span class="co"># Leave only gene IDs in sequence names</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span><span class="st">".*gene:| .*"</span>, <span class="st">""</span>, <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span></span>
+<span>    </span>
+<span>    <span class="co"># If isoforms are present (same gene ID multiple times), keep the longest</span></span>
+<span>    <span class="va">x</span> <span class="op">&lt;-</span> <span class="va">x</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/order.html" class="external-link">order</a></span><span class="op">(</span><span class="fu">Biostrings</span><span class="fu">::</span><span class="fu">width</span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, decreasing <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">]</span></span>
+<span>    <span class="va">x</span> <span class="op">&lt;-</span> <span class="va">x</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/duplicated.html" class="external-link">duplicated</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span><span class="op">]</span></span>
+<span>    </span>
+<span>    <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
+<span><span class="op">}</span><span class="op">)</span></span></code></pre></div>
+<p>Note that processing might differ depending on the data source. For
+instance, Ensembl adds gene ‘biotypes’ (e.g., protein-coding,
+pseudogene, etc) in sequence names and in a field named <em>biotype</em>
+in annotation files. Other databases might add these information
+elsewhere.</p>
+<p>To avoid problems building this vignette (due to no/slow/unstable
+internet connection), the code chunk above is not executed. Instead, we
+ran such code and saved data in the following objects:</p>
+<ul>
+<li><p><strong>yeast_seq:</strong> A list of <code>AAStringSet</code>
+objects with elements named <em>Scerevisiae</em> and
+<em>Cglabrata</em>.</p></li>
+<li><p><strong>yeast_annot:</strong> A <code>GRangesList</code> object
+with elements named <em>Scerevisiae</em> and
+<em>Cglabrata</em>.</p></li>
+</ul>
+<p>Let’s take a look at them.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Load example data</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">yeast_seq</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">yeast_seq</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">yeast_annot</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">yeast_seq</span></span>
 <span><span class="co">#&gt; $Scerevisiae</span></span>
 <span><span class="co">#&gt; AAStringSet object of length 6600:</span></span>
 <span><span class="co">#&gt;        width seq                                            names               </span></span>
@@ -161,16 +323,8 @@ objects with elements named <em>Scerevisiae</em> and
 <span><span class="co">#&gt; [5290]    39 <span style="color: #000000; background-color: #FFD7D7;">ML</span><span style="color: #000000; background-color: #D7D7FF;">PGGP</span><span style="color: #000000; background-color: #FFD7D7;">IVVLILV</span><span style="color: #000000; background-color: #D7D7FF;">G</span><span style="color: #000000; background-color: #FFD7D7;">LAA</span><span style="color: #000000; background-color: #FFFFD7;">C</span><span style="color: #000000; background-color: #FFD7D7;">IIVA</span><span style="color: #000000; background-color: #AFFFFF;">T</span><span style="color: #000000; background-color: #FFD7D7;">II</span><span style="color: #000000; background-color: #D7FFD7;">Y</span><span style="color: #000000; background-color: #AFD7FF;">RK</span><span style="color: #000000; background-color: #D7FFD7;">W</span><span style="color: #000000; background-color: #AFFFFF;">Q</span><span style="color: #000000; background-color: #FFD7FF;">E</span><span style="color: #000000; background-color: #AFD7FF;">R</span><span style="color: #000000; background-color: #AFFFFF;">Q</span><span style="color: #000000; background-color: #AFD7FF;">R</span><span style="color: #000000; background-color: #FFD7D7;">ALA</span><span style="color: #000000; background-color: #AFD7FF;">R</span><span style="color: #000000; background-color: #D7FFD7;">F</span>        CAGL0M03305g</span></span>
 <span><span class="co">#&gt; [5291]    39 <span style="color: #000000; background-color: #FFD7D7;">ML</span><span style="color: #000000; background-color: #D7D7FF;">PGG</span><span style="color: #000000; background-color: #FFD7D7;">VILV</span><span style="color: #000000; background-color: #D7FFD7;">F</span><span style="color: #000000; background-color: #FFD7D7;">ILV</span><span style="color: #000000; background-color: #D7D7FF;">G</span><span style="color: #000000; background-color: #FFD7D7;">LAA</span><span style="color: #000000; background-color: #FFFFD7;">C</span><span style="color: #000000; background-color: #FFD7D7;">AIVAVII</span><span style="color: #000000; background-color: #D7FFD7;">Y</span><span style="color: #000000; background-color: #AFD7FF;">RK</span><span style="color: #000000; background-color: #D7FFD7;">W</span><span style="color: #000000; background-color: #AFFFFF;">Q</span><span style="color: #000000; background-color: #FFD7FF;">E</span><span style="color: #000000; background-color: #AFD7FF;">R</span><span style="color: #000000; background-color: #AFFFFF;">Q</span><span style="color: #000000; background-color: #AFD7FF;">R</span><span style="color: #000000; background-color: #AFFFFF;">S</span><span style="color: #000000; background-color: #FFD7D7;">L</span><span style="color: #000000; background-color: #AFFFFF;">Q</span><span style="color: #000000; background-color: #AFD7FF;">R</span><span style="color: #000000; background-color: #D7FFD7;">F</span>        CAGL0L08008g</span></span>
 <span><span class="co">#&gt; [5292]    37 <span style="color: #000000; background-color: #FFD7D7;">MI</span><span style="color: #000000; background-color: #AFFFFF;">N</span><span style="color: #000000; background-color: #FFD7FF;">E</span><span style="color: #000000; background-color: #D7D7FF;">G</span><span style="color: #000000; background-color: #AFFFFF;">Q</span><span style="color: #000000; background-color: #FFD7D7;">L</span><span style="color: #000000; background-color: #AFFFFF;">QT</span><span style="color: #000000; background-color: #FFD7D7;">LVI</span><span style="color: #000000; background-color: #D7D7FF;">G</span><span style="color: #000000; background-color: #D7FFD7;">F</span><span style="color: #000000; background-color: #D7D7FF;">G</span><span style="color: #000000; background-color: #FFD7D7;">LAMVVLVVV</span><span style="color: #000000; background-color: #D7FFD7;">Y</span><span style="color: #000000; background-color: #AFD7FF;">H</span><span style="color: #000000; background-color: #FFD7D7;">AVA</span><span style="color: #000000; background-color: #AFFFFF;">ST</span><span style="color: #000000; background-color: #FFD7D7;">MAV</span><span style="color: #000000; background-color: #AFD7FF;">KR</span><span style="color: #000000; background-color: #FFD7FF;">D</span>          CAGL0C05461g</span></span>
-<span><span class="co">#&gt; [5293]    34 <span style="color: #000000; background-color: #FFD7D7;">M</span><span style="color: #000000; background-color: #AFFFFF;">Q</span><span style="color: #000000; background-color: #D7D7FF;">P</span><span style="color: #000000; background-color: #AFFFFF;">T</span><span style="color: #000000; background-color: #FFD7D7;">I</span><span style="color: #000000; background-color: #FFD7FF;">E</span><span style="color: #000000; background-color: #FFD7D7;">A</span><span style="color: #000000; background-color: #AFFFFF;">TQ</span><span style="color: #000000; background-color: #AFD7FF;">K</span><span style="color: #000000; background-color: #FFD7FF;">D</span><span style="color: #000000; background-color: #AFFFFF;">NTQ</span><span style="color: #000000; background-color: #FFD7FF;">E</span><span style="color: #000000; background-color: #AFD7FF;">KR</span><span style="color: #000000; background-color: #FFD7FF;">D</span><span style="color: #000000; background-color: #AFFFFF;">N</span><span style="color: #000000; background-color: #D7FFD7;">Y</span><span style="color: #000000; background-color: #FFD7D7;">IV</span><span style="color: #000000; background-color: #AFD7FF;">K</span><span style="color: #000000; background-color: #D7D7FF;">G</span><span style="color: #000000; background-color: #D7FFD7;">FFW</span><span style="color: #000000; background-color: #AFFFFF;">S</span><span style="color: #000000; background-color: #D7D7FF;">P</span><span style="color: #000000; background-color: #FFD7FF;">D</span><span style="color: #000000; background-color: #FFFFD7;">C</span><span style="color: #000000; background-color: #FFD7D7;">VIA</span>             CAGL0C01919g</span></span></code></pre></div>
-<ul>
-<li>
-<strong>yeast_annot:</strong> A <code>GRangesList</code> object with
-elements named <em>Scerevisiae</em> and <em>Cglabrata</em>.</li>
-</ul>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Load annotation list processed with syntenet::process_input()</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">yeast_annot</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">yeast_annot</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [5293]    34 <span style="color: #000000; background-color: #FFD7D7;">M</span><span style="color: #000000; background-color: #AFFFFF;">Q</span><span style="color: #000000; background-color: #D7D7FF;">P</span><span style="color: #000000; background-color: #AFFFFF;">T</span><span style="color: #000000; background-color: #FFD7D7;">I</span><span style="color: #000000; background-color: #FFD7FF;">E</span><span style="color: #000000; background-color: #FFD7D7;">A</span><span style="color: #000000; background-color: #AFFFFF;">TQ</span><span style="color: #000000; background-color: #AFD7FF;">K</span><span style="color: #000000; background-color: #FFD7FF;">D</span><span style="color: #000000; background-color: #AFFFFF;">NTQ</span><span style="color: #000000; background-color: #FFD7FF;">E</span><span style="color: #000000; background-color: #AFD7FF;">KR</span><span style="color: #000000; background-color: #FFD7FF;">D</span><span style="color: #000000; background-color: #AFFFFF;">N</span><span style="color: #000000; background-color: #D7FFD7;">Y</span><span style="color: #000000; background-color: #FFD7D7;">IV</span><span style="color: #000000; background-color: #AFD7FF;">K</span><span style="color: #000000; background-color: #D7D7FF;">G</span><span style="color: #000000; background-color: #D7FFD7;">FFW</span><span style="color: #000000; background-color: #AFFFFF;">S</span><span style="color: #000000; background-color: #D7D7FF;">P</span><span style="color: #000000; background-color: #FFD7FF;">D</span><span style="color: #000000; background-color: #FFFFD7;">C</span><span style="color: #000000; background-color: #FFD7D7;">VIA</span>             CAGL0C01919g</span></span>
+<span><span class="va">yeast_annot</span></span>
 <span><span class="co">#&gt; GRangesList object of length 2:</span></span>
 <span><span class="co">#&gt; $Scerevisiae</span></span>
 <span><span class="co">#&gt; GRanges object with 27144 ranges and 9 metadata columns:</span></span>
@@ -259,17 +413,6 @@ elements named <em>Scerevisiae</em> and <em>Cglabrata</em>.</li>
 <span><span class="co">#&gt;   [31671]         &lt;NA&gt;           &lt;NA&gt;              &lt;NA&gt;    CaglfMp12-T-p1</span></span>
 <span><span class="co">#&gt;   -------</span></span>
 <span><span class="co">#&gt;   seqinfo: 31 sequences from an unspecified genome; no seqlengths</span></span></code></pre></div>
-<p><strong>IMPORTANT:</strong> If you have protein sequences as FASTA
-files in a directory, you can read them into a list of
-<code>AAStringSet</code> objects with the function
-<code><a href="https://rdrr.io/pkg/syntenet/man/fasta2AAStringSetlist.html" class="external-link">fasta2AAStringSetlist()</a></code> from the Bioconductor package
-<em><a href="https://bioconductor.org/packages/3.20/syntenet" class="external-link">syntenet</a></em>.
-Likewise, you can get a <code>GRangesList</code> object from GFF/GTF
-files with the function <code><a href="https://rdrr.io/pkg/syntenet/man/gff2GRangesList.html" class="external-link">gff2GRangesList()</a></code>, also from <em><a href="https://bioconductor.org/packages/3.20/syntenet" class="external-link">syntenet</a></em>.</p>
-<p>Our goal here is to identify and classify duplicated genes in the
-<em>S. cerevisiae</em> genome. The <em>C. glabrata</em> genome will be
-used as an outgroup to identify transposed duplicates later in this
-vignette.</p>
 </div>
 <div class="section level2">
 <h2 id="data-preparation">Data preparation<a class="anchor" aria-label="anchor" href="#data-preparation"></a>
@@ -279,7 +422,7 @@ gene ranges to detect synteny with <em><a href="https://bioconductor.org/package
 We will do that using the function <code><a href="https://rdrr.io/pkg/syntenet/man/process_input.html" class="external-link">process_input()</a></code> from the
 <em><a href="https://bioconductor.org/packages/3.20/syntenet" class="external-link">syntenet</a></em>
 package.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/almeidasilvaf/syntenet" class="external-link">syntenet</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Process input data</span></span>
@@ -354,7 +497,7 @@ package.</p>
 <span><span class="co">#&gt;   [5293] Cgl_mito_C_glabrata_.. 16756-17565      + |    Cgl_CaglfMp12</span></span>
 <span><span class="co">#&gt;   -------</span></span>
 <span><span class="co">#&gt;   seqinfo: 14 sequences from an unspecified genome; no seqlengths</span></span></code></pre></div>
-<p>The processed data is represented as a list with the elements
+<p>The processed data are represented as a list with the elements
 <code>seq</code> and <code>annotation</code>, each containing the
 protein sequences and gene ranges for each species, respectively.</p>
 <p>Finally, we need to perform pairwise sequence similarity searches to
@@ -367,7 +510,7 @@ package to install DIAMOND in a Conda environment and run DIAMOND from
 this virtual environment.&lt;/p&gt;'><sup>1</sup></a>, setting
 <code>compare = "intraspecies"</code> to perform only intraspecies
 comparisons.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">diamond_intra</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Run DIAMOND in sensitive mode for S. cerevisiae only</span></span>
@@ -499,7 +642,7 @@ remaining pairs are classified as originating from small-scale
 duplications.</p>
 <p>This scheme can be used by specifying <code>scheme = "binary"</code>
 in the function <code><a href="../reference/classify_gene_pairs.html">classify_gene_pairs()</a></code>.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Binary scheme</span></span>
 <span><span class="va">c_binary</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/classify_gene_pairs.html">classify_gene_pairs</a></span><span class="op">(</span></span>
 <span>    annotation <span class="op">=</span> <span class="va">pdata</span><span class="op">$</span><span class="va">annotation</span>,</span>
@@ -540,7 +683,7 @@ not fit in any of the previous categories).</p>
 <p>This is the default classification scheme in
 <code><a href="../reference/classify_gene_pairs.html">classify_gene_pairs()</a></code>, and it can be specified by setting
 <code>scheme = "standard"</code>.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Standard scheme</span></span>
 <span><span class="va">c_standard</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/classify_gene_pairs.html">classify_gene_pairs</a></span><span class="op">(</span></span>
 <span>    annotation <span class="op">=</span> <span class="va">pdata</span><span class="op">$</span><span class="va">annotation</span>,</span>
@@ -586,7 +729,7 @@ classify duplicated genes for multiple species in batch, you must
 include the outgroup for each of them in the comparisons data frame.&lt;/p&gt;"><sup>2</sup></a></p>
 <p>Here, we will identify duplicated gene pairs for <em>Saccharomyces
 cerevisiae</em> using <em>Candida glabrata</em> as an outgroup.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">diamond_inter</span><span class="op">)</span> <span class="co"># load pre-computed output in case DIAMOND is not installed</span></span>
 <span></span>
 <span><span class="co"># Create data frame of comparisons to be made</span></span>
@@ -628,7 +771,7 @@ cerevisiae</em> using <em>Candida glabrata</em> as an outgroup.</p>
 <p>Now, we will pass this interspecies DIAMOND output as an argument to
 the parameter <code>blast_inter</code> of
 <code><a href="../reference/classify_gene_pairs.html">classify_gene_pairs()</a></code>.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Extended scheme</span></span>
 <span><span class="va">c_extended</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/classify_gene_pairs.html">classify_gene_pairs</a></span><span class="op">(</span></span>
 <span>    annotation <span class="op">=</span> <span class="va">pdata</span><span class="op">$</span><span class="va">annotation</span>,</span>
@@ -685,7 +828,7 @@ the <code>GRanges</code> object must contain genomic coordinates for all
 features, including transcripts, exons, etc. Because of that, we will
 use annotation from the example data set <code>yeast_annot</code>, which
 was not processed with <code><a href="https://rdrr.io/pkg/syntenet/man/process_input.html" class="external-link">syntenet::process_input()</a></code>.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://bioconductor.org/packages/txdbmaker" class="external-link">txdbmaker</a></span><span class="op">)</span></span>
 <span><span class="co"># Create a list of `TxDb` objects from a list of `GRanges` objects</span></span>
 <span><span class="va">txdb_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">yeast_annot</span>, <span class="fu">txdbmaker</span><span class="fu">::</span><span class="va">makeTxDbFromGRanges</span><span class="op">)</span></span>
@@ -697,7 +840,7 @@ was not processed with <code><a href="https://rdrr.io/pkg/syntenet/man/process_i
 <span><span class="co">#&gt; # Genome: NA</span></span>
 <span><span class="co">#&gt; # Nb of transcripts: 6631</span></span>
 <span><span class="co">#&gt; # Db created by: txdbmaker package from Bioconductor</span></span>
-<span><span class="co">#&gt; # Creation time: 2024-10-02 09:49:23 +0000 (Wed, 02 Oct 2024)</span></span>
+<span><span class="co">#&gt; # Creation time: 2024-10-03 09:16:47 +0000 (Thu, 03 Oct 2024)</span></span>
 <span><span class="co">#&gt; # txdbmaker version at creation time: 1.1.1</span></span>
 <span><span class="co">#&gt; # RSQLite version at creation time: 2.3.7</span></span>
 <span><span class="co">#&gt; # DBSCHEMAVERSION: 1.2</span></span>
@@ -709,13 +852,13 @@ was not processed with <code><a href="https://rdrr.io/pkg/syntenet/man/process_i
 <span><span class="co">#&gt; # Genome: NA</span></span>
 <span><span class="co">#&gt; # Nb of transcripts: 5389</span></span>
 <span><span class="co">#&gt; # Db created by: txdbmaker package from Bioconductor</span></span>
-<span><span class="co">#&gt; # Creation time: 2024-10-02 09:49:23 +0000 (Wed, 02 Oct 2024)</span></span>
+<span><span class="co">#&gt; # Creation time: 2024-10-03 09:16:47 +0000 (Thu, 03 Oct 2024)</span></span>
 <span><span class="co">#&gt; # txdbmaker version at creation time: 1.1.1</span></span>
 <span><span class="co">#&gt; # RSQLite version at creation time: 2.3.7</span></span>
 <span><span class="co">#&gt; # DBSCHEMAVERSION: 1.2</span></span></code></pre></div>
 <p>Once we have the <code>TxDb</code> objects, we can get intron counts
 per gene with <code><a href="../reference/get_intron_counts.html">get_intron_counts()</a></code>.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Get a list of data frames with intron counts per gene for each species</span></span>
 <span><span class="va">intron_counts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">txdb_list</span>, <span class="va">get_intron_counts</span><span class="op">)</span></span>
 <span></span>
@@ -732,7 +875,7 @@ per gene with <code><a href="../reference/get_intron_counts.html">get_intron_cou
 <span><span class="co">#&gt; 6 Q0060       2</span></span></code></pre></div>
 <p>Finally, we can use this list to classify duplicates using the full
 scheme as follows:</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Full scheme</span></span>
 <span><span class="va">c_full</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/classify_gene_pairs.html">classify_gene_pairs</a></span><span class="op">(</span></span>
 <span>    annotation <span class="op">=</span> <span class="va">pdata</span><span class="op">$</span><span class="va">annotation</span>,</span>
@@ -792,7 +935,7 @@ DD.</li>
 </ol>
 <p>The input for <code><a href="../reference/classify_genes.html">classify_genes()</a></code> is the list of gene pairs
 returned by <code><a href="../reference/classify_gene_pairs.html">classify_gene_pairs()</a></code>.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Classify genes into unique modes of duplication</span></span>
 <span><span class="va">c_genes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/classify_genes.html">classify_genes</a></span><span class="op">(</span><span class="va">c_full</span><span class="op">)</span></span>
 <span></span>
@@ -834,7 +977,7 @@ and
 for 5 TD-derived gene pairs. The CDS for TD-derived genes were obtained
 from Ensembl Fungi <span class="citation">(Yates et al. 2022)</span>,
 and they are stored in <code>cds_scerevisiae</code>.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">cds_scerevisiae</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">cds_scerevisiae</span><span class="op">)</span></span>
 <span><span class="co">#&gt; DNAStringSet object of length 6:</span></span>
@@ -912,7 +1055,7 @@ distributions with peaks using the function
 <p>First of all, let’s look at the data and have a quick look at the
 distribution with the function <code><a href="../reference/plot_ks_distro.html">plot_ks_distro()</a></code> (more
 details on this function in the data visualization section).</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Load data and inspect it</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">gmax_ks</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">gmax_ks</span><span class="op">)</span></span>
@@ -936,7 +1079,7 @@ values around 0.1 and 0.5, respectively. There could be a third,
 flattened peak at around 1.6, which would represent the WGD shared by
 all eudicots. Let’s test which number of peaks has more support: 2 or
 3.</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Find 2 and 3 peaks and test which one has more support</span></span>
 <span><span class="va">peaks</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/find_ks_peaks.html">find_ks_peaks</a></span><span class="op">(</span><span class="va">gmax_ks</span><span class="op">$</span><span class="va">Ks</span>, npeaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">3</span><span class="op">)</span>, verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Optimal number of peaks: 3</span></span>
@@ -969,7 +1112,7 @@ distribution itself.</p>
 <p>Now, suppose you just want to get the first 2 peaks. You can do that
 by explictly saying to <code><a href="../reference/find_ks_peaks.html">find_ks_peaks()</a></code> how many peaks there
 are.</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Find 2 peaks ignoring Ks values &gt; 1</span></span>
 <span><span class="va">peaks</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/find_ks_peaks.html">find_ks_peaks</a></span><span class="op">(</span><span class="va">gmax_ks</span><span class="op">$</span><span class="va">Ks</span>, npeaks <span class="op">=</span> <span class="fl">2</span>, max_ks <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/plot_ks_peaks.html">plot_ks_peaks</a></span><span class="op">(</span><span class="va">peaks</span><span class="op">)</span></span></code></pre></div>
@@ -996,7 +1139,7 @@ Marron 1999)</span>. This can be done with the function
 </ol>
 <p>As an example of a SiZer map, let’s use <code><a href="https://rdrr.io/pkg/feature/man/SiZer.html" class="external-link">feature::SiZer()</a></code>
 to assess the significance of the 2 peaks we found previously.</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Get numeric vector of Ks values &lt;= 1</span></span>
 <span><span class="va">ks</span> <span class="op">&lt;-</span> <span class="va">gmax_ks</span><span class="op">$</span><span class="va">Ks</span><span class="op">[</span><span class="va">gmax_ks</span><span class="op">$</span><span class="va">Ks</span> <span class="op">&lt;=</span> <span class="fl">1</span><span class="op">]</span></span>
 <span></span>
@@ -1020,7 +1163,7 @@ returns a list containing the classified pairs in a data frame, and a
 ggplot object with the age boundaries highlighted in the histogram of
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>K</mi><mi>s</mi></msub><annotation encoding="application/x-tex">K_s</annotation></semantics></math>
 values.</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Gene pairs without age-based classification</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">gmax_ks</span><span class="op">)</span></span>
 <span><span class="co">#&gt;              dup1            dup2     Ks type</span></span>
@@ -1069,7 +1212,7 @@ of the entire genome.</p>
 originated from the WGD event shared by all legumes (at ~58 million
 years ago), you’d need to extract SD pairs in age group 2 using the
 following code:</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Get all pairs in age group 2</span></span>
 <span><span class="va">pairs_ag2</span> <span class="op">&lt;-</span> <span class="va">pairs_age_group</span><span class="op">$</span><span class="va">pairs</span><span class="op">[</span><span class="va">pairs_age_group</span><span class="op">$</span><span class="va">pairs</span><span class="op">$</span><span class="va">peak</span> <span class="op">==</span> <span class="fl">2</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span><span class="op">]</span></span>
 <span></span>
@@ -1106,7 +1249,7 @@ create a data frame of counts with <code><a href="../reference/duplicates2counts
 demonstrate how this works, we will use an example data set with
 duplicate pairs for 3 fungi species (and substitution rates, which will
 be ignored by <code><a href="../reference/duplicates2counts.html">duplicates2counts()</a></code>).</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Load data set with pre-computed duplicates for 3 fungi species</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">fungi_kaks</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">fungi_kaks</span><span class="op">)</span></span>
@@ -1148,7 +1291,7 @@ be ignored by <code><a href="../reference/duplicates2counts.html">duplicates2cou
 duplication type with the function <code><a href="../reference/plot_duplicate_freqs.html">plot_duplicate_freqs()</a></code>.
 You can visualize frequencies in three different ways, as demonstrated
 below.</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># A) Facets</span></span>
 <span><span class="va">p1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/plot_duplicate_freqs.html">plot_duplicate_freqs</a></span><span class="op">(</span><span class="va">counts_table</span><span class="op">)</span></span>
 <span></span>
@@ -1161,18 +1304,18 @@ below.</p>
 <span><span class="co"># Combine plots, one per row</span></span>
 <span><span class="fu">patchwork</span><span class="fu">::</span><span class="fu"><a href="https://patchwork.data-imaginist.com/reference/wrap_plots.html" class="external-link">wrap_plots</a></span><span class="op">(</span><span class="va">p1</span>, <span class="va">p2</span>, <span class="va">p3</span>, nrow <span class="op">=</span> <span class="fl">3</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>    <span class="fu">patchwork</span><span class="fu">::</span><span class="fu"><a href="https://patchwork.data-imaginist.com/reference/plot_annotation.html" class="external-link">plot_annotation</a></span><span class="op">(</span>tag_levels <span class="op">=</span> <span class="st">"A"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="doubletrouble_vignette_files/figure-html/unnamed-chunk-6-1.png" width="700"></p>
+<p><img src="doubletrouble_vignette_files/figure-html/unnamed-chunk-8-1.png" width="700"></p>
 <p>If you want to visually the frequency of duplicated
 <strong>genes</strong> (not gene pairs), you’d first need to classify
 genes into unique modes of duplication with
 <code><a href="../reference/classify_genes.html">classify_genes()</a></code>, and then repeat the code above. For
 example:</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Frequency of duplicated genes by mode</span></span>
 <span><span class="fu"><a href="../reference/classify_genes.html">classify_genes</a></span><span class="op">(</span><span class="va">fungi_kaks</span><span class="op">)</span> <span class="op">|&gt;</span>   <span class="co"># classify genes into unique duplication types</span></span>
 <span>    <span class="fu"><a href="../reference/duplicates2counts.html">duplicates2counts</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span>      <span class="co"># get a data frame of counts (long format)</span></span>
 <span>    <span class="fu"><a href="../reference/plot_duplicate_freqs.html">plot_duplicate_freqs</a></span><span class="op">(</span><span class="op">)</span>      <span class="co"># plot frequencies</span></span></code></pre></div>
-<p><img src="doubletrouble_vignette_files/figure-html/unnamed-chunk-7-1.png" width="768"></p>
+<p><img src="doubletrouble_vignette_files/figure-html/unnamed-chunk-9-1.png" width="768"></p>
 </div>
 <div class="section level3">
 <h3 id="visualizing-k_s-distributions">Visualizing
@@ -1183,7 +1326,7 @@ distributions<a class="anchor" aria-label="anchor" href="#visualizing-k_s-distri
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>K</mi><mi>s</mi></msub><annotation encoding="application/x-tex">K_s</annotation></semantics></math>
 distribution for the whole paranome, you will use the function
 <code><a href="../reference/plot_ks_distro.html">plot_ks_distro()</a></code>.</p>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ks_df</span> <span class="op">&lt;-</span> <span class="va">fungi_kaks</span><span class="op">$</span><span class="va">saccharomyces_cerevisiae</span></span>
 <span></span>
 <span><span class="co"># A) Histogram, whole paranome</span></span>
@@ -1198,7 +1341,7 @@ distribution for the whole paranome, you will use the function
 <span><span class="co"># Combine plots side by side</span></span>
 <span><span class="fu">patchwork</span><span class="fu">::</span><span class="fu"><a href="https://patchwork.data-imaginist.com/reference/wrap_plots.html" class="external-link">wrap_plots</a></span><span class="op">(</span><span class="va">p1</span>, <span class="va">p2</span>, <span class="va">p3</span>, nrow <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu">patchwork</span><span class="fu">::</span><span class="fu"><a href="https://patchwork.data-imaginist.com/reference/plot_annotation.html" class="external-link">plot_annotation</a></span><span class="op">(</span>tag_levels <span class="op">=</span> <span class="st">"A"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="doubletrouble_vignette_files/figure-html/unnamed-chunk-8-1.png" width="864"></p>
+<p><img src="doubletrouble_vignette_files/figure-html/unnamed-chunk-10-1.png" width="864"></p>
 <p>However, visualizing the distribution for the whole paranome can mask
 patterns that only happen for duplicates originating from particular
 duplication types. For instance, when looking for evidence of WGD
@@ -1208,7 +1351,7 @@ distribution for SD-derived pairs only can reveal whether syntenic genes
 cluster together, suggesting the presence of WGD history. To visualize
 the distribution by duplication type, use <code>bytype = TRUE</code> in
 <code><a href="../reference/plot_ks_distro.html">plot_ks_distro()</a></code>.</p>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># A) Duplicates by type, histogram</span></span>
 <span><span class="va">p1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/plot_ks_distro.html">plot_ks_distro</a></span><span class="op">(</span><span class="va">ks_df</span>, bytype <span class="op">=</span> <span class="cn">TRUE</span>, plot_type <span class="op">=</span> <span class="st">"histogram"</span><span class="op">)</span></span>
 <span></span>
@@ -1218,7 +1361,7 @@ the distribution by duplication type, use <code>bytype = TRUE</code> in
 <span><span class="co"># Combine plots side by side</span></span>
 <span><span class="fu">patchwork</span><span class="fu">::</span><span class="fu"><a href="https://patchwork.data-imaginist.com/reference/wrap_plots.html" class="external-link">wrap_plots</a></span><span class="op">(</span><span class="va">p1</span>, <span class="va">p2</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu">patchwork</span><span class="fu">::</span><span class="fu"><a href="https://patchwork.data-imaginist.com/reference/plot_annotation.html" class="external-link">plot_annotation</a></span><span class="op">(</span>tag_levels <span class="op">=</span> <span class="st">"A"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="doubletrouble_vignette_files/figure-html/unnamed-chunk-9-1.png" width="768"></p>
+<p><img src="doubletrouble_vignette_files/figure-html/unnamed-chunk-11-1.png" width="768"></p>
 </div>
 <div class="section level3">
 <h3 id="visualizing-substitution-rates-by-species">Visualizing substitution rates by species<a class="anchor" aria-label="anchor" href="#visualizing-substitution-rates-by-species"></a>
@@ -1232,7 +1375,7 @@ or their ratio
 by species. You can choose which rate you want to visualize, and whether
 or not to group gene pairs by duplication mode, as demonstrated
 below.</p>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># A) Ks for each species</span></span>
 <span><span class="va">p1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/plot_rates_by_species.html">plot_rates_by_species</a></span><span class="op">(</span><span class="va">fungi_kaks</span><span class="op">)</span></span>
 <span></span>
@@ -1242,14 +1385,14 @@ below.</p>
 <span><span class="co"># Combine plots - one per row</span></span>
 <span><span class="fu">patchwork</span><span class="fu">::</span><span class="fu"><a href="https://patchwork.data-imaginist.com/reference/wrap_plots.html" class="external-link">wrap_plots</a></span><span class="op">(</span><span class="va">p1</span>, <span class="va">p2</span>, nrow <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu">patchwork</span><span class="fu">::</span><span class="fu"><a href="https://patchwork.data-imaginist.com/reference/plot_annotation.html" class="external-link">plot_annotation</a></span><span class="op">(</span>tag_levels <span class="op">=</span> <span class="st">"A"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="doubletrouble_vignette_files/figure-html/unnamed-chunk-10-1.png" width="576"></p>
+<p><img src="doubletrouble_vignette_files/figure-html/unnamed-chunk-12-1.png" width="576"></p>
 </div>
 </div>
 <div class="section level2">
 <h2 class="unnumbered" id="session-information">Session information<a class="anchor" aria-label="anchor" href="#session-information"></a>
 </h2>
 <p>This document was created under the following conditions:</p>
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">sessioninfo</span><span class="fu">::</span><span class="fu"><a href="https://r-lib.github.io/sessioninfo/reference/session_info.html" class="external-link">session_info</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB; font-weight: bold;">─ Session info ───────────────────────────────────────────────────────────────</span></span></span>
 <span><span class="co">#&gt;  <span style="color: #555555; font-style: italic;">setting </span> <span style="color: #555555; font-style: italic;">value</span></span></span>
@@ -1261,7 +1404,7 @@ below.</p>
 <span><span class="co">#&gt;  collate  en_US.UTF-8</span></span>
 <span><span class="co">#&gt;  ctype    en_US.UTF-8</span></span>
 <span><span class="co">#&gt;  tz       UTC</span></span>
-<span><span class="co">#&gt;  date     2024-10-02</span></span>
+<span><span class="co">#&gt;  date     2024-10-03</span></span>
 <span><span class="co">#&gt;  pandoc   3.4 @ /usr/bin/ (via rmarkdown)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB; font-weight: bold;">─ Packages ───────────────────────────────────────────────────────────────────</span></span></span>
@@ -1298,7 +1441,7 @@ below.</p>
 <span><span class="co">#&gt;  desc                   1.4.3     <span style="color: #555555;">2023-12-10</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.4.0)</span></span></span>
 <span><span class="co">#&gt;  digest                 0.6.37    <span style="color: #555555;">2024-08-19</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.4.0)</span></span></span>
 <span><span class="co">#&gt;  doParallel             1.0.17    <span style="color: #555555;">2022-02-07</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.4.0)</span></span></span>
-<span><span class="co">#&gt;  doubletrouble        * 1.5.2     <span style="color: #555555;">2024-10-02</span> <span style="color: #555555;">[1]</span> <span style="color: #555555;">Bioconductor</span></span></span>
+<span><span class="co">#&gt;  doubletrouble        * 1.5.3     <span style="color: #555555;">2024-10-03</span> <span style="color: #555555;">[1]</span> <span style="color: #555555;">Bioconductor</span></span></span>
 <span><span class="co">#&gt;  dplyr                  1.1.4     <span style="color: #555555;">2023-11-17</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.4.0)</span></span></span>
 <span><span class="co">#&gt;  evaluate               1.0.0     <span style="color: #555555;">2024-09-17</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.4.0)</span></span></span>
 <span><span class="co">#&gt;  fansi                  1.0.6     <span style="color: #555555;">2023-12-08</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.4.0)</span></span></span>
