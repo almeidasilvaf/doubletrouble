@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">doubletrouble</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.5.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.5.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -797,6 +797,39 @@ the parameter <code>blast_inter</code> of
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;   SD   TD   PD  TRD   DD </span></span>
 <span><span class="co">#&gt;  342   42   80 1015 2109</span></span></code></pre></div>
+<p>In the example above, we used only one outgroup species (<em>C.
+glabrata</em>). However, since results might change depending on the
+chosen outgroup, you can also use multiple outgroups in the comparisons
+data frame, and then run interspecies DIAMOND searches as above. For
+instance, suppose you want to use <em>speciesB</em>, <em>speciesC</em>,
+and <em>speciesD</em> as outgroups to <em>speciesA</em>. In this case,
+your data frame of comparisons (to be passed to the <code>compare</code>
+argument of <code><a href="https://rdrr.io/pkg/syntenet/man/run_diamond.html" class="external-link">syntenet::run_diamond()</a></code>) would look like the
+following:</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Example: multiple outgroups for the same species</span></span>
+<span><span class="va">comparisons</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>    species <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"speciesA"</span>, <span class="fl">3</span><span class="op">)</span>,</span>
+<span>    outgroup <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"speciesB"</span>, <span class="st">"speciesC"</span>, <span class="st">"speciesD"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">comparisons</span></span>
+<span><span class="co">#&gt;    species outgroup</span></span>
+<span><span class="co">#&gt; 1 speciesA speciesB</span></span>
+<span><span class="co">#&gt; 2 speciesA speciesC</span></span>
+<span><span class="co">#&gt; 3 speciesA speciesD</span></span></code></pre></div>
+<p>When multiple outgroups are present,
+<code><a href="../reference/classify_gene_pairs.html">classify_gene_pairs()</a></code> will check if gene pairs are
+classified as transposed (i.e., only one gene is an ancestral locus) in
+each of the outgroup species, and then calculate the percentage of
+outgroup species in which each pair is considered ‘transposed’. For
+instance, you could have gene pair 1 as transposed based on 30% of the
+outgroup species, gene pair 2 as transposed based on 100% of the
+outgroup species, gene pair 3 based on 0% of the outgroup species, and
+so on. By default, pairs are considered ‘transposed’ if they are
+classified as such in &gt;70% of the outgroups, but you can choose a
+different minimum percentage cut-off using parameter
+<code>outgroup_coverage</code>.</p>
 </div>
 <div class="section level3">
 <h3 id="the-full-scheme-ssd-td-pd-rtrd-dtrd-dd">The <em>full</em> scheme (SSD → TD, PD, rTRD, dTRD, DD)<a class="anchor" aria-label="anchor" href="#the-full-scheme-ssd-td-pd-rtrd-dtrd-dd"></a>
@@ -828,7 +861,7 @@ the <code>GRanges</code> object must contain genomic coordinates for all
 features, including transcripts, exons, etc. Because of that, we will
 use annotation from the example data set <code>yeast_annot</code>, which
 was not processed with <code><a href="https://rdrr.io/pkg/syntenet/man/process_input.html" class="external-link">syntenet::process_input()</a></code>.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://bioconductor.org/packages/txdbmaker" class="external-link">txdbmaker</a></span><span class="op">)</span></span>
 <span><span class="co"># Create a list of `TxDb` objects from a list of `GRanges` objects</span></span>
 <span><span class="va">txdb_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">yeast_annot</span>, <span class="fu">txdbmaker</span><span class="fu">::</span><span class="va">makeTxDbFromGRanges</span><span class="op">)</span></span>
@@ -840,7 +873,7 @@ was not processed with <code><a href="https://rdrr.io/pkg/syntenet/man/process_i
 <span><span class="co">#&gt; # Genome: NA</span></span>
 <span><span class="co">#&gt; # Nb of transcripts: 6631</span></span>
 <span><span class="co">#&gt; # Db created by: txdbmaker package from Bioconductor</span></span>
-<span><span class="co">#&gt; # Creation time: 2024-10-03 09:16:47 +0000 (Thu, 03 Oct 2024)</span></span>
+<span><span class="co">#&gt; # Creation time: 2024-10-07 14:08:27 +0000 (Mon, 07 Oct 2024)</span></span>
 <span><span class="co">#&gt; # txdbmaker version at creation time: 1.1.1</span></span>
 <span><span class="co">#&gt; # RSQLite version at creation time: 2.3.7</span></span>
 <span><span class="co">#&gt; # DBSCHEMAVERSION: 1.2</span></span>
@@ -852,13 +885,13 @@ was not processed with <code><a href="https://rdrr.io/pkg/syntenet/man/process_i
 <span><span class="co">#&gt; # Genome: NA</span></span>
 <span><span class="co">#&gt; # Nb of transcripts: 5389</span></span>
 <span><span class="co">#&gt; # Db created by: txdbmaker package from Bioconductor</span></span>
-<span><span class="co">#&gt; # Creation time: 2024-10-03 09:16:47 +0000 (Thu, 03 Oct 2024)</span></span>
+<span><span class="co">#&gt; # Creation time: 2024-10-07 14:08:27 +0000 (Mon, 07 Oct 2024)</span></span>
 <span><span class="co">#&gt; # txdbmaker version at creation time: 1.1.1</span></span>
 <span><span class="co">#&gt; # RSQLite version at creation time: 2.3.7</span></span>
 <span><span class="co">#&gt; # DBSCHEMAVERSION: 1.2</span></span></code></pre></div>
 <p>Once we have the <code>TxDb</code> objects, we can get intron counts
 per gene with <code><a href="../reference/get_intron_counts.html">get_intron_counts()</a></code>.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Get a list of data frames with intron counts per gene for each species</span></span>
 <span><span class="va">intron_counts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">txdb_list</span>, <span class="va">get_intron_counts</span><span class="op">)</span></span>
 <span></span>
@@ -875,7 +908,7 @@ per gene with <code><a href="../reference/get_intron_counts.html">get_intron_cou
 <span><span class="co">#&gt; 6 Q0060       2</span></span></code></pre></div>
 <p>Finally, we can use this list to classify duplicates using the full
 scheme as follows:</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Full scheme</span></span>
 <span><span class="va">c_full</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/classify_gene_pairs.html">classify_gene_pairs</a></span><span class="op">(</span></span>
 <span>    annotation <span class="op">=</span> <span class="va">pdata</span><span class="op">$</span><span class="va">annotation</span>,</span>
@@ -935,7 +968,7 @@ DD.</li>
 </ol>
 <p>The input for <code><a href="../reference/classify_genes.html">classify_genes()</a></code> is the list of gene pairs
 returned by <code><a href="../reference/classify_gene_pairs.html">classify_gene_pairs()</a></code>.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Classify genes into unique modes of duplication</span></span>
 <span><span class="va">c_genes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/classify_genes.html">classify_genes</a></span><span class="op">(</span><span class="va">c_full</span><span class="op">)</span></span>
 <span></span>
@@ -977,7 +1010,7 @@ and
 for 5 TD-derived gene pairs. The CDS for TD-derived genes were obtained
 from Ensembl Fungi <span class="citation">(Yates et al. 2022)</span>,
 and they are stored in <code>cds_scerevisiae</code>.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">cds_scerevisiae</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">cds_scerevisiae</span><span class="op">)</span></span>
 <span><span class="co">#&gt; DNAStringSet object of length 6:</span></span>
@@ -1055,7 +1088,7 @@ distributions with peaks using the function
 <p>First of all, let’s look at the data and have a quick look at the
 distribution with the function <code><a href="../reference/plot_ks_distro.html">plot_ks_distro()</a></code> (more
 details on this function in the data visualization section).</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Load data and inspect it</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">gmax_ks</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">gmax_ks</span><span class="op">)</span></span>
@@ -1079,7 +1112,7 @@ values around 0.1 and 0.5, respectively. There could be a third,
 flattened peak at around 1.6, which would represent the WGD shared by
 all eudicots. Let’s test which number of peaks has more support: 2 or
 3.</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Find 2 and 3 peaks and test which one has more support</span></span>
 <span><span class="va">peaks</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/find_ks_peaks.html">find_ks_peaks</a></span><span class="op">(</span><span class="va">gmax_ks</span><span class="op">$</span><span class="va">Ks</span>, npeaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">3</span><span class="op">)</span>, verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Optimal number of peaks: 3</span></span>
@@ -1112,7 +1145,7 @@ distribution itself.</p>
 <p>Now, suppose you just want to get the first 2 peaks. You can do that
 by explictly saying to <code><a href="../reference/find_ks_peaks.html">find_ks_peaks()</a></code> how many peaks there
 are.</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Find 2 peaks ignoring Ks values &gt; 1</span></span>
 <span><span class="va">peaks</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/find_ks_peaks.html">find_ks_peaks</a></span><span class="op">(</span><span class="va">gmax_ks</span><span class="op">$</span><span class="va">Ks</span>, npeaks <span class="op">=</span> <span class="fl">2</span>, max_ks <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/plot_ks_peaks.html">plot_ks_peaks</a></span><span class="op">(</span><span class="va">peaks</span><span class="op">)</span></span></code></pre></div>
@@ -1139,7 +1172,7 @@ Marron 1999)</span>. This can be done with the function
 </ol>
 <p>As an example of a SiZer map, let’s use <code><a href="https://rdrr.io/pkg/feature/man/SiZer.html" class="external-link">feature::SiZer()</a></code>
 to assess the significance of the 2 peaks we found previously.</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Get numeric vector of Ks values &lt;= 1</span></span>
 <span><span class="va">ks</span> <span class="op">&lt;-</span> <span class="va">gmax_ks</span><span class="op">$</span><span class="va">Ks</span><span class="op">[</span><span class="va">gmax_ks</span><span class="op">$</span><span class="va">Ks</span> <span class="op">&lt;=</span> <span class="fl">1</span><span class="op">]</span></span>
 <span></span>
@@ -1163,7 +1196,7 @@ returns a list containing the classified pairs in a data frame, and a
 ggplot object with the age boundaries highlighted in the histogram of
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>K</mi><mi>s</mi></msub><annotation encoding="application/x-tex">K_s</annotation></semantics></math>
 values.</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Gene pairs without age-based classification</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">gmax_ks</span><span class="op">)</span></span>
 <span><span class="co">#&gt;              dup1            dup2     Ks type</span></span>
@@ -1212,7 +1245,7 @@ of the entire genome.</p>
 originated from the WGD event shared by all legumes (at ~58 million
 years ago), you’d need to extract SD pairs in age group 2 using the
 following code:</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Get all pairs in age group 2</span></span>
 <span><span class="va">pairs_ag2</span> <span class="op">&lt;-</span> <span class="va">pairs_age_group</span><span class="op">$</span><span class="va">pairs</span><span class="op">[</span><span class="va">pairs_age_group</span><span class="op">$</span><span class="va">pairs</span><span class="op">$</span><span class="va">peak</span> <span class="op">==</span> <span class="fl">2</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span><span class="op">]</span></span>
 <span></span>
@@ -1249,7 +1282,7 @@ create a data frame of counts with <code><a href="../reference/duplicates2counts
 demonstrate how this works, we will use an example data set with
 duplicate pairs for 3 fungi species (and substitution rates, which will
 be ignored by <code><a href="../reference/duplicates2counts.html">duplicates2counts()</a></code>).</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Load data set with pre-computed duplicates for 3 fungi species</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">fungi_kaks</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">fungi_kaks</span><span class="op">)</span></span>
@@ -1291,7 +1324,7 @@ be ignored by <code><a href="../reference/duplicates2counts.html">duplicates2cou
 duplication type with the function <code><a href="../reference/plot_duplicate_freqs.html">plot_duplicate_freqs()</a></code>.
 You can visualize frequencies in three different ways, as demonstrated
 below.</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># A) Facets</span></span>
 <span><span class="va">p1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/plot_duplicate_freqs.html">plot_duplicate_freqs</a></span><span class="op">(</span><span class="va">counts_table</span><span class="op">)</span></span>
 <span></span>
@@ -1304,18 +1337,18 @@ below.</p>
 <span><span class="co"># Combine plots, one per row</span></span>
 <span><span class="fu">patchwork</span><span class="fu">::</span><span class="fu"><a href="https://patchwork.data-imaginist.com/reference/wrap_plots.html" class="external-link">wrap_plots</a></span><span class="op">(</span><span class="va">p1</span>, <span class="va">p2</span>, <span class="va">p3</span>, nrow <span class="op">=</span> <span class="fl">3</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>    <span class="fu">patchwork</span><span class="fu">::</span><span class="fu"><a href="https://patchwork.data-imaginist.com/reference/plot_annotation.html" class="external-link">plot_annotation</a></span><span class="op">(</span>tag_levels <span class="op">=</span> <span class="st">"A"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="doubletrouble_vignette_files/figure-html/unnamed-chunk-8-1.png" width="700"></p>
+<p><img src="doubletrouble_vignette_files/figure-html/unnamed-chunk-9-1.png" width="700"></p>
 <p>If you want to visually the frequency of duplicated
 <strong>genes</strong> (not gene pairs), you’d first need to classify
 genes into unique modes of duplication with
 <code><a href="../reference/classify_genes.html">classify_genes()</a></code>, and then repeat the code above. For
 example:</p>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Frequency of duplicated genes by mode</span></span>
 <span><span class="fu"><a href="../reference/classify_genes.html">classify_genes</a></span><span class="op">(</span><span class="va">fungi_kaks</span><span class="op">)</span> <span class="op">|&gt;</span>   <span class="co"># classify genes into unique duplication types</span></span>
 <span>    <span class="fu"><a href="../reference/duplicates2counts.html">duplicates2counts</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span>      <span class="co"># get a data frame of counts (long format)</span></span>
 <span>    <span class="fu"><a href="../reference/plot_duplicate_freqs.html">plot_duplicate_freqs</a></span><span class="op">(</span><span class="op">)</span>      <span class="co"># plot frequencies</span></span></code></pre></div>
-<p><img src="doubletrouble_vignette_files/figure-html/unnamed-chunk-9-1.png" width="768"></p>
+<p><img src="doubletrouble_vignette_files/figure-html/unnamed-chunk-10-1.png" width="768"></p>
 </div>
 <div class="section level3">
 <h3 id="visualizing-k_s-distributions">Visualizing
@@ -1326,7 +1359,7 @@ distributions<a class="anchor" aria-label="anchor" href="#visualizing-k_s-distri
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>K</mi><mi>s</mi></msub><annotation encoding="application/x-tex">K_s</annotation></semantics></math>
 distribution for the whole paranome, you will use the function
 <code><a href="../reference/plot_ks_distro.html">plot_ks_distro()</a></code>.</p>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ks_df</span> <span class="op">&lt;-</span> <span class="va">fungi_kaks</span><span class="op">$</span><span class="va">saccharomyces_cerevisiae</span></span>
 <span></span>
 <span><span class="co"># A) Histogram, whole paranome</span></span>
@@ -1341,7 +1374,7 @@ distribution for the whole paranome, you will use the function
 <span><span class="co"># Combine plots side by side</span></span>
 <span><span class="fu">patchwork</span><span class="fu">::</span><span class="fu"><a href="https://patchwork.data-imaginist.com/reference/wrap_plots.html" class="external-link">wrap_plots</a></span><span class="op">(</span><span class="va">p1</span>, <span class="va">p2</span>, <span class="va">p3</span>, nrow <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu">patchwork</span><span class="fu">::</span><span class="fu"><a href="https://patchwork.data-imaginist.com/reference/plot_annotation.html" class="external-link">plot_annotation</a></span><span class="op">(</span>tag_levels <span class="op">=</span> <span class="st">"A"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="doubletrouble_vignette_files/figure-html/unnamed-chunk-10-1.png" width="864"></p>
+<p><img src="doubletrouble_vignette_files/figure-html/unnamed-chunk-11-1.png" width="864"></p>
 <p>However, visualizing the distribution for the whole paranome can mask
 patterns that only happen for duplicates originating from particular
 duplication types. For instance, when looking for evidence of WGD
@@ -1351,7 +1384,7 @@ distribution for SD-derived pairs only can reveal whether syntenic genes
 cluster together, suggesting the presence of WGD history. To visualize
 the distribution by duplication type, use <code>bytype = TRUE</code> in
 <code><a href="../reference/plot_ks_distro.html">plot_ks_distro()</a></code>.</p>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># A) Duplicates by type, histogram</span></span>
 <span><span class="va">p1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/plot_ks_distro.html">plot_ks_distro</a></span><span class="op">(</span><span class="va">ks_df</span>, bytype <span class="op">=</span> <span class="cn">TRUE</span>, plot_type <span class="op">=</span> <span class="st">"histogram"</span><span class="op">)</span></span>
 <span></span>
@@ -1361,7 +1394,7 @@ the distribution by duplication type, use <code>bytype = TRUE</code> in
 <span><span class="co"># Combine plots side by side</span></span>
 <span><span class="fu">patchwork</span><span class="fu">::</span><span class="fu"><a href="https://patchwork.data-imaginist.com/reference/wrap_plots.html" class="external-link">wrap_plots</a></span><span class="op">(</span><span class="va">p1</span>, <span class="va">p2</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu">patchwork</span><span class="fu">::</span><span class="fu"><a href="https://patchwork.data-imaginist.com/reference/plot_annotation.html" class="external-link">plot_annotation</a></span><span class="op">(</span>tag_levels <span class="op">=</span> <span class="st">"A"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="doubletrouble_vignette_files/figure-html/unnamed-chunk-11-1.png" width="768"></p>
+<p><img src="doubletrouble_vignette_files/figure-html/unnamed-chunk-12-1.png" width="768"></p>
 </div>
 <div class="section level3">
 <h3 id="visualizing-substitution-rates-by-species">Visualizing substitution rates by species<a class="anchor" aria-label="anchor" href="#visualizing-substitution-rates-by-species"></a>
@@ -1375,7 +1408,7 @@ or their ratio
 by species. You can choose which rate you want to visualize, and whether
 or not to group gene pairs by duplication mode, as demonstrated
 below.</p>
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># A) Ks for each species</span></span>
 <span><span class="va">p1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/plot_rates_by_species.html">plot_rates_by_species</a></span><span class="op">(</span><span class="va">fungi_kaks</span><span class="op">)</span></span>
 <span></span>
@@ -1385,14 +1418,14 @@ below.</p>
 <span><span class="co"># Combine plots - one per row</span></span>
 <span><span class="fu">patchwork</span><span class="fu">::</span><span class="fu"><a href="https://patchwork.data-imaginist.com/reference/wrap_plots.html" class="external-link">wrap_plots</a></span><span class="op">(</span><span class="va">p1</span>, <span class="va">p2</span>, nrow <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu">patchwork</span><span class="fu">::</span><span class="fu"><a href="https://patchwork.data-imaginist.com/reference/plot_annotation.html" class="external-link">plot_annotation</a></span><span class="op">(</span>tag_levels <span class="op">=</span> <span class="st">"A"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="doubletrouble_vignette_files/figure-html/unnamed-chunk-12-1.png" width="576"></p>
+<p><img src="doubletrouble_vignette_files/figure-html/unnamed-chunk-13-1.png" width="576"></p>
 </div>
 </div>
 <div class="section level2">
 <h2 class="unnumbered" id="session-information">Session information<a class="anchor" aria-label="anchor" href="#session-information"></a>
 </h2>
 <p>This document was created under the following conditions:</p>
-<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">sessioninfo</span><span class="fu">::</span><span class="fu"><a href="https://r-lib.github.io/sessioninfo/reference/session_info.html" class="external-link">session_info</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB; font-weight: bold;">─ Session info ───────────────────────────────────────────────────────────────</span></span></span>
 <span><span class="co">#&gt;  <span style="color: #555555; font-style: italic;">setting </span> <span style="color: #555555; font-style: italic;">value</span></span></span>
@@ -1404,7 +1437,7 @@ below.</p>
 <span><span class="co">#&gt;  collate  en_US.UTF-8</span></span>
 <span><span class="co">#&gt;  ctype    en_US.UTF-8</span></span>
 <span><span class="co">#&gt;  tz       UTC</span></span>
-<span><span class="co">#&gt;  date     2024-10-03</span></span>
+<span><span class="co">#&gt;  date     2024-10-07</span></span>
 <span><span class="co">#&gt;  pandoc   3.4 @ /usr/bin/ (via rmarkdown)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB; font-weight: bold;">─ Packages ───────────────────────────────────────────────────────────────────</span></span></span>
@@ -1415,7 +1448,7 @@ below.</p>
 <span><span class="co">#&gt;  ape                    5.8       <span style="color: #555555;">2024-04-11</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.4.0)</span></span></span>
 <span><span class="co">#&gt;  Biobase              * 2.65.1    <span style="color: #555555;">2024-08-28</span> <span style="color: #555555;">[1]</span> <span style="color: #555555;">Bioconductor 3.20 (R 4.4.1)</span></span></span>
 <span><span class="co">#&gt;  BiocFileCache          2.13.0    <span style="color: #555555;">2024-05-01</span> <span style="color: #555555;">[1]</span> <span style="color: #555555;">Bioconductor 3.20 (R 4.4.0)</span></span></span>
-<span><span class="co">#&gt;  BiocGenerics         * 0.51.2    <span style="color: #555555;">2024-09-27</span> <span style="color: #555555;">[1]</span> <span style="color: #555555;">Bioconductor 3.20 (R 4.4.1)</span></span></span>
+<span><span class="co">#&gt;  BiocGenerics         * 0.51.3    <span style="color: #555555;">2024-10-02</span> <span style="color: #555555;">[1]</span> <span style="color: #555555;">Bioconductor 3.20 (R 4.4.1)</span></span></span>
 <span><span class="co">#&gt;  BiocIO                 1.15.2    <span style="color: #555555;">2024-08-23</span> <span style="color: #555555;">[1]</span> <span style="color: #555555;">Bioconductor 3.20 (R 4.4.1)</span></span></span>
 <span><span class="co">#&gt;  BiocManager            1.30.25   <span style="color: #555555;">2024-08-28</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.4.1)</span></span></span>
 <span><span class="co">#&gt;  BiocParallel           1.39.0    <span style="color: #555555;">2024-05-01</span> <span style="color: #555555;">[1]</span> <span style="color: #555555;">Bioconductor 3.20 (R 4.4.0)</span></span></span>
@@ -1424,7 +1457,7 @@ below.</p>
 <span><span class="co">#&gt;  Biostrings             2.73.2    <span style="color: #555555;">2024-09-26</span> <span style="color: #555555;">[1]</span> <span style="color: #555555;">Bioconductor 3.20 (R 4.4.1)</span></span></span>
 <span><span class="co">#&gt;  bit                    4.5.0     <span style="color: #555555;">2024-09-20</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.4.0)</span></span></span>
 <span><span class="co">#&gt;  bit64                  4.5.2     <span style="color: #555555;">2024-09-22</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.4.0)</span></span></span>
-<span><span class="co">#&gt;  bitops                 1.0-8     <span style="color: #555555;">2024-07-29</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.4.0)</span></span></span>
+<span><span class="co">#&gt;  bitops                 1.0-9     <span style="color: #555555;">2024-10-03</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.4.0)</span></span></span>
 <span><span class="co">#&gt;  blob                   1.2.4     <span style="color: #555555;">2023-03-17</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.4.0)</span></span></span>
 <span><span class="co">#&gt;  bookdown               0.40      <span style="color: #555555;">2024-07-02</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.4.0)</span></span></span>
 <span><span class="co">#&gt;  bslib                  0.8.0     <span style="color: #555555;">2024-07-29</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.4.0)</span></span></span>
@@ -1437,11 +1470,11 @@ below.</p>
 <span><span class="co">#&gt;  curl                   5.2.3     <span style="color: #555555;">2024-09-20</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.4.0)</span></span></span>
 <span><span class="co">#&gt;  DBI                    1.2.3     <span style="color: #555555;">2024-06-02</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.4.0)</span></span></span>
 <span><span class="co">#&gt;  dbplyr                 2.5.0     <span style="color: #555555;">2024-03-19</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.4.0)</span></span></span>
-<span><span class="co">#&gt;  DelayedArray           0.31.12   <span style="color: #555555;">2024-09-27</span> <span style="color: #555555;">[1]</span> <span style="color: #555555;">Bioconductor 3.20 (R 4.4.1)</span></span></span>
+<span><span class="co">#&gt;  DelayedArray           0.31.14   <span style="color: #555555;">2024-10-03</span> <span style="color: #555555;">[1]</span> <span style="color: #555555;">Bioconductor 3.20 (R 4.4.1)</span></span></span>
 <span><span class="co">#&gt;  desc                   1.4.3     <span style="color: #555555;">2023-12-10</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.4.0)</span></span></span>
 <span><span class="co">#&gt;  digest                 0.6.37    <span style="color: #555555;">2024-08-19</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.4.0)</span></span></span>
 <span><span class="co">#&gt;  doParallel             1.0.17    <span style="color: #555555;">2022-02-07</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.4.0)</span></span></span>
-<span><span class="co">#&gt;  doubletrouble        * 1.5.3     <span style="color: #555555;">2024-10-03</span> <span style="color: #555555;">[1]</span> <span style="color: #555555;">Bioconductor</span></span></span>
+<span><span class="co">#&gt;  doubletrouble        * 1.5.4     <span style="color: #555555;">2024-10-07</span> <span style="color: #555555;">[1]</span> <span style="color: #555555;">Bioconductor</span></span></span>
 <span><span class="co">#&gt;  dplyr                  1.1.4     <span style="color: #555555;">2023-11-17</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.4.0)</span></span></span>
 <span><span class="co">#&gt;  evaluate               1.0.0     <span style="color: #555555;">2024-09-17</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.4.0)</span></span></span>
 <span><span class="co">#&gt;  fansi                  1.0.6     <span style="color: #555555;">2023-12-08</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.4.0)</span></span></span>
@@ -1452,7 +1485,7 @@ below.</p>
 <span><span class="co">#&gt;  foreach                1.5.2     <span style="color: #555555;">2022-02-02</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.4.0)</span></span></span>
 <span><span class="co">#&gt;  fs                     1.6.4     <span style="color: #555555;">2024-04-25</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.4.0)</span></span></span>
 <span><span class="co">#&gt;  generics               0.1.3     <span style="color: #555555;">2022-07-05</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.4.0)</span></span></span>
-<span><span class="co">#&gt;  GenomeInfoDb         * 1.41.1    <span style="color: #555555;">2024-05-24</span> <span style="color: #555555;">[1]</span> <span style="color: #555555;">Bioconductor 3.20 (R 4.4.0)</span></span></span>
+<span><span class="co">#&gt;  GenomeInfoDb         * 1.41.2    <span style="color: #555555;">2024-10-02</span> <span style="color: #555555;">[1]</span> <span style="color: #555555;">Bioconductor 3.20 (R 4.4.1)</span></span></span>
 <span><span class="co">#&gt;  GenomeInfoDbData       1.2.13    <span style="color: #555555;">2024-10-02</span> <span style="color: #555555;">[1]</span> <span style="color: #555555;">Bioconductor</span></span></span>
 <span><span class="co">#&gt;  GenomicAlignments      1.41.0    <span style="color: #555555;">2024-05-01</span> <span style="color: #555555;">[1]</span> <span style="color: #555555;">Bioconductor 3.20 (R 4.4.0)</span></span></span>
 <span><span class="co">#&gt;  GenomicFeatures      * 1.57.1    <span style="color: #555555;">2024-09-27</span> <span style="color: #555555;">[1]</span> <span style="color: #555555;">Bioconductor 3.20 (R 4.4.1)</span></span></span>
@@ -1523,11 +1556,11 @@ below.</p>
 <span><span class="co">#&gt;  scales                 1.3.0     <span style="color: #555555;">2023-11-28</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.4.0)</span></span></span>
 <span><span class="co">#&gt;  seqinr                 4.2-36    <span style="color: #555555;">2023-12-08</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.4.0)</span></span></span>
 <span><span class="co">#&gt;  sessioninfo            1.2.2     <span style="color: #555555;">2021-12-06</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.4.0)</span></span></span>
-<span><span class="co">#&gt;  SparseArray            1.5.41    <span style="color: #555555;">2024-09-27</span> <span style="color: #555555;">[1]</span> <span style="color: #555555;">Bioconductor 3.20 (R 4.4.1)</span></span></span>
-<span><span class="co">#&gt;  statnet.common         4.9.0     <span style="color: #555555;">2023-05-24</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.4.0)</span></span></span>
+<span><span class="co">#&gt;  SparseArray            1.5.43    <span style="color: #555555;">2024-10-04</span> <span style="color: #555555;">[1]</span> <span style="color: #555555;">Bioconductor 3.20 (R 4.4.1)</span></span></span>
+<span><span class="co">#&gt;  statnet.common         4.10.0    <span style="color: #555555;">2024-10-06</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.4.0)</span></span></span>
 <span><span class="co">#&gt;  stringi                1.8.4     <span style="color: #555555;">2024-05-06</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.4.0)</span></span></span>
 <span><span class="co">#&gt;  stringr                1.5.1     <span style="color: #555555;">2023-11-14</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.4.0)</span></span></span>
-<span><span class="co">#&gt;  SummarizedExperiment   1.35.2    <span style="color: #555555;">2024-09-27</span> <span style="color: #555555;">[1]</span> <span style="color: #555555;">Bioconductor 3.20 (R 4.4.1)</span></span></span>
+<span><span class="co">#&gt;  SummarizedExperiment   1.35.3    <span style="color: #555555;">2024-10-02</span> <span style="color: #555555;">[1]</span> <span style="color: #555555;">Bioconductor 3.20 (R 4.4.1)</span></span></span>
 <span><span class="co">#&gt;  syntenet             * 1.7.0     <span style="color: #555555;">2024-05-01</span> <span style="color: #555555;">[1]</span> <span style="color: #555555;">Bioconductor 3.20 (R 4.4.0)</span></span></span>
 <span><span class="co">#&gt;  systemfonts            1.1.0     <span style="color: #555555;">2024-05-15</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.4.0)</span></span></span>
 <span><span class="co">#&gt;  textshaping            0.4.0     <span style="color: #555555;">2024-05-24</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.4.0)</span></span></span>
@@ -1539,7 +1572,7 @@ below.</p>
 <span><span class="co">#&gt;  utf8                   1.2.4     <span style="color: #555555;">2023-10-22</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.4.0)</span></span></span>
 <span><span class="co">#&gt;  vctrs                  0.6.5     <span style="color: #555555;">2023-12-01</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.4.0)</span></span></span>
 <span><span class="co">#&gt;  withr                  3.0.1     <span style="color: #555555;">2024-07-31</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.4.0)</span></span></span>
-<span><span class="co">#&gt;  xfun                   0.47      <span style="color: #555555;">2024-08-17</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.4.0)</span></span></span>
+<span><span class="co">#&gt;  xfun                   0.48      <span style="color: #555555;">2024-10-03</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.4.0)</span></span></span>
 <span><span class="co">#&gt;  XML                    3.99-0.17 <span style="color: #555555;">2024-06-25</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.4.0)</span></span></span>
 <span><span class="co">#&gt;  xml2                   1.3.6     <span style="color: #555555;">2023-12-04</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.4.0)</span></span></span>
 <span><span class="co">#&gt;  XVector                0.45.0    <span style="color: #555555;">2024-05-01</span> <span style="color: #555555;">[1]</span> <span style="color: #555555;">Bioconductor 3.20 (R 4.4.0)</span></span></span>

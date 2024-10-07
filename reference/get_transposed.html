@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">doubletrouble</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.5.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.5.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -49,7 +49,8 @@
 <span>  evalue <span class="op">=</span> <span class="fl">1e-10</span>,</span>
 <span>  anchors <span class="op">=</span> <span class="fl">5</span>,</span>
 <span>  max_gaps <span class="op">=</span> <span class="fl">25</span>,</span>
-<span>  collinearity_dir <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  collinearity_dir <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  outgroup_coverage <span class="op">=</span> <span class="fl">70</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -100,6 +101,13 @@ Default: 25.</p></dd>
 where .collinearity files will be stored. If NULL, files will
 be stored in a subdirectory of <code><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir()</a></code>. Default: NULL.</p></dd>
 
+
+<dt id="arg-outgroup-coverage">outgroup_coverage<a class="anchor" aria-label="anchor" href="#arg-outgroup-coverage"></a></dt>
+<dd><p>Numeric indicating the minimum percentage of
+outgroup species to use to consider genes as transposed duplicates. Only
+valid if multiple outgroup species are present (see details below). Values
+should range from 0 to 100. Default: 70.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
@@ -119,6 +127,21 @@ be stored in a subdirectory of <code><a href="https://rdrr.io/r/base/tempfile.ht
 
 
 </dl></div>
+    <div class="section level2">
+    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
+    <p>If the list of interspecies DIAMOND tables contain comparisons of the
+same species to multiple outgroups (e.g.,
+'speciesA_speciesB', 'speciesA_speciesC'), this function will check if
+gene pairs are classified as transposed (i.e.,
+only one gene is an ancestral locus) in each of the outgroup species,
+and then calculate the percentage of outgroup species in which each pair
+is considered 'transposed'. For instance, gene pair 1 is transposed based on
+30\<!-- % of the outgroup species, gene pair is considered as transposed based -->
+on  100\<!-- % of the outgroup species, gene pair 3 is considered as transposed -->
+based on 0\<!-- % of the outgroup species, and so on. -->
+Parameter <strong>outgroup_coverage</strong> lets you choose a minimum percentage
+cut-off to classify pairs as transposed.</p>
+    </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
@@ -140,6 +163,9 @@ be stored in a subdirectory of <code><a href="https://rdrr.io/r/base/tempfile.ht
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Classify pairs</span></span></span>
 <span class="r-in"><span><span class="va">trd</span> <span class="op">&lt;-</span> <span class="fu">get_transposed</span><span class="op">(</span><span class="va">pairs</span>, <span class="va">diamond_inter</span>, <span class="va">annotation</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">annotation</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">annotation</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>Cglabrata2 <span class="op">=</span> <span class="va">annotation</span><span class="op">$</span><span class="va">Cglabrata</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">blast_inter</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">diamond_inter</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>Scerevisiae_Cglabrata2 <span class="op">=</span> <span class="va">diamond_inter</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">)</span> </span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

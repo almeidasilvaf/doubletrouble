@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">doubletrouble</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.5.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.5.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -52,7 +52,8 @@
 <span>  anchors <span class="op">=</span> <span class="fl">5</span>,</span>
 <span>  max_gaps <span class="op">=</span> <span class="fl">25</span>,</span>
 <span>  proximal_max <span class="op">=</span> <span class="fl">10</span>,</span>
-<span>  collinearity_dir <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  collinearity_dir <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  outgroup_coverage <span class="op">=</span> <span class="fl">70</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -123,6 +124,13 @@ Default: 10.</p></dd>
 <dd><p>Character indicating the path to the directory
 where .collinearity files will be stored. If NULL, files will
 be stored in a subdirectory of <code><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir()</a></code>. Default: NULL.</p></dd>
+
+
+<dt id="arg-outgroup-coverage">outgroup_coverage<a class="anchor" aria-label="anchor" href="#arg-outgroup-coverage"></a></dt>
+<dd><p>Numeric indicating the minimum percentage of
+outgroup species to use to consider genes as transposed duplicates. Only
+valid if multiple outgroup species are present (see details below). Values
+should range from 0 to 100. Default: 70.</p></dd>
 
 </dl></div>
     <div class="section level2">
