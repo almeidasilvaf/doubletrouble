@@ -309,7 +309,7 @@ get_transposed <- function(
         parsed_syn <- collinearity2blocks(syn)[, c("anchor2", "block")]
         parsed_syn <- parsed_syn[!duplicated(parsed_syn$anchor2), ]
         
-        pairs_ancestral <- pairs
+        pairs_ancestral <- pairs_dd[, c(1, 2)]
         pairs_ancestral$ancestral <- FALSE
         if(!is.null(parsed_syn)) {
             

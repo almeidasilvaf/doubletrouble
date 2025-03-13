@@ -117,7 +117,6 @@ classify_gene_pairs <- function(
         return(fpair)
     })
     
-    
     dup_list <- lapply(seq_along(anchorp), function(x) {
         # 1) Get segmental duplicates
         sp <- names(anchorp)[x]
@@ -137,16 +136,26 @@ classify_gene_pairs <- function(
             if(scheme %in% c("extended", "full")) {
                 # 3) Get transposed duplicates
                 binter <- blast_inter[startsWith(names(blast_inter), paste0(sp, "_"))]
-                dups <- get_transposed(
-                    dups, binter, annotation, evalue = evalue,
-                    anchors = anchors, max_gaps = max_gaps,
-                    collinearity_dir = collinearity_dir,
-                    outgroup_coverage = outgroup_coverage
-                )
-                
-                if(scheme == "full") {
-                    # 4) Get TRD classes (rTRD and dTRD)
-                    dups <- get_transposed_classes(dups, intron_counts[[sp]])
+                if(length(binter) == 0) {
+                    message(
+                        "Could not find outgroup for species '", sp, 
+                        "'. Skipping identification of TRD duplicates..."
+                    )
+                } else {
+                    dups <- get_transposed(
+                        pairs = dups, 
+                        blast_inter = binter, 
+                        annotation = annotation, 
+                        evalue = evalue,
+                        anchors = anchors, max_gaps = max_gaps,
+                        collinearity_dir = collinearity_dir,
+                        outgroup_coverage = outgroup_coverage
+                    )
+                    
+                    if(scheme == "full") {
+                        # 4) Get TRD classes (rTRD and dTRD)
+                        dups <- get_transposed_classes(dups, intron_counts[[sp]])
+                    }
                 }
             }
         }
