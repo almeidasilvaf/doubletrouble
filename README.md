@@ -71,20 +71,25 @@ R. Please run this yourself to check for any updates on how to cite
 
 ``` r
 print(citation('doubletrouble'), bibtex = TRUE)
-#> To cite package 'doubletrouble' in publications use:
+#> To cite doubletrouble in publications, use:
 #> 
-#>   Almeida-Silva F, Van de Peer Y (2022). _doubletrouble: Identification
-#>   and classification of duplicated genes_. R package version 1.3.0,
-#>   <https://github.com/almeidasilvaf/doubletrouble>.
+#>   Almeida-Silva F, Van de Peer Y doubletrouble: an R/Bioconductor
+#>   package for the identification, classification, and analysis of gene
+#>   and genome duplications. Bioinformatics, 41(2), btaf043. (2025).
+#>   https://doi.org/10.1093/bioinformatics/btaf043
 #> 
 #> A BibTeX entry for LaTeX users is
 #> 
-#>   @Manual{,
-#>     title = {doubletrouble: Identification and classification of duplicated genes},
-#>     author = {Fabrício Almeida-Silva and Yves {Van de Peer}},
-#>     year = {2022},
-#>     note = {R package version 1.3.0},
-#>     url = {https://github.com/almeidasilvaf/doubletrouble},
+#>   @Article{,
+#>     title = {doubletrouble: an R/Bioconductor package for the identification, classification, and analysis of gene and genome duplications},
+#>     author = {Fabricio Almeida-Silva and Yves {Van de Peer}},
+#>     journal = {Bioinformatics},
+#>     year = {2025},
+#>     volume = {41},
+#>     number = {2},
+#>     pages = {btaf043},
+#>     url = {https://academic.oup.com/bioinformatics/article/41/2/btaf043/7979242},
+#>     doi = {10.1093/bioinformatics/btaf043},
 #>   }
 ```
 
@@ -108,7 +113,7 @@ contributing to this project, you agree to abide by its terms.
   *[rcmdcheck](https://CRAN.R-project.org/package=rcmdcheck)* customized
   to use [Bioconductor’s docker
   containers](https://www.bioconductor.org/help/docker/) and
-  *[BiocCheck](https://bioconductor.org/packages/3.17/BiocCheck)*.
+  *[BiocCheck](https://bioconductor.org/packages/3.19/BiocCheck)*.
 - Code coverage assessment is possible thanks to
   [codecov](https://codecov.io/gh) and
   *[covr](https://CRAN.R-project.org/package=covr)*.
@@ -125,4 +130,4 @@ contributing to this project, you agree to abide by its terms.
 For more details, check the `dev` directory.
 
 This package was developed using
-*[biocthis](https://bioconductor.org/packages/3.17/biocthis)*.
+*[biocthis](https://bioconductor.org/packages/3.19/biocthis)*.
