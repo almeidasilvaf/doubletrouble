@@ -75,7 +75,7 @@ jobs:
 
 
       - name: Checkout Repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       ## R is already included in the Bioconductor docker images
       - name: Setup R from r-lib
@@ -97,7 +97,7 @@ jobs:
 
       - name: Cache R packages
         if: "!contains(github.event.head_commit.message, '/nocache') && runner.os != 'Linux'"
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: ${{ env.R_LIBS_USER }}
           key: ${{ env.cache-version }}-${{ runner.os }}-biocversion-devel-r-4.4-${{ hashFiles('.github/depends.Rds') }}
@@ -105,7 +105,7 @@ jobs:
 
       - name: Cache R packages on Linux
         if: "!contains(github.event.head_commit.message, '/nocache') && runner.os == 'Linux' "
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: /home/runner/work/_temp/Library
           key: ${{ env.cache-version }}-${{ runner.os }}-biocversion-devel-r-4.4-${{ hashFiles('.github/depends.Rds') }}
