@@ -82,8 +82,8 @@ Parameter \strong{outgroup_coverage} lets you choose a minimum percentage
 cut-off to classify pairs as transposed.
 }
 \examples{
+# Load example data
 data(diamond_inter)
-data(diamond_intra)
 data(yeast_seq)
 data(yeast_annot)
 data(fungi_kaks)
@@ -98,10 +98,11 @@ pairs <- scerevisiae_kaks[, c("dup1", "dup2", "type")]
 pairs$dup1 <- paste0("Sce_", pairs$dup1)
 pairs$dup2 <- paste0("Sce_", pairs$dup2)
 
-# Classify pairs
-trd <- get_transposed(pairs, diamond_inter, annotation)
+# Collapse bidirectional hits
+compare <- data.frame(target = "Scerevisiae", outgroup = "Cglabrata")
+blast_inter <- syntenet::collapse_bidirectional_hits(diamond_inter, compare)
 
-annotation <- c(annotation, list(Cglabrata2 = annotation$Cglabrata))
-blast_inter <- c(diamond_inter, list(Scerevisiae_Cglabrata2 = diamond_inter[[1]])) 
+# Classify pairs
+trd <- get_transposed(pairs, blast_inter, annotation)
 
 }

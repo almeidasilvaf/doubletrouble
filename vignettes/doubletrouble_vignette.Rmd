@@ -391,30 +391,46 @@ duplicate pair is classified as originating from transposon-derived
 duplications. 
 
 
-Since finding transposon-derived duplicates requires comparing a target
-species with an outgroup species, you will first need to perform a 
-similarity search of your target species against an outgroup.
-You can do this with `syntenet::run_diamond()`. For the parameter `compare`,
+Since finding transposon-derived duplicates requires detecting syntenic regions
+between a target species and an outgroup species, you will first need to 
+perform similarity searches with DIAMOND [@buchfink2021sensitive], 
+BLAST [@altschul1997gapped], or similar programs. This can be done with
+`syntenet::run_diamond(seq, compare = compare_df)`. For the parameter `compare`,
 you will pass a 2-column data frame specifying the comparisons to be made. [^3]
+Importantly, for a more accurate detection of interspecies synteny, you need to
+perform bidirectional similarity searches for each comparison. For instance,
+if you want to use `speciesA` as target species and `speciesB` as outgroup,
+you need to perform similarity searches in both directions: 
+`speciesA_speciesB` and `speciesB_speciesA`.
 
 [^3]: **Pro tip:** If you want to identify and classify duplicated genes for
 multiple species in batch, you must include the outgroup for each of them
 in the comparisons data frame.
 
 Here, we will identify duplicated gene pairs for *Saccharomyces cerevisiae*
-using *Candida glabrata* as an outgroup.
+using *Candida glabrata* as an outgroup. To create a data frame with the 
+bidirectional comparisons to be made, we will use the helper function `make_bidirectional()` from the `r BiocStyle::Biocpkg("syntenet")` package.
+
+```{r make_bidirectional_comparisons}
+# Create a data frame of species and outgroups for `syntenet::run_diamond()`
+spp_outgroup <- data.frame(
+    species = "Scerevisiae",
+    outgroup = "Cglabrata"
+)
+spp_outgroup
+
+# Expand the data frame to make bidirectional comparisons
+comparisons <- syntenet::make_bidirectional(spp_outgroup)
+comparisons
+```
+
+Now that we have a data frame with our desired comparisons, we can pass it
+to `syntenet::run_diamond()`.
 
 ```{r blast_interspecies}
 data(diamond_inter) # load pre-computed output in case DIAMOND is not installed
 
-# Create data frame of comparisons to be made
-comparisons <- data.frame(
-    species = "Scerevisiae",
-    outgroup = "Cglabrata"
-)
-comparisons
-
-# Run DIAMOND for the comparison we specified
+# Run DIAMOND for the comparisons we specified
 if(diamond_is_installed()) {
     diamond_inter <- run_diamond(
         seq = pdata$seq,
@@ -428,7 +444,26 @@ names(diamond_inter)
 head(diamond_inter$Scerevisiae_Cglabrata)
 ```
 
-Now, we will pass this interspecies DIAMOND output as an argument to 
+As you can see, for each species-outgroup pair, `diamond_inter` contains two
+data frames: one named `Scerevisiae_Cglabrata`, and one named 
+`Cglabrata_Scerevisiae`. Before actually classifying gene pairs, we will
+need to collapse these data frames so that we have 
+**only one data frame per species-outgroup pair**. This can be easily done
+with the function `collapse_bidirectional_hits()` from 
+`r BiocStyle::Biocpkg("syntenet")`. As input, this function takes a 
+list of interspecies DIAMOND data frames, and a 2-column data frame indicating
+the target species and the outgroup species (columns 1 and 2, respectively;
+double-check the order of the columns!).
+
+```{r collapse_hits}
+# For each species-outgroup pair, collapse bidirectional hits in one data frame
+diamond_inter <- syntenet::collapse_bidirectional_hits(
+    diamond_inter, compare = spp_outgroup
+)
+names(diamond_inter)
+```
+
+Then, we can pass this interspecies DIAMOND output as an argument to 
 the parameter `blast_inter` of `classify_gene_pairs()`.
 
 ```{r full_classification}
@@ -458,12 +493,13 @@ argument of `syntenet::run_diamond()`) would look like the following:
 
 ```{r}
 # Example: multiple outgroups for the same species
-comparisons <- data.frame(
+spp_outgroup_many <- data.frame(
     species = rep("speciesA", 3),
     outgroup = c("speciesB", "speciesC", "speciesD")
 )
 
-comparisons
+comparisons_many <- syntenet::make_bidirectional(spp_outgroup_many)
+comparisons_many
 ```
 
 When multiple outgroups are present, `classify_gene_pairs()` will check if
@@ -509,6 +545,7 @@ which was not processed with `syntenet::process_input()`.
 
 ```{r message=FALSE}
 library(txdbmaker)
+
 # Create a list of `TxDb` objects from a list of `GRanges` objects
 txdb_list <- lapply(yeast_annot, txdbmaker::makeTxDbFromGRanges)
 txdb_list

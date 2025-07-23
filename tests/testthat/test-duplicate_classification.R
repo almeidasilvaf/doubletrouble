@@ -7,7 +7,10 @@ data(diamond_inter)
 data(yeast_annot)
 data(yeast_seq)
 blast_list <- diamond_intra
-blast_inter <- diamond_inter
+blast_inter <- syntenet::collapse_bidirectional_hits(
+    diamond_inter,
+    data.frame("Scerevisiae", "Cglabrata")
+)
 
 scerevisiae_kaks <- fungi_kaks$saccharomyces_cerevisiae
 
@@ -86,7 +89,7 @@ test_that("classify_gene_pairs() and classify_genes() return a data frame", {
         annotation = annotation,
         blast_list = diamond_intra,
         scheme = "full",
-        blast_inter = diamond_inter,
+        blast_inter = blast_inter,
         intron_counts = ic_list
     )
     
