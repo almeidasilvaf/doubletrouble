@@ -108,6 +108,12 @@ data(yeast_seq)
 # Get processed annotation data
 annotation <- syntenet::process_input(yeast_seq, yeast_annot)$annotation
 
+# Get collapsed DIAMOND inter
+blast_inter <- syntenet::collapse_bidirectional_hits(
+    diamond_inter,
+    data.frame("Scerevisiae", "Cglabrata")
+)
+
 # Get list of intron counts
 library(txdbmaker)
 txdb_list <- lapply(yeast_annot, txdbmaker::makeTxDbFromGRanges)
@@ -118,7 +124,7 @@ dup_class <- classify_gene_pairs(
     annotation = annotation, 
     blast_list = diamond_intra, 
     scheme = "full",
-    blast_inter = diamond_inter, 
+    blast_inter = blast_inter, 
     intron_counts = intron_counts
 )
 

@@ -97,7 +97,15 @@ collinearity2blocks <- function(collinearity_paths = NULL) {
                 collinearity_paths[x], sep = "\t", comment.char = "#"
             )
             df <- df[, c(1, 2, 3)]
-            names(df)[c(2, 3)] <- c("anchor1", "anchor2")
+            
+            # Reorder columns based on original order (not alphabetically)
+            spp1 <- unlist(strsplit(names(collinearity_paths[x]), "_"))[1]
+            id1 <- gsub("_.*", "", df$V2[1])
+            new_names <- c("anchor1", "anchor2") 
+            if(!startsWith(spp1, id1)) {
+                new_names <- c("anchor2", "anchor1")
+            }
+            names(df)[c(2, 3)] <- new_names
             
             # Get syntenic block IDs
             df$V1 <- gsub(":", "", df$V1)

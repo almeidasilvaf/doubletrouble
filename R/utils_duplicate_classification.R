@@ -242,8 +242,8 @@ pairs_and_synblocks <- function(pairs, syn_df) {
 #' @export
 #' @rdname get_transposed
 #' @examples 
+#' # Load example data
 #' data(diamond_inter)
-#' data(diamond_intra)
 #' data(yeast_seq)
 #' data(yeast_annot)
 #' data(fungi_kaks)
@@ -258,11 +258,12 @@ pairs_and_synblocks <- function(pairs, syn_df) {
 #' pairs$dup1 <- paste0("Sce_", pairs$dup1)
 #' pairs$dup2 <- paste0("Sce_", pairs$dup2)
 #' 
-#' # Classify pairs
-#' trd <- get_transposed(pairs, diamond_inter, annotation)
+#' # Collapse bidirectional hits
+#' compare <- data.frame(target = "Scerevisiae", outgroup = "Cglabrata")
+#' blast_inter <- syntenet::collapse_bidirectional_hits(diamond_inter, compare)
 #' 
-#' annotation <- c(annotation, list(Cglabrata2 = annotation$Cglabrata))
-#' blast_inter <- c(diamond_inter, list(Scerevisiae_Cglabrata2 = diamond_inter[[1]])) 
+#' # Classify pairs
+#' trd <- get_transposed(pairs, blast_inter, annotation)
 #' 
 get_transposed <- function(
         pairs, blast_inter, annotation, 
@@ -306,8 +307,8 @@ get_transposed <- function(
         )
         
         # Read and parse interspecies synteny results
-        parsed_syn <- collinearity2blocks(syn)[, c("anchor2", "block")]
-        parsed_syn <- parsed_syn[!duplicated(parsed_syn$anchor2), ]
+        parsed_syn <- collinearity2blocks(syn)[, c("anchor1", "block")]
+        parsed_syn <- parsed_syn[!duplicated(parsed_syn$anchor1), ]
         
         pairs_ancestral <- pairs_dd[, c(1, 2)]
         pairs_ancestral$ancestral <- FALSE
