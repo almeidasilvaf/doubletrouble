@@ -263,7 +263,7 @@ split_pairs_by_peak <- function(ks_df, peaks, nsd = 2, binwidth = 0.05) {
     
     # Create list of intervals
     int_list <- lapply(seq_len(length(cutpoints)-1), function(x) {
-        return(c(cutpoints[x], cutpoints[x] + 1))
+        return(c(cutpoints[x], cutpoints[x+1]))
     })
     
     # Create list of data frames for each interval
